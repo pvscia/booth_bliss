@@ -1,6 +1,6 @@
 # booth_bliss
 
-A new Flutter project. wowoowowowoowowowo
+A new Flutter project.
 
 ## Getting Started
 
