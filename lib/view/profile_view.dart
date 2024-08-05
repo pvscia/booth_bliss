@@ -29,7 +29,7 @@ class ProfileView extends StatelessWidget {
             ),
             SizedBox(height: 5),
             Text(
-              '2500 followers · 150 following',
+              '2500 followers · 1500 following',
               style: TextStyle(fontSize: 16, color: Colors.grey),
             ),
             SizedBox(height: 10),
