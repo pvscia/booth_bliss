@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "855889447188",
+    "project_id": "booth-bliss",
+    "storage_bucket": "booth-bliss.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:855889447188:android:f49ea4c22a81c0f561da01",
+        "android_client_info": {
+          "package_name": "com.example.booth_bliss"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBJr9n4DvuxGW2No5VIKdracAANPgpNw1Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
