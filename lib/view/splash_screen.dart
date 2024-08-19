@@ -1,3 +1,6 @@
+import 'package:booth_bliss/view/login_view.dart';
+import 'package:booth_bliss/view/sign_in_up_view.dart';
+import 'package:booth_bliss/view/sign_up_view.dart';
 import 'package:flutter/material.dart';
 import '../controller/main_controller.dart';
 
@@ -17,7 +20,7 @@ class _SplashScreenState extends State<SplashScreen> {
     await Future.delayed(Duration(seconds: 5), () {}); // Duration for the splash screen
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => MainScreen()), // Navigate to your main screen
+      MaterialPageRoute(builder: (context) => SignInUpView()), // Navigate to your main screen
     );
   }
 
@@ -32,33 +35,6 @@ class _SplashScreenState extends State<SplashScreen> {
               'lib/assets/logo.png', // Path to your logo image
               width: 200,
               height: 200,
-            ),
-            SizedBox(height: 20),
-            Text(
-              'CREATE UNIQUE MEMORIES EASILY',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                // Navigate to Login screen
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green, // Background color
-                foregroundColor: Colors.white, // Text color
-              ),
-              child: Text('Log in'),
-            ),
-            SizedBox(height: 10),
-            ElevatedButton(
-              onPressed: () {
-                // Navigate to Sign Up screen
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.pink, // Background color
-                foregroundColor: Colors.white, // Text color
-              ),
-              child: Text('Sign Up'),
             ),
           ],
         ),
