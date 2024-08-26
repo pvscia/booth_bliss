@@ -1,4 +1,6 @@
+import 'package:booth_bliss/view/sign_in_up_view.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class SignUpPage extends StatefulWidget {
   @override
@@ -10,7 +12,7 @@ class _SignUpPageState extends State<SignUpPage> {
   bool _isPasswordVisible = false;
   bool _isFormFilled = false;
   String _passwordStrength = '';
-  
+
   // Controllers to manage text field states
   final TextEditingController _firstNameController = TextEditingController();
   final TextEditingController _lastNameController = TextEditingController();
@@ -41,6 +43,25 @@ class _SignUpPageState extends State<SignUpPage> {
       _passwordStrength = 'excellent';
     } else {
       _passwordStrength = 'weak';
+    }
+  }
+
+  Future<void> _addUserDataToFirestore() async {
+    try {
+      await FirebaseFirestore.instance.collection('users').add({
+        'first_name': _firstNameController.text,
+        'last_name': _lastNameController.text,
+        'email': _emailController.text,
+        'password': _passwordController.text, // In a real app, never store plain text passwords
+        'created_at': FieldValue.serverTimestamp(),
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('User data added successfully!')),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to add user: $e')),
+      );
     }
   }
 
@@ -118,7 +139,11 @@ class _SignUpPageState extends State<SignUpPage> {
                 onPressed: _isFormFilled
                     ? () {
                         if (_formKey.currentState!.validate()) {
-                          // Process data
+                          _addUserDataToFirestore();
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => SignInUpView()),
+                          );
                         }
                       }
                     : null,

@@ -1,4 +1,6 @@
+import 'package:booth_bliss/controller/main_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'forgot_password.dart';
 
 class LoginPage extends StatefulWidget {
@@ -10,6 +12,7 @@ class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   bool _isPasswordVisible = false;
   bool _isFormFilled = false;
+  String _loginError = '';
 
   // Controllers to manage text field states
   final TextEditingController _emailController = TextEditingController();
@@ -30,6 +33,42 @@ class _LoginPageState extends State<LoginPage> {
     });
   }
 
+  Future<void> _login() async {
+    try {
+      final QuerySnapshot result = await FirebaseFirestore.instance
+          .collection('users')
+          .where('email', isEqualTo: _emailController.text)
+          .where('password', isEqualTo: _passwordController.text) // Note: Never use plaintext passwords in a real app.
+          .get();
+
+      final List<DocumentSnapshot> documents = result.docs;
+      
+      if (documents.length == 1) {
+        // Successful login
+        setState(() {
+          _loginError = ''; // Clear any previous errors
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Login successful!')),
+        );
+        // Navigate to the HomeView
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => MainScreen()),
+        );
+      } else {
+        // Login failed
+        setState(() {
+          _loginError = 'Invalid email or password';
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _loginError = 'An error occurred during login: $e';
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -44,6 +83,14 @@ class _LoginPageState extends State<LoginPage> {
           key: _formKey,
           child: Column(
             children: <Widget>[
+              if (_loginError.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 8.0),
+                  child: Text(
+                    _loginError,
+                    style: TextStyle(color: Colors.red),
+                  ),
+                ),
               TextFormField(
                 controller: _emailController,
                 decoration: InputDecoration(labelText: 'Email'),
@@ -87,7 +134,7 @@ class _LoginPageState extends State<LoginPage> {
                 onPressed: _isFormFilled
                     ? () {
                         if (_formKey.currentState!.validate()) {
-                          // Process data
+                          _login();
                         }
                       }
                     : null,
@@ -103,3 +150,4 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 }
+
