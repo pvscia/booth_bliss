@@ -59,8 +59,8 @@ class _MainScreenState extends State<MainScreen> {
             label: 'Custom',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.image),
-            label: 'Gallery',
+            icon: Icon(Icons.qr_code),
+            label: 'Scan',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),

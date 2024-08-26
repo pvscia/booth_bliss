@@ -50,55 +50,15 @@ class ProfileView extends StatelessWidget {
                     children: [
                       TextButton(
                         onPressed: () {},
-                        child: Text('Saved'),
-                      ),
-                      TextButton(
-                        onPressed: () {},
-                        child: Text('Liked'),
+                        child: Text('Results'),
                       ),
                       TextButton(
                         onPressed: () {},
                         child: Text('Created'),
                       ),
-                    ],
-                  ),
-                  SizedBox(height: 10),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: TextField(
-                          decoration: InputDecoration(
-                            prefixIcon: Icon(Icons.search),
-                            hintText: 'Search',
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(30),
-                              borderSide: BorderSide.none,
-                            ),
-                            filled: true,
-                            fillColor: Colors.grey[200],
-                          ),
-                        ),
-                      ),
-                      SizedBox(width: 10),
-                      IconButton(
-                        onPressed: () {
-                          // Add new action
-                        },
-                        icon: Icon(Icons.add),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 10),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      FilterChip(
-                        label: Text('Favourites'),
-                        onSelected: (bool selected) {},
-                      ),
-                      FilterChip(
-                        label: Text('Date: Old -> New'),
-                        onSelected: (bool selected) {},
+                      TextButton(
+                        onPressed: () {},
+                        child: Text('Liked'),
                       ),
                     ],
                   ),
@@ -106,16 +66,21 @@ class ProfileView extends StatelessWidget {
                   GridView.builder(
                     shrinkWrap: true,
                     physics: NeverScrollableScrollPhysics(),
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 3,
-                      crossAxisSpacing: 10,
-                      mainAxisSpacing: 10,
-                    ),
-                    itemCount: 6,
+                    gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                        maxCrossAxisExtent: 150,
+                        crossAxisSpacing: 2,
+                        mainAxisSpacing: 8,
+                        childAspectRatio: 3 / 5),
+                    itemCount: 12,
                     itemBuilder: (BuildContext context, int index) {
                       return Container(
-                        color: Colors.grey[300],
-                        child: Image.network('https://via.placeholder.com/150', fit: BoxFit.cover),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(20),
+                          child: Image.network(
+                            'https://i.pinimg.com/564x/a9/08/92/a90892abfe20695d601263160cbd234f.jpg',
+                            fit: BoxFit.contain,
+                          ),
+                        ),
                       );
                     },
                   ),
