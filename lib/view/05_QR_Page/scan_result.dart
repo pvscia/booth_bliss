@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:qr_flutter/qr_flutter.dart';
-import '../view/gallery_view.dart';
 
 class ScanResult extends StatelessWidget {
   const ScanResult({super.key});

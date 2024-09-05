@@ -1,24 +1,15 @@
+import 'package:booth_bliss/model/user_model.dart';
 import 'package:flutter/material.dart';
-import '../view/home_view.dart';
-import '../view/search_view.dart';
-import '../view/custom_view.dart';
-import '../view/gallery_view.dart';
-import '../view/profile_view.dart';
-
-void main() {
-  runApp(MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: MainScreen(),
-    );
-  }
-}
+import '02_Home_Page/home_view.dart';
+import '03_Search_Page/search_view.dart';
+import '04_Custom_Page/custom_view.dart';
+import '05_QR_Page/qr_view.dart';
+import '06_Profile_Page/profile_view.dart';
 
 class MainScreen extends StatefulWidget {
+  final UserModel user;
+  const MainScreen({super.key, required this.user});
+
   @override
   _MainScreenState createState() => _MainScreenState();
 }
@@ -26,8 +17,9 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
 
-  static final List<Widget> _widgetOptions = <Widget>[
-    HomeView(),
+  // Passing user data to views that require it
+  late final List<Widget> _widgetOptions = <Widget>[
+    HomeView(user: widget.user),
     SearchView(),
     CustomView(),
     ScanQR(),
