@@ -1,8 +1,6 @@
-import 'package:booth_bliss/view/sign_up_view.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'view/splash_screen.dart';
-import 'view/home_view.dart';
+import 'view/01_Front_page/splash_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding
@@ -15,10 +13,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      // home: LoginPage(),
       home: SplashScreen(),
-      // home: AddDataPage()
-      // home: HomeView(),
     );
   }
 }

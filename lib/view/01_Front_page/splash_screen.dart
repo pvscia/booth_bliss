@@ -1,9 +1,5 @@
-import 'package:booth_bliss/view/home_view.dart';
-import 'package:booth_bliss/view/login_view.dart';
-import 'package:booth_bliss/view/sign_in_up_view.dart';
-import 'package:booth_bliss/view/sign_up_view.dart';
 import 'package:flutter/material.dart';
-import 'package:booth_bliss/controller/main_controller.dart';
+import 'sign_in_up_view.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -22,9 +18,10 @@ class _SplashScreenState extends State<SplashScreen> {
         Duration(seconds: 5), () {}); // Duration for the splash screen
     Navigator.pushReplacement(
       context,
-      // MaterialPageRoute(builder: (context) => SignInUpView()), // Navigate to your main screen
       MaterialPageRoute(
-          builder: (context) => MyApp()), // Navigate to homescreen
+          builder: (context) => SignInUpView()), // Navigate to your main screen
+      //   MaterialPageRoute(
+      //       builder: (context) => MyApp()), // Navigate to homescreen
     );
   }
 

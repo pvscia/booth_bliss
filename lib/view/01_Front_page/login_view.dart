@@ -1,7 +1,8 @@
-import 'package:booth_bliss/controller/main_controller.dart';
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:booth_bliss/controller/login_controller.dart';
+import '../main_screen_view.dart';
 import 'forgot_password.dart';
+import 'package:booth_bliss/model/user_model.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -14,13 +15,15 @@ class _LoginPageState extends State<LoginPage> {
   bool _isFormFilled = false;
   String _loginError = '';
 
+  // Instantiate the controller
+  final LoginController _loginController = LoginController();
+
   // Controllers to manage text field states
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
   @override
   void dispose() {
-    // Clean up controllers
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
@@ -35,29 +38,26 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<void> _login() async {
     try {
-      final QuerySnapshot result = await FirebaseFirestore.instance
-          .collection('users')
-          .where('email', isEqualTo: _emailController.text)
-          .where('password', isEqualTo: _passwordController.text) // Note: Never use plaintext passwords in a real app.
-          .get();
+      UserModel? user = await _loginController.login(
+        _emailController.text,
+        _passwordController.text,
+      );
 
-      final List<DocumentSnapshot> documents = result.docs;
-      
-      if (documents.length == 1) {
-        // Successful login
+      if (user != null) {
+        // Clear previous error
         setState(() {
-          _loginError = ''; // Clear any previous errors
+          _loginError = '';
         });
+
+        // Navigate to HomeView
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Login successful!')),
         );
-        // Navigate to the HomeView
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => MainScreen()),
+          MaterialPageRoute(builder: (context) => MainScreen(user: user)),
         );
       } else {
-        // Login failed
         setState(() {
           _loginError = 'Invalid email or password';
         });
@@ -150,4 +150,3 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 }
-
