@@ -5,7 +5,7 @@ class SearchView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: PreferredSize(
-          preferredSize: Size.fromHeight(130.0),
+          preferredSize: Size.fromHeight(154.0),
           child: Container(
               color: Colors.green[100],
               child: Padding(

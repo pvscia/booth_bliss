@@ -30,7 +30,7 @@ class _MainScreenState extends State<MainScreen> {
     HomeView(),
     SearchView(),
     CustomView(),
-    GalleryView(),
+    ScanQR(),
     ProfileView(),
   ];
 
