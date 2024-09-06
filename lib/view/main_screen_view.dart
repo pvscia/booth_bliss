@@ -19,11 +19,11 @@ class _MainScreenState extends State<MainScreen> {
 
   // Passing user data to views that require it
   late final List<Widget> _widgetOptions = <Widget>[
-    HomeView(user: widget.user),
+    HomeView(),
     SearchView(),
     CustomView(),
     ScanQR(),
-    ProfileView(),
+    ProfileView(user: widget.user),
   ];
 
   void _onItemTapped(int index) {

@@ -1,7 +1,7 @@
+import 'package:booth_bliss/view/01_Front_page/forgot_password.dart';
 import 'package:flutter/material.dart';
 import 'package:booth_bliss/controller/login_controller.dart';
 import '../main_screen_view.dart';
-import 'forgot_password.dart';
 import 'package:booth_bliss/model/user_model.dart';
 
 class LoginPage extends StatefulWidget {
@@ -122,7 +122,7 @@ class _LoginPageState extends State<LoginPage> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => ForgotPasswordPage()),
+                        builder: (context) => ForgetPasswordPage()),
                   );
                 },
                 child: Text(

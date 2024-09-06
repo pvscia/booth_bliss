@@ -1,6 +1,9 @@
+import 'package:booth_bliss/model/user_model.dart';
 import 'package:flutter/material.dart';
 
 class ProfileView extends StatelessWidget {
+  final UserModel user;
+  const ProfileView({super.key, required this.user});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -19,7 +22,7 @@ class ProfileView extends StatelessWidget {
             ),
             SizedBox(height: 10),
             Text(
-              'User_Profile_Name',
+              '${user.firstName} ${user.lastName}',
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 5),

@@ -2,8 +2,7 @@ import 'package:booth_bliss/model/user_model.dart';
 import 'package:flutter/material.dart';
 
 class HomeView extends StatelessWidget {
-  final UserModel user;
-  const HomeView({super.key, required this.user});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
