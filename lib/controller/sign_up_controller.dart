@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class SignUpController {
@@ -26,7 +27,26 @@ class SignUpController {
     }
   }
 
-  Future<void> addUserDataToFirestore(BuildContext context) async {
+  Future<bool> addUserDataToFirestore(BuildContext context) async {
+    try {
+      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: emailController.text,
+        password: passwordController.text,
+      );
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'weak-password') {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('The password provided is too weak.')));
+      } else if (e.code == 'email-already-in-use') {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text('The account already exists for that email.')));
+      }
+      return false;
+    } catch (e) {
+      print(e);
+      return false;
+    }
+
     try {
       final userId =
           emailController.text; // Use email as ID or generate a unique ID
@@ -34,18 +54,19 @@ class SignUpController {
         'first_name': firstNameController.text,
         'last_name': lastNameController.text,
         'email': emailController.text,
-        'password': passwordController
-            .text, // In a real app, never store plain text passwords
+        'bio': '',
+        'profile_pict':'',
+        'lstFrame': [],
+        'lstPhotos': [],
         'created_at': FieldValue.serverTimestamp(),
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('User data added successfully!')),
-      );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to add user: $e')),
       );
+      return false;
     }
+    return true;
   }
 
   void dispose() {

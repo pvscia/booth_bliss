@@ -41,6 +41,7 @@ class _LoginPageState extends State<LoginPage> {
       UserModel? user = await _loginController.login(
         _emailController.text,
         _passwordController.text,
+        context,
       );
 
       if (user != null) {

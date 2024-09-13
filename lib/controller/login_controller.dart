@@ -1,14 +1,32 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:booth_bliss/model/user_model.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginController {
-  Future<UserModel?> login(String email, String password) async {
+  Future<UserModel?> login(
+      String email, String password, BuildContext context) async {
+    try {
+      await FirebaseAuth.instance
+          .signInWithEmailAndPassword(email: email, password: password);
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('No user found for that email.')));
+      } else if (e.code == 'wrong-password') {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Wrong password provided for that user.')));
+      }
+      return null;
+    } catch (e) {
+      return null;
+    }
+
     try {
       final QuerySnapshot result = await FirebaseFirestore.instance
           .collection('users')
           .where('email', isEqualTo: email)
-          .where('password', isEqualTo: password)
           .get();
 
       final List<DocumentSnapshot> documents = result.docs;
@@ -29,7 +47,7 @@ class LoginController {
         return null; // Invalid login
       }
     } catch (e) {
-      throw 'An error occurred during login: $e';
+      return null;
     }
   }
 
@@ -48,9 +66,7 @@ class LoginController {
     String? lastName = prefs.getString('lastName');
     String? email = prefs.getString('email');
 
-    if (firstName != null &&
-        lastName != null &&
-        email != null) {
+    if (firstName != null && lastName != null && email != null) {
       return UserModel(
         firstName: firstName,
         lastName: lastName,
