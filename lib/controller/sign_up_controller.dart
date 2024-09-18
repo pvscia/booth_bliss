@@ -28,8 +28,9 @@ class SignUpController {
   }
 
   Future<bool> addUserDataToFirestore(BuildContext context) async {
+    UserCredential user;
     try {
-      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      user = await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: emailController.text,
         password: passwordController.text,
       );
@@ -48,16 +49,18 @@ class SignUpController {
     }
 
     try {
-      final userId =
-          emailController.text; // Use email as ID or generate a unique ID
-      await FirebaseFirestore.instance.collection('users').doc(userId).set({
+      final String userId = user.user!.uid; // Use email as ID or generate a unique ID
+      DocumentReference docRef =
+          FirebaseFirestore.instance.collection('users').doc(userId);
+      await docRef.set({
         'first_name': firstNameController.text,
         'last_name': lastNameController.text,
         'email': emailController.text,
         'bio': '',
-        'profile_pict':'',
-        'lstFrame': [],
-        'lstPhotos': [],
+        'profile_pict': {
+          'filename': 'dummy.png',
+          'fileloc': 'dummyloc',
+        },
         'created_at': FieldValue.serverTimestamp(),
       });
     } catch (e) {
@@ -76,3 +79,4 @@ class SignUpController {
     passwordController.dispose();
   }
 }
+

@@ -27,7 +27,7 @@ class ProfileView extends StatelessWidget {
             ),
             SizedBox(height: 5),
             Text(
-              'Bio profile text',
+              user.bio == '' ? 'No Bio' : user.bio,
               style: TextStyle(fontSize: 16, color: Colors.grey),
             ),
             SizedBox(height: 5),

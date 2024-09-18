@@ -1,3 +1,4 @@
+import 'package:booth_bliss/controller/auth_check.dart';
 import 'package:flutter/material.dart';
 import 'sign_in_up_view.dart';
 
@@ -19,7 +20,7 @@ class _SplashScreenState extends State<SplashScreen> {
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
-          builder: (context) => SignInUpView()), // Navigate to your main screen
+          builder: (context) => AuthCheck()), // Navigate to your main screen
       //   MaterialPageRoute(
       //       builder: (context) => MyApp()), // Navigate to homescreen
     );
