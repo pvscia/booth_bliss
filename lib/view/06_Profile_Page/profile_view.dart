@@ -1,9 +1,18 @@
-import 'package:booth_bliss/model/user_model.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:booth_bliss/model/user_model.dart';
+import 'package:booth_bliss/view/06_Profile_Page/edit_profile_view.dart';
 
-class ProfileView extends StatelessWidget {
+class ProfileView extends StatefulWidget {
   final UserModel user;
+
   const ProfileView({super.key, required this.user});
+
+  @override
+  ProfileViewState createState() => ProfileViewState();
+}
+
+class ProfileViewState extends State<ProfileView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -18,27 +27,33 @@ class ProfileView extends StatelessWidget {
             SizedBox(height: 20),
             CircleAvatar(
               radius: 50,
-              backgroundImage: NetworkImage('https://via.placeholder.com/150'),
+              backgroundImage: widget.user.profilePicture.fileloc.isNotEmpty
+                  ? NetworkImage(widget.user.profilePicture.fileloc)
+                  : AssetImage('lib/assets/logo.png') as ImageProvider,
             ),
             SizedBox(height: 10),
             Text(
-              '${user.firstName} ${user.lastName}',
+              '${widget.user.firstName} ${widget.user.lastName}',
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 5),
             Text(
-              user.bio == '' ? 'No Bio' : user.bio,
-              style: TextStyle(fontSize: 16, color: Colors.grey),
-            ),
-            SizedBox(height: 5),
-            Text(
-              '25000 followers · 15000 following',
+              widget.user.bio.isNotEmpty ? widget.user.bio : 'No Bio',
               style: TextStyle(fontSize: 16, color: Colors.grey),
             ),
             SizedBox(height: 10),
             ElevatedButton(
               onPressed: () {
-                // Edit profile action
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => EditProfilePage(
+                      currentBio: widget.user.bio,
+                      profilePicUrl: widget.user.profilePicture.fileloc,
+                      mUser: widget.user,
+                    ),
+                  ),
+                );
               },
               child: Text('Edit Profile'),
               style: ElevatedButton.styleFrom(backgroundColor: Colors.pink),
@@ -70,10 +85,11 @@ class ProfileView extends StatelessWidget {
                     shrinkWrap: true,
                     physics: NeverScrollableScrollPhysics(),
                     gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                        maxCrossAxisExtent: 150,
-                        crossAxisSpacing: 2,
-                        mainAxisSpacing: 8,
-                        childAspectRatio: 3 / 5),
+                      maxCrossAxisExtent: 150,
+                      crossAxisSpacing: 2,
+                      mainAxisSpacing: 8,
+                      childAspectRatio: 3 / 5,
+                    ),
                     itemCount: 12,
                     itemBuilder: (BuildContext context, int index) {
                       return Container(

@@ -15,8 +15,6 @@ class SearchView extends StatelessWidget {
                     SizedBox(height: 30),
                     Row(
                       children: [
-                        IconButton(
-                            onPressed: () {}, icon: Icon(Icons.arrow_back)),
                         Expanded(
                           child: TextField(
                             decoration: InputDecoration(

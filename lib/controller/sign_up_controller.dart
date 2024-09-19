@@ -56,10 +56,10 @@ class SignUpController {
         'first_name': firstNameController.text,
         'last_name': lastNameController.text,
         'email': emailController.text,
-        'bio': '',
+        'bio': null,
         'profile_pict': {
-          'filename': 'dummy.png',
-          'fileloc': 'dummyloc',
+          'filename': null,
+          'fileloc': null,
         },
         'created_at': FieldValue.serverTimestamp(),
       });
