@@ -54,10 +54,12 @@ class _LoginPageState extends State<LoginPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Login successful!')),
         );
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => MainScreen(user: user)),
-        );
+        // Navigator.pushReplacement(
+        //   context,
+        //   MaterialPageRoute(builder: (context) => MainScreen(user: user)),
+        // );
+
+        Navigator.of(context).pushReplacementNamed("/home", arguments: user);
       } else {
         setState(() {
           _loginError = 'Invalid email or password';

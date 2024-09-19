@@ -1,4 +1,6 @@
 import 'package:booth_bliss/model/user_model.dart';
+import 'package:booth_bliss/view/06_Profile_Page/profile_view.dart';
+import 'package:booth_bliss/view/main_screen_view.dart';
 import 'package:flutter/material.dart';
 import 'package:booth_bliss/controller/edit_profile_controller.dart';
 
@@ -13,7 +15,7 @@ class EditProfilePage extends StatefulWidget {
   _EditProfilePageState createState() => _EditProfilePageState();
 }
 
-class _EditProfilePageState extends State<EditProfilePage> {
+class _EditProfilePageState extends State<EditProfilePage>{
   final EditProfileController _controller = EditProfileController();
   final TextEditingController _bioController = TextEditingController();
   bool isSaving = false;

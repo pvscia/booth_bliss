@@ -44,7 +44,7 @@ class ProfileViewState extends State<ProfileView> {
             SizedBox(height: 10),
             ElevatedButton(
               onPressed: () {
-                Navigator.push(
+                Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
                     builder: (context) => EditProfilePage(
