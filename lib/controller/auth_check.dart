@@ -1,6 +1,5 @@
 import 'package:booth_bliss/model/user_model.dart';
 import 'package:booth_bliss/view/01_Front_page/sign_in_up_view.dart';
-import 'package:booth_bliss/view/main_screen_view.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -28,7 +27,8 @@ class AuthCheck extends StatelessWidget {
 
               if (userSnapshot.hasData) {
                 // UserModel is ready, pass it to the home screen
-                return MainScreen(user: userSnapshot.data!);
+                Navigator.of(context).pushReplacementNamed("/home",
+                    arguments: userSnapshot.data);
               } else {
                 // If there's no user data, show an error or redirect to login
                 return SignInUpView();
