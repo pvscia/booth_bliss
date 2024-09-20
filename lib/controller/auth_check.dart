@@ -29,7 +29,7 @@ class AuthCheck extends StatelessWidget {
                 // UserModel is ready, navigate to the home screen
                 Future.microtask(() => Navigator.pushReplacementNamed(
                     context, '/home',
-                    arguments: userSnapshot.data!));
+                    arguments: {'user' : userSnapshot.data!, 'index' : 0}));
               } else {
                 // If there's no user data, show an error or redirect to login
                 Future.microtask(() =>

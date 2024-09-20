@@ -49,7 +49,7 @@ class ProfileViewState extends State<ProfileView> {
                     builder: (context) => EditProfilePage(
                       currentBio: widget.user.bio,
                       profilePicUrl: widget.user.profilePicture.fileloc,
-                      mUser: widget.user,
+                      mUser: widget.user, 
                     ),
                   ),
                 );

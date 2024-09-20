@@ -7,13 +7,17 @@ class EditProfilePage extends StatefulWidget {
   final String? profilePicUrl;
   final UserModel mUser;
 
-  EditProfilePage({this.currentBio, this.profilePicUrl, required this.mUser});
+  EditProfilePage({
+    this.currentBio,
+    this.profilePicUrl,
+    required this.mUser,
+  });
 
   @override
   _EditProfilePageState createState() => _EditProfilePageState();
 }
 
-class _EditProfilePageState extends State<EditProfilePage>{
+class _EditProfilePageState extends State<EditProfilePage> {
   final EditProfileController _controller = EditProfileController();
   final TextEditingController _bioController = TextEditingController();
   bool isSaving = false;
@@ -40,7 +44,8 @@ class _EditProfilePageState extends State<EditProfilePage>{
       setState(() {
         isSaving = false;
       });
-      Navigator.pop(context);
+      Navigator.pushReplacementNamed(context, '/home',
+          arguments: {'user': widget.mUser, 'index': 4});
     } catch (e) {
       setState(() {
         isSaving = false;
@@ -59,7 +64,8 @@ class _EditProfilePageState extends State<EditProfilePage>{
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.pop(context);
+            Navigator.pushReplacementNamed(context, '/home',
+                arguments: {'user': widget.mUser, 'index': 4});
           },
         ),
         actions: [

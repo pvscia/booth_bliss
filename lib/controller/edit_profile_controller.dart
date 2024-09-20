@@ -16,20 +16,23 @@ class EditProfileController {
 
   // Pick image from the gallery
   Future<void> pickImage() async {
-    final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
+    final pickedFile =
+        await ImagePicker().pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       profileImage = File(pickedFile.path);
     }
   }
 
   // Save profile data (bio and profile picture) to Firebase
-  Future<void> saveProfile(String bio, UserModel mUSer) async {
+  Future<void> saveProfile(String bio, UserModel mUser) async {
     User? user = _auth.currentUser;
     if (user == null) throw Exception('No user logged in');
 
-    String? imageUrl;
+    String? imageUrl =
+        mUser.profilePicture.fileloc; // Use the existing profile picture URL
+
+    // Upload the new image only if a new one was selected
     if (profileImage != null) {
-      // Upload image to Firebase Storage and get the download URL
       String fileName = '${user.uid}.png';
       Reference storageRef = _storage.ref().child('profilePics/$fileName');
       UploadTask uploadTask = storageRef.putFile(profileImage!);
@@ -37,22 +40,25 @@ class EditProfileController {
       imageUrl = await taskSnapshot.ref.getDownloadURL();
     }
 
-    // Prepare the data to be updated in Firestore
+    // Prepare the updated user data, using the existing image URL if no new image was uploaded
     ProfilePictureModel profilePictureModel = ProfilePictureModel(
       filename: imageUrl != null ? '${user.uid}.png' : '',
       fileloc: imageUrl ?? '',
     );
 
     UserModel updatedUser = UserModel(
-      firstName: mUSer.firstName, 
-      lastName: mUSer.lastName, 
+      firstName: mUser.firstName,
+      lastName: mUser.lastName,
       email: user.email!,
       bio: bio,
-      createdAt: DateTime.now(), // Ideally, you'd want to keep the original createdAt
+      createdAt: mUser.createdAt, // Keep the original createdAt
       profilePicture: profilePictureModel,
     );
 
     // Update Firestore user document
-    await _firestore.collection('users').doc(user.uid).update(updatedUser.toJson());
+    await _firestore
+        .collection('users')
+        .doc(user.uid)
+        .update(updatedUser.toJson());
   }
 }
