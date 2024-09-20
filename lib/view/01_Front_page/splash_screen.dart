@@ -1,6 +1,6 @@
 import 'package:booth_bliss/controller/auth_check.dart';
+import 'package:booth_bliss/view/01_Front_page/sign_in_up_view.dart';
 import 'package:flutter/material.dart';
-import 'sign_in_up_view.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -19,10 +19,7 @@ class _SplashScreenState extends State<SplashScreen> {
         Duration(seconds: 5), () {}); // Duration for the splash screen
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(
-          builder: (context) => AuthCheck()), // Navigate to your main screen
-      //   MaterialPageRoute(
-      //       builder: (context) => MyApp()), // Navigate to homescreen
+      MaterialPageRoute(builder: (context) => AuthCheck()),
     );
   }
 

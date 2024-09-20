@@ -1,9 +1,7 @@
 import 'package:booth_bliss/firebase_options.dart';
 import 'package:booth_bliss/view/01_Front_page/login_view.dart';
-import 'package:booth_bliss/view/03_Search_Page/search_view.dart';
-import 'package:booth_bliss/view/04_Custom_Page/custom_view.dart';
-import 'package:booth_bliss/view/05_QR_Page/qr_view.dart';
-import 'package:booth_bliss/view/06_Profile_Page/profile_view.dart';
+import 'package:booth_bliss/view/01_Front_page/sign_in_up_view.dart';
+import 'package:booth_bliss/view/01_Front_page/sign_up_view.dart';
 import 'package:booth_bliss/view/main_screen_view.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -21,7 +19,8 @@ void main() async {
 final routes = {
   '/': (BuildContext context) => SplashScreen(),
   '/login': (BuildContext context) => LoginPage(),
-  '/register': (BuildContext context) => SplashScreen(),
+  '/register': (BuildContext context) => SignUpPage(),
+  '/front_page': (BuildContext context) => SignInUpView(),
   '/home': (BuildContext context) => MainScreen(),
 };
 

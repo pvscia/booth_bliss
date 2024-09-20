@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:booth_bliss/model/user_model.dart';
 import 'package:booth_bliss/view/06_Profile_Page/edit_profile_view.dart';

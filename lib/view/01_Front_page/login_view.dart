@@ -1,7 +1,6 @@
 import 'package:booth_bliss/view/01_Front_page/forgot_password.dart';
 import 'package:flutter/material.dart';
 import 'package:booth_bliss/controller/login_controller.dart';
-import '../main_screen_view.dart';
 import 'package:booth_bliss/model/user_model.dart';
 
 class LoginPage extends StatefulWidget {
@@ -54,10 +53,6 @@ class _LoginPageState extends State<LoginPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Login successful!')),
         );
-        // Navigator.pushReplacement(
-        //   context,
-        //   MaterialPageRoute(builder: (context) => MainScreen(user: user)),
-        // );
 
         Navigator.of(context).pushReplacementNamed("/home", arguments: user);
       } else {

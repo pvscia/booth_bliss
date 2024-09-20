@@ -112,11 +112,7 @@ class _SignUpPageState extends State<SignUpPage> {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(content: Text('Successfuly Sign Up')),
                             );
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => SignInUpView()),
-                            );
+                            Navigator.of(context).pop();
                           }
                         }
                       }
