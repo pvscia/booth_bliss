@@ -7,23 +7,23 @@ import '05_QR_Page/qr_view.dart';
 import '06_Profile_Page/profile_view.dart';
 
 class MainScreen extends StatefulWidget {
-  final UserModel user;
-  const MainScreen({super.key, required this.user});
+  const MainScreen({super.key});
 
   @override
   _MainScreenState createState() => _MainScreenState();
 }
 
 class _MainScreenState extends State<MainScreen> {
+  UserModel? user;
   int _selectedIndex = 0;
 
   // Passing user data to views that require it
   late final List<Widget> _widgetOptions = <Widget>[
-    HomeView(user: widget.user),
+    HomeView(),
     SearchView(),
     CustomView(),
     ScanQR(),
-    ProfileView(),
+    ProfileView(user: user!),
   ];
 
   void _onItemTapped(int index) {
@@ -34,6 +34,9 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
+    setState(() {
+      user = ModalRoute.of(context)?.settings.arguments as UserModel?;
+    });
     return Scaffold(
       body: _widgetOptions.elementAt(_selectedIndex),
       bottomNavigationBar: BottomNavigationBar(

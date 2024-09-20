@@ -24,10 +24,7 @@ class SignInUpView extends StatelessWidget {
             ElevatedButton(
               onPressed: () {
                 // Navigate to the Login Page
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => LoginPage()),
-                );
+                Navigator.of(context).pushNamed("/login");
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.green, // Background color
@@ -39,10 +36,7 @@ class SignInUpView extends StatelessWidget {
             ElevatedButton(
               onPressed: () {
                 // Navigate to the Sign Up Page
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => SignUpPage()),
-                );
+                Navigator.of(context).pushNamed("/register");
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.pink, // Background color

@@ -1,29 +1,69 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class UserModel {
   final String firstName;
   final String lastName;
   final String email;
+  final String bio;
+  final DateTime createdAt;
+  final ProfilePictureModel profilePicture;
 
   UserModel({
     required this.firstName,
     required this.lastName,
     required this.email,
+    required this.bio,
+    required this.createdAt,
+    required this.profilePicture,
   });
 
-  // Convert a Firestore document snapshot into a UserModel instance
-  factory UserModel.fromDocument(Map<String, dynamic> doc, String docId) {
+  // Factory method to create a UserModel from JSON
+  factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
-      firstName: doc['first_name'],
-      lastName: doc['last_name'],
-      email: doc['email'],
+      firstName: json['first_name'] ?? '',
+      lastName: json['last_name'] ?? '',
+      email: json['email'] ?? '',
+      bio: json['bio'] ?? '',
+      createdAt: (json['created_at'] as Timestamp).toDate(),
+      profilePicture: ProfilePictureModel.fromJson(json['profile_pict'] ?? {}),
     );
   }
 
-  // Convert a UserModel instance into a Map to save in Firestore
-  Map<String, dynamic> toMap() {
+  // Method to convert UserModel back to JSON
+  Map<String, dynamic> toJson() {
     return {
-      'firstName': firstName,
-      'lastName': lastName,
+      'first_name': firstName,
+      'last_name': lastName,
       'email': email,
+      'bio': bio,
+      'created_at': createdAt,
+      'profile_pict': profilePicture.toJson(),
+    };
+  }
+}
+
+class ProfilePictureModel {
+  final String filename;
+  final String fileloc;
+
+  ProfilePictureModel({
+    required this.filename,
+    required this.fileloc,
+  });
+
+  // Factory method to create ProfilePictureModel from JSON
+  factory ProfilePictureModel.fromJson(Map<String, dynamic> json) {
+    return ProfilePictureModel(
+      filename: json['filename'] ?? '',
+      fileloc: json['fileloc'] ?? '',
+    );
+  }
+
+  // Method to convert ProfilePictureModel back to JSON
+  Map<String, dynamic> toJson() {
+    return {
+      'filename': filename,
+      'fileloc': fileloc,
     };
   }
 }

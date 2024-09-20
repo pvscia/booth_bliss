@@ -104,14 +104,16 @@ class _SignUpPageState extends State<SignUpPage> {
               Spacer(),
               ElevatedButton(
                 onPressed: _controller.isFormFilled
-                    ? () {
+                    ? () async {
                         if (_formKey.currentState!.validate()) {
-                          _controller.addUserDataToFirestore(context);
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => SignInUpView()),
-                          );
+                          bool success =
+                              await _controller.addUserDataToFirestore(context);
+                          if (success) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('Successfuly Sign Up')),
+                            );
+                            Navigator.of(context).pop();
+                          }
                         }
                       }
                     : null,
