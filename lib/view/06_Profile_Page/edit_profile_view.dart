@@ -40,12 +40,12 @@ class _EditProfilePageState extends State<EditProfilePage> {
     });
 
     try {
-      await _controller.saveProfile(_bioController.text, widget.mUser);
+      var updatedProfile =
+          await _controller.saveProfile(_bioController.text, widget.mUser);
       setState(() {
         isSaving = false;
       });
-      Navigator.pushReplacementNamed(context, '/home',
-          arguments: {'user': widget.mUser, 'index': 4});
+      Navigator.pop(context, updatedProfile);
     } catch (e) {
       setState(() {
         isSaving = false;
@@ -64,8 +64,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.pushReplacementNamed(context, '/home',
-                arguments: {'user': widget.mUser, 'index': 4});
+            Navigator.pop(context);
           },
         ),
         actions: [

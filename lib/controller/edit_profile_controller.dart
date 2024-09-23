@@ -24,7 +24,7 @@ class EditProfileController {
   }
 
   // Save profile data (bio and profile picture) to Firebase
-  Future<void> saveProfile(String bio, UserModel mUser) async {
+  Future<UserModel> saveProfile(String bio, UserModel mUser) async {
     User? user = _auth.currentUser;
     if (user == null) throw Exception('No user logged in');
 
@@ -60,5 +60,7 @@ class EditProfileController {
         .collection('users')
         .doc(user.uid)
         .update(updatedUser.toJson());
+
+    return updatedUser;
   }
 }

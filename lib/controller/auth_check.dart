@@ -17,7 +17,6 @@ class AuthCheck extends StatelessWidget {
           // User is logged in
           User? firebaseUser = snapshot.data;
 
-          // Fetch the user's Firestore data and create a UserModel
           return FutureBuilder<UserModel?>(
             future: getUserModel(firebaseUser!.uid), // Retrieve user data
             builder: (context, userSnapshot) {
@@ -26,23 +25,26 @@ class AuthCheck extends StatelessWidget {
               }
 
               if (userSnapshot.hasData) {
-                // UserModel is ready, navigate to the home screen
-                Future.microtask(() => Navigator.pushReplacementNamed(
-                    context, '/home',
-                    arguments: {'user' : userSnapshot.data!, 'index' : 0}));
+                // UserModel is ready, navigate to the home screen after the build phase
+                Future.microtask(() {
+                  Navigator.pushReplacementNamed(context, '/home',
+                      arguments: userSnapshot.data!);
+                });
               } else {
                 // If there's no user data, show an error or redirect to login
-                Future.microtask(() =>
-                    Navigator.pushReplacementNamed(context, '/front_page'));
+                Future.microtask(() {
+                  Navigator.pushReplacementNamed(context, '/front_page');
+                });
               }
 
               return SizedBox(); // Temporary widget until navigation is complete
             },
           );
         } else {
-          // User is not logged in, redirect to login screen
-          Future.microtask(
-              () => Navigator.pushReplacementNamed(context, '/front_page'));
+          // User is not logged in, redirect to login screen after the build phase
+          Future.microtask(() {
+            Navigator.pushReplacementNamed(context, '/front_page');
+          });
 
           return SizedBox(); // Temporary widget until navigation is complete
         }

@@ -21,7 +21,7 @@ final routes = {
   '/login': (BuildContext context) => LoginPage(),
   '/register': (BuildContext context) => SignUpPage(),
   '/front_page': (BuildContext context) => SignInUpView(),
-  '/home': (BuildContext context) => MainScreen(),
+  '/home': (BuildContext context) => const MainScreen(),
 };
 
 // TODO change all routes nav using named

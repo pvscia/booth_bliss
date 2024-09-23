@@ -17,16 +17,6 @@ class _MainScreenState extends State<MainScreen> {
   UserModel? user;
   int _selectedIndex = 0;
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    // Fetch arguments only once when the widget is first created
-    final args =
-        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>;
-    user = args['user'];
-    _selectedIndex = args['index'] ?? 0;
-  }
-
   // Create widget options list dynamically, based on the user being passed in
   List<Widget> get _widgetOptions => <Widget>[
         HomeView(),
@@ -44,6 +34,7 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
+    user = ModalRoute.of(context)?.settings.arguments as UserModel?;
     return Scaffold(
       body: _widgetOptions.elementAt(_selectedIndex),
       bottomNavigationBar: BottomNavigationBar(

@@ -12,6 +12,14 @@ class ProfileView extends StatefulWidget {
 }
 
 class ProfileViewState extends State<ProfileView> {
+  late UserModel updatedUser;
+
+  @override
+  void initState() {
+    super.initState();
+    updatedUser = widget.user; // Initialize with the passed user data
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,33 +34,39 @@ class ProfileViewState extends State<ProfileView> {
             SizedBox(height: 20),
             CircleAvatar(
               radius: 50,
-              backgroundImage: widget.user.profilePicture.fileloc.isNotEmpty
-                  ? NetworkImage(widget.user.profilePicture.fileloc)
+              backgroundImage: updatedUser.profilePicture.fileloc.isNotEmpty
+                  ? NetworkImage(updatedUser.profilePicture.fileloc)
                   : AssetImage('lib/assets/logo.png') as ImageProvider,
             ),
             SizedBox(height: 10),
             Text(
-              '${widget.user.firstName} ${widget.user.lastName}',
+              '${updatedUser.firstName} ${updatedUser.lastName}',
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 5),
             Text(
-              widget.user.bio.isNotEmpty ? widget.user.bio : 'No Bio',
+              updatedUser.bio.isNotEmpty ? updatedUser.bio : 'No Bio',
               style: TextStyle(fontSize: 16, color: Colors.grey),
             ),
             SizedBox(height: 10),
             ElevatedButton(
-              onPressed: () {
-                Navigator.pushReplacement(
+              onPressed: () async {
+                final result = await Navigator.push<UserModel>(
                   context,
                   MaterialPageRoute(
                     builder: (context) => EditProfilePage(
-                      currentBio: widget.user.bio,
-                      profilePicUrl: widget.user.profilePicture.fileloc,
-                      mUser: widget.user, 
+                      currentBio: updatedUser.bio,
+                      profilePicUrl: updatedUser.profilePicture.fileloc,
+                      mUser: updatedUser,
                     ),
                   ),
                 );
+
+                if (result != null) {
+                  setState(() {
+                    updatedUser = result; // Update the user data directly
+                  });
+                }
               },
               child: Text('Edit Profile'),
               style: ElevatedButton.styleFrom(backgroundColor: Colors.pink),
