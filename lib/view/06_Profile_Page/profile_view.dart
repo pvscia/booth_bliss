@@ -34,9 +34,11 @@ class ProfileViewState extends State<ProfileView> {
             SizedBox(height: 20),
             CircleAvatar(
               radius: 50,
-              backgroundImage: updatedUser.profilePicture.fileloc.isNotEmpty
-                  ? NetworkImage(updatedUser.profilePicture.fileloc)
-                  : AssetImage('lib/assets/logo.png') as ImageProvider,
+              backgroundImage: (updatedUser.profilePicture != null &&
+                      updatedUser.profilePicture!.fileloc != null &&
+                      updatedUser.profilePicture!.fileloc!.isNotEmpty)
+                  ? NetworkImage(updatedUser.profilePicture!.fileloc!)
+                  : AssetImage('lib/assets/default-user.png') as ImageProvider,
             ),
             SizedBox(height: 10),
             Text(
@@ -45,7 +47,7 @@ class ProfileViewState extends State<ProfileView> {
             ),
             SizedBox(height: 5),
             Text(
-              updatedUser.bio.isNotEmpty ? updatedUser.bio : 'No Bio',
+              updatedUser.bio ?? 'No Bio',
               style: TextStyle(fontSize: 16, color: Colors.grey),
             ),
             SizedBox(height: 10),
@@ -55,9 +57,7 @@ class ProfileViewState extends State<ProfileView> {
                   context,
                   MaterialPageRoute(
                     builder: (context) => EditProfilePage(
-                      currentBio: updatedUser.bio,
-                      profilePicUrl: updatedUser.profilePicture.fileloc,
-                      mUser: updatedUser,
+                      user: updatedUser,
                     ),
                   ),
                 );

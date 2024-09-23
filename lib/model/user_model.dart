@@ -1,20 +1,20 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class UserModel {
-  final String firstName;
-  final String lastName;
-  final String email;
-  final String bio;
-  final DateTime createdAt;
-  final ProfilePictureModel profilePicture;
+  final String? firstName;
+  final String? lastName;
+  final String? email;
+  final String? bio;
+  final DateTime? createdAt;
+  final ProfilePictureModel? profilePicture;
 
   UserModel({
-    required this.firstName,
-    required this.lastName,
-    required this.email,
-    required this.bio,
-    required this.createdAt,
-    required this.profilePicture,
+    this.firstName,
+    this.lastName,
+    this.email,
+    this.bio,
+    this.createdAt,
+    this.profilePicture,
   });
 
   // Factory method to create a UserModel from JSON
@@ -37,18 +37,18 @@ class UserModel {
       'email': email,
       'bio': bio,
       'created_at': createdAt,
-      'profile_pict': profilePicture.toJson(),
+      'profile_pict': profilePicture?.toJson(),
     };
   }
 }
 
 class ProfilePictureModel {
-  final String filename;
-  final String fileloc;
+  final String? filename;
+  final String? fileloc;
 
   ProfilePictureModel({
-    required this.filename,
-    required this.fileloc,
+     this.filename,
+     this.fileloc,
   });
 
   // Factory method to create ProfilePictureModel from JSON
