@@ -44,7 +44,7 @@ class UserModel {
 
 class ProfilePictureModel {
   final String? filename;
-  final String? fileloc;
+  late final String? fileloc;
 
   ProfilePictureModel({
      this.filename,

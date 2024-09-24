@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:booth_bliss/controller/edit_profile_controller.dart';
 
 class EditProfilePage extends StatefulWidget {
-  late final UserModel user;
+  final UserModel user;
 
   EditProfilePage({
     super.key,
@@ -19,17 +19,21 @@ class _EditProfilePageState extends State<EditProfilePage> {
   final TextEditingController _firstNameController = TextEditingController();
   final TextEditingController _lastNameController = TextEditingController();
   final TextEditingController _bioController = TextEditingController();
+
   bool isValid = false;
   bool isSaving = false;
+  bool isLoadingImage = false; // New variable for loading state
   late UserModel mUser;
 
   @override
   void initState() {
     super.initState();
     mUser = widget.user;
-    if (mUser.profilePicture != null) {
-      _controller.initImageController(mUser.profilePicture!.fileloc);
+
+    if (mUser.profilePicture!.fileloc != null) {
+      _initializeImage(mUser.profilePicture!.fileloc);
     }
+
     _firstNameController.text = mUser.firstName ?? '';
     _lastNameController.text = mUser.lastName ?? '';
     _bioController.text = mUser.bio ?? '';
@@ -41,6 +45,18 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
     _lastNameController.addListener(() {
       activeInactiveButton();
+    });
+  }
+
+  Future<void> _initializeImage(String? fileloc) async {
+    setState(() {
+      isLoadingImage = true; // Start loading
+    });
+
+    await _controller.initImageController(fileloc);
+
+    setState(() {
+      isLoadingImage = false; // End loading
     });
   }
 
@@ -98,6 +114,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     try {
       setState(() {
         _controller.removeProfile(mUser);
+        // Make sure to await the removal
         isSaving = false;
       });
     } catch (e) {
@@ -105,7 +122,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
         isSaving = false;
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to save profile: ${e.toString()}')),
+        SnackBar(content: Text('Failed to remove profile: ${e.toString()}')),
       );
     }
   }
@@ -119,7 +136,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
             Navigator.pop(context);
-            print('wow');
           },
         ),
         actions: [
@@ -136,71 +152,81 @@ class _EditProfilePageState extends State<EditProfilePage> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            GestureDetector(
-              onTap: () async {
-                await _controller.pickImage();
-                setState(() {}); // To show the selected image
-              },
-              child: CircleAvatar(
-                radius: 50,
-                backgroundImage: _controller.profileImage != null
-                    ? FileImage(_controller.profileImage!)
-                    : (mUser.profilePicture!.fileloc != null &&
-                            mUser.profilePicture!.fileloc!.isNotEmpty)
-                        ? NetworkImage(mUser.profilePicture!.fileloc!)
-                        : const AssetImage('lib/assets/default-user.png')
-                            as ImageProvider,
-                child: const Icon(
-                  Icons.camera_alt,
-                  size: 30,
-                  color: Colors.white,
+            if (isLoadingImage)
+              Center(
+                // Center the loading indicator
+                child: SizedBox(
+                  width: 100, // Set width of the circular indicator
+                  height: 100, // Set height of the circular indicator
+                  child: const CircularProgressIndicator(
+                    strokeWidth: 8.0, // Adjust stroke width for visibility
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(height: 10),
-            TextButton(
-              onPressed: isSaving ? null : _removeProfile,
-              child: Text(
-                'Remove photo',
-                style: TextStyle(
-                    color: _controller.profileImage != null
-                        ? Colors.red
-                        : Colors.grey),
+            if (!isLoadingImage) ...[
+              GestureDetector(
+                onTap: () async {
+                  await _controller.pickImage();
+                  setState(() {}); // To show the selected image
+                },
+                child: CircleAvatar(
+                  radius: 50,
+                  backgroundImage: _controller.profileImage != null
+                      ? FileImage(_controller.profileImage!)
+                      : const AssetImage('lib/assets/default-user.png')
+                          as ImageProvider,
+                  child: const Icon(
+                    Icons.camera_alt,
+                    size: 30,
+                    color: Colors.white,
+                  ),
+                ),
               ),
-            ),
-            const SizedBox(height: 20),
-            TextFormField(
-              controller: _firstNameController,
-              minLines: 1,
-              decoration: const InputDecoration(
-                labelText: 'First Name',
-                border: OutlineInputBorder(),
-                hintText: 'Enter your first name',
+              const SizedBox(height: 10),
+              TextButton(
+                onPressed: isSaving ? null : _removeProfile,
+                child: Text(
+                  'Remove photo',
+                  style: TextStyle(
+                      color: _controller.profileImage != null
+                          ? Colors.red
+                          : Colors.grey),
+                ),
               ),
-            ),
-            const SizedBox(height: 20),
-            TextFormField(
-              controller: _lastNameController,
-              minLines: 1,
-              decoration: const InputDecoration(
-                labelText: 'Last Name',
-                border: OutlineInputBorder(),
-                hintText: 'Enter your last name',
+              const SizedBox(height: 20),
+              TextFormField(
+                controller: _firstNameController,
+                minLines: 1,
+                decoration: const InputDecoration(
+                  labelText: 'First Name',
+                  border: OutlineInputBorder(),
+                  hintText: 'Enter your first name',
+                ),
               ),
-            ),
-            const SizedBox(height: 20),
-            TextFormField(
-              controller: _bioController,
-              maxLines: 3,
-              decoration: const InputDecoration(
-                labelText: 'Bio',
-                border: OutlineInputBorder(),
-                hintText: 'Enter your bio',
+              const SizedBox(height: 20),
+              TextFormField(
+                controller: _lastNameController,
+                minLines: 1,
+                decoration: const InputDecoration(
+                  labelText: 'Last Name',
+                  border: OutlineInputBorder(),
+                  hintText: 'Enter your last name',
+                ),
               ),
-            ),
-            const SizedBox(height: 20),
-            if (isSaving)
-              const CircularProgressIndicator(), // Show loading indicator while saving
+              const SizedBox(height: 20),
+              TextFormField(
+                controller: _bioController,
+                maxLines: 3,
+                decoration: const InputDecoration(
+                  labelText: 'Bio',
+                  border: OutlineInputBorder(),
+                  hintText: 'Enter your bio',
+                ),
+              ),
+              const SizedBox(height: 20),
+              if (isSaving)
+                const CircularProgressIndicator(), // Show loading indicator while saving
+            ],
           ],
         ),
       ),

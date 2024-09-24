@@ -7,8 +7,17 @@ class LoginController {
   Future<UserModel?> login(
       String email, String password, BuildContext context) async {
     try {
-      await FirebaseAuth.instance
+      UserCredential user = await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email, password: password);
+
+      if (!user.user!.emailVerified) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(
+                'Your email is not verified. Please check your inbox for the verification email.')));
+        await user.user!.sendEmailVerification();
+        await FirebaseAuth.instance.signOut();
+        return null;
+      }
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
         ScaffoldMessenger.of(context).showSnackBar(

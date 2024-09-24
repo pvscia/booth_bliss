@@ -2,8 +2,11 @@ import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http; // For downloading the image
 import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart'; // For getting app's local storage path
+import 'package:path/path.dart'
+    as path; // For getting the file name from the URLimport 'package:image_picker/image_picker.dart';
 import 'package:booth_bliss/model/user_model.dart';
 
 class EditProfileController {
@@ -22,8 +25,33 @@ class EditProfileController {
     }
   }
 
-  void initImageController(String? fileloc) {
-    // profileImage = NetworkImage(fileloc) as File?;
+  Future<void> initImageController(String? fileloc) async {
+    if (fileloc == null || fileloc.isEmpty) {
+      print('File location is invalid');
+      return;
+    }
+
+    try {
+      // Fetch image data
+      var response = await http.get(Uri.parse(fileloc));
+
+      // Check if the response was successful
+      if (response.statusCode == 200) {
+        // Get the temporary directory to save the image file
+        final directory = await getTemporaryDirectory();
+        final filePath = '${directory.path}/profile_image.png';
+
+        // Save the image to the file
+        profileImage = File(filePath);
+        await profileImage!.writeAsBytes(response.bodyBytes);
+
+        print('Image saved to: ${profileImage!.path}');
+      } else {
+        print('Failed to download image: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error downloading image: $e');
+    }
   }
 
   // Save profile data (first name, last name, bio, and profile picture) to Firebase

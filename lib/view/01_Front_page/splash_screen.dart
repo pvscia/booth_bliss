@@ -1,4 +1,4 @@
-import 'package:booth_bliss/controller/auth_check.dart';
+import 'package:booth_bliss/controller/auth_check_controller.dart';
 import 'package:flutter/material.dart';
 
 class SplashScreen extends StatefulWidget {

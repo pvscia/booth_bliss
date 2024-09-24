@@ -1,3 +1,4 @@
+import 'package:booth_bliss/controller/profile_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:booth_bliss/model/user_model.dart';
 import 'package:booth_bliss/view/06_Profile_Page/edit_profile_view.dart';
@@ -24,9 +25,24 @@ class ProfileViewState extends State<ProfileView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Profile'),
+        title: const Text(
+          'Profile',
+          style: TextStyle(color: Colors.black),
+        ),
         backgroundColor: Colors.green[100],
         elevation: 0,
+        actions: [
+          IconButton(
+            onPressed: () async {
+              await ProfileController().logout();
+              Navigator.pushReplacementNamed(context, '/front_page');
+            },
+            icon: const Icon(
+              Icons.logout,
+              color: Colors.black,
+            ),
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(
