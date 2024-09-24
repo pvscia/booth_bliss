@@ -29,10 +29,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   void initState() {
     super.initState();
     mUser = widget.user;
-
-    if (mUser.profilePicture!.fileloc != null) {
-      _initializeImage(mUser.profilePicture!.fileloc);
-    }
+    _initializeImage(mUser.uid);
 
     _firstNameController.text = mUser.firstName ?? '';
     _lastNameController.text = mUser.lastName ?? '';
@@ -48,12 +45,12 @@ class _EditProfilePageState extends State<EditProfilePage> {
     });
   }
 
-  Future<void> _initializeImage(String? fileloc) async {
+  Future<void> _initializeImage(String? uid) async {
     setState(() {
       isLoadingImage = true; // Start loading
     });
 
-    await _controller.initImageController(fileloc);
+    await _controller.initImageController(uid);
 
     setState(() {
       isLoadingImage = false; // End loading

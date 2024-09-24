@@ -5,16 +5,16 @@ class UserModel {
   final String? lastName;
   final String? email;
   final String? bio;
+  final String? uid;
   final DateTime? createdAt;
-  final ProfilePictureModel? profilePicture;
 
   UserModel({
     this.firstName,
     this.lastName,
     this.email,
     this.bio,
+    this.uid,
     this.createdAt,
-    this.profilePicture,
   });
 
   // Factory method to create a UserModel from JSON
@@ -24,8 +24,8 @@ class UserModel {
       lastName: json['last_name'] ?? '',
       email: json['email'] ?? '',
       bio: json['bio'] ?? '',
+      uid: json['uid'] ?? '',
       createdAt: (json['created_at'] as Timestamp).toDate(),
-      profilePicture: ProfilePictureModel.fromJson(json['profile_pict'] ?? {}),
     );
   }
 
@@ -36,34 +36,8 @@ class UserModel {
       'last_name': lastName,
       'email': email,
       'bio': bio,
+      'uid': uid,
       'created_at': createdAt,
-      'profile_pict': profilePicture?.toJson(),
-    };
-  }
-}
-
-class ProfilePictureModel {
-  final String? filename;
-  late final String? fileloc;
-
-  ProfilePictureModel({
-     this.filename,
-     this.fileloc,
-  });
-
-  // Factory method to create ProfilePictureModel from JSON
-  factory ProfilePictureModel.fromJson(Map<String, dynamic> json) {
-    return ProfilePictureModel(
-      filename: json['filename'] ?? '',
-      fileloc: json['fileloc'] ?? '',
-    );
-  }
-
-  // Method to convert ProfilePictureModel back to JSON
-  Map<String, dynamic> toJson() {
-    return {
-      'filename': filename,
-      'fileloc': fileloc,
     };
   }
 }

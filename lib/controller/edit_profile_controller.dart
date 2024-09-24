@@ -1,12 +1,11 @@
 import 'dart:io';
+import 'package:booth_bliss/controller/profile_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:http/http.dart' as http; // For downloading the image
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart'; // For getting app's local storage path
-import 'package:path/path.dart'
-    as path; // For getting the file name from the URLimport 'package:image_picker/image_picker.dart';
 import 'package:booth_bliss/model/user_model.dart';
 
 class EditProfileController {
@@ -25,15 +24,19 @@ class EditProfileController {
     }
   }
 
-  Future<void> initImageController(String? fileloc) async {
-    if (fileloc == null || fileloc.isEmpty) {
-      print('File location is invalid');
-      return;
-    }
-
+  Future<void> initImageController(String? uid) async {
     try {
-      // Fetch image data
-      var response = await http.get(Uri.parse(fileloc));
+      // Fetch image URL from Firebase Storage
+      final imageUrl = await ProfileController().fetchPhoto(uid);
+
+      // Check if the imageUrl is null or empty
+      if (imageUrl == null || imageUrl.isEmpty) {
+        print('Error: No image URL retrieved');
+        return;
+      }
+
+      // Fetch image data from the valid URL
+      var response = await http.get(Uri.parse(imageUrl));
 
       // Check if the response was successful
       if (response.statusCode == 200) {
@@ -41,7 +44,14 @@ class EditProfileController {
         final directory = await getTemporaryDirectory();
         final filePath = '${directory.path}/profile_image.png';
 
-        // Save the image to the file
+        // Check if the file already exists
+        File imageFile = File(filePath);
+        if (await imageFile.exists()) {
+          // Delete the existing file before replacing it
+          await imageFile.delete();
+        }
+
+        // Save the new image to the file (this replaces the old image)
         profileImage = File(filePath);
         await profileImage!.writeAsBytes(response.bodyBytes);
 
@@ -63,42 +73,19 @@ class EditProfileController {
     User? user = _auth.currentUser;
     if (user == null) throw Exception('No user logged in');
 
-    String? imageUrl =
-        mUser.profilePicture!.fileloc; // Use the existing profile picture URL
-
     // Upload the new image only if a new one was selected
+    String fileName = '${user.uid}.png';
+    final storageRef = _storage.ref().child('profilePics/$fileName');
     if (profileImage != null) {
-      String fileName = '${user.uid}.png';
-      Reference storageRef = _storage.ref().child('profilePics/$fileName');
-      UploadTask uploadTask = storageRef.putFile(profileImage!);
-      TaskSnapshot taskSnapshot = await uploadTask;
-      imageUrl = await taskSnapshot.ref.getDownloadURL();
+      await storageRef.putFile(profileImage!);
     } else {
       // Remove the profile picture from Firebase Storage, if it exists
-      if (mUser.profilePicture!.fileloc!.isNotEmpty) {
-        String fileName =
-            '${user.uid}.png'; // Assuming the file name is the user's UID with a .png extension
-        Reference storageRef = _storage.ref().child('profilePics/$fileName');
-
-        try {
-          await storageRef.delete();
-          print('success'); // Delete the file from Firebase Storage
-        } catch (e) {
-          // Handle error if the file doesn't exist or other errors occur
-          print('Failed to delete profile picture: $e');
-        }
+      try {
+        await storageRef.delete();
+      } catch (e) {
+        // Handle error if the file doesn't exist or other errors occur
+        print('Failed to delete profile picture: $e');
       }
-    }
-
-    // Prepare the updated user data, using the existing image URL if no new image was uploaded
-    ProfilePictureModel profilePictureModel;
-    if (profileImage == null) {
-      profilePictureModel = ProfilePictureModel();
-    } else {
-      profilePictureModel = ProfilePictureModel(
-        filename: imageUrl != null ? '${user.uid}.png' : '',
-        fileloc: imageUrl ?? '',
-      );
     }
 
     UserModel updatedUser = UserModel(
@@ -106,8 +93,8 @@ class EditProfileController {
       lastName: lastName,
       email: user.email!,
       bio: bio,
+      uid: mUser.uid,
       createdAt: mUser.createdAt, // Keep the original createdAt
-      profilePicture: profilePictureModel,
     );
 
     // Update Firestore user document

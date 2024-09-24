@@ -73,10 +73,7 @@ class SignUpController {
         'last_name': lastNameController.text,
         'email': emailController.text,
         'bio': null,
-        'profile_pict': {
-          'filename': null,
-          'fileloc': null,
-        },
+        'uid': userId,
         'created_at': FieldValue.serverTimestamp(),
       });
     } catch (e) {

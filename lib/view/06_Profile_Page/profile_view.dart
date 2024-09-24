@@ -14,15 +14,30 @@ class ProfileView extends StatefulWidget {
 
 class ProfileViewState extends State<ProfileView> {
   late UserModel updatedUser;
+  String imageUrl = '';
 
   @override
   void initState() {
     super.initState();
     updatedUser = widget.user; // Initialize with the passed user data
+    _fetchUserPhoto();
+  }
+
+  Future<void> _fetchUserPhoto() async {
+    try {
+      String? fetchedUrl =
+          await ProfileController().fetchPhoto(updatedUser.uid);
+      setState(() {
+        imageUrl = fetchedUrl!;
+      });
+    } catch (e) {
+      print('Error fetching photo: $e');
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    print('isNotEmpty ${imageUrl.isNotEmpty}');
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -50,10 +65,8 @@ class ProfileViewState extends State<ProfileView> {
             SizedBox(height: 20),
             CircleAvatar(
               radius: 50,
-              backgroundImage: (updatedUser.profilePicture != null &&
-                      updatedUser.profilePicture!.fileloc != null &&
-                      updatedUser.profilePicture!.fileloc!.isNotEmpty)
-                  ? NetworkImage(updatedUser.profilePicture!.fileloc!)
+              backgroundImage: imageUrl.isNotEmpty
+                  ? NetworkImage(imageUrl.toString())
                   : AssetImage('lib/assets/default-user.png') as ImageProvider,
             ),
             SizedBox(height: 10),
@@ -82,6 +95,7 @@ class ProfileViewState extends State<ProfileView> {
                   setState(() {
                     updatedUser = result; // Update the user data directly
                   });
+                  await _fetchUserPhoto();
                 }
               },
               child: Text('Edit Profile'),
