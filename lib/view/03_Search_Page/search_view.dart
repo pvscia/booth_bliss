@@ -1,6 +1,13 @@
 import 'package:flutter/material.dart';
 
-class SearchView extends StatelessWidget {
+class SearchView extends StatefulWidget {
+  const SearchView({super.key});
+
+  @override
+  SearchViewState createState() => SearchViewState();
+}
+
+class SearchViewState extends State<SearchView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,7 +45,10 @@ class SearchView extends StatelessWidget {
                         child: Row(children: [
                           InkWell(
                             child: IconButton(
-                                icon: Icon(Icons.filter), onPressed: () {}),
+                                icon: Icon(Icons.filter_list),
+                                onPressed: () {
+                                  filterDialog();
+                                }),
                           ),
                           InkWell(
                             child: ElevatedButton(
@@ -94,5 +104,21 @@ class SearchView extends StatelessWidget {
                     },
                   ),
                 ]))));
+  }
+
+  void filterDialog() {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return Dialog(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15.0)),
+            backgroundColor: Colors.white,
+            child: SizedBox(
+              width: 50,
+              height: 500,
+            ),
+          );
+        });
   }
 }
