@@ -170,7 +170,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   radius: 50,
                   backgroundImage: _controller.profileImage != null
                       ? FileImage(_controller.profileImage!)
-                      : const AssetImage('lib/assets/default-user.png')
+                      : const AssetImage('assets/default-user.png')
                           as ImageProvider,
                   child: const Icon(
                     Icons.camera_alt,

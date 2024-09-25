@@ -53,7 +53,7 @@ class _FrameEditorPageState extends State<FrameEditorView> {
                   decoration: BoxDecoration(
                     image: DecorationImage(
                       image: AssetImage(
-                          'lib/assets/logo.png'), // Your background image
+                          'assets/logo.png'), // Your background image
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -62,13 +62,13 @@ class _FrameEditorPageState extends State<FrameEditorView> {
                 Positioned(
                   top: 100,
                   left: 30,
-                  child: Image.asset('lib/assets/default-user.png',
+                  child: Image.asset('assets/default-user.png',
                       width: 100, height: 120), // Frame 1
                 ),
                 Positioned(
                   top: 150,
                   left: 180,
-                  child: Image.asset('lib/assets/default-user.png',
+                  child: Image.asset('assets/default-user.png',
                       width: 100, height: 120), // Frame 2
                 ),
                 // Add more frames similarly as needed
