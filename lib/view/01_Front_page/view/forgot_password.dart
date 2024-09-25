@@ -1,4 +1,4 @@
-import 'package:booth_bliss/controller/forgot_pass_controller.dart';
+import 'package:booth_bliss/view/01_Front_page/controller/forgot_pass_controller.dart';
 import 'package:flutter/material.dart';
 
 class ForgetPasswordPage extends StatefulWidget {
