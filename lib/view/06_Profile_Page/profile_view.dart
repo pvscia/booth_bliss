@@ -24,20 +24,22 @@ class ProfileViewState extends State<ProfileView> {
   }
 
   Future<void> _fetchUserPhoto() async {
+    String? fetchedUrl = '';
     try {
-      String? fetchedUrl =
-          await ProfileController().fetchPhoto(updatedUser.uid);
+      fetchedUrl = await ProfileController().fetchPhoto(updatedUser.uid);
       setState(() {
         imageUrl = fetchedUrl!;
       });
     } catch (e) {
       print('Error fetching photo: $e');
+      setState(() {
+        imageUrl = '';
+      });
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    print('isNotEmpty ${imageUrl.isNotEmpty}');
     return Scaffold(
       appBar: AppBar(
         title: const Text(

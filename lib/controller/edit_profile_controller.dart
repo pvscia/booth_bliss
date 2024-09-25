@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 import 'package:booth_bliss/controller/profile_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -42,7 +43,8 @@ class EditProfileController {
       if (response.statusCode == 200) {
         // Get the temporary directory to save the image file
         final directory = await getTemporaryDirectory();
-        final filePath = '${directory.path}/profile_image.png';
+        final filePath =
+            '${directory.path}/profile_image_${Random().nextInt(10000)}.png';
 
         // Check if the file already exists
         File imageFile = File(filePath);
