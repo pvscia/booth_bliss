@@ -1,6 +1,6 @@
-import 'package:booth_bliss/view/01_Front_page/forgot_password.dart';
+import 'package:booth_bliss/view/01_Front_page/view/forgot_password.dart';
 import 'package:flutter/material.dart';
-import 'package:booth_bliss/controller/login_controller.dart';
+import 'package:booth_bliss/view/01_Front_page/controller/login_controller.dart';
 import 'package:booth_bliss/model/user_model.dart';
 
 class LoginPage extends StatefulWidget {

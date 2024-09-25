@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'dart:math';
-import 'package:booth_bliss/controller/profile_controller.dart';
+import 'package:booth_bliss/view/06_Profile_Page/controller/profile_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
