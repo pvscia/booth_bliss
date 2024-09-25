@@ -57,7 +57,7 @@ class _LoginPageState extends State<LoginPage> {
         Navigator.of(context).pushReplacementNamed("/home", arguments: user);
       } else {
         setState(() {
-          _loginError = 'Invalid email or password';
+          _loginError = 'Check you email or password again';
         });
       }
     } catch (e) {

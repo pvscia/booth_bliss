@@ -1,5 +1,4 @@
 import 'package:booth_bliss/controller/sign_up_controller.dart';
-import 'package:booth_bliss/view/01_Front_page/sign_in_up_view.dart';
 import 'package:flutter/material.dart';
 
 class SignUpPage extends StatefulWidget {

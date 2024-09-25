@@ -1,3 +1,4 @@
+import 'package:booth_bliss/controller/profile_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:booth_bliss/model/user_model.dart';
 import 'package:booth_bliss/view/06_Profile_Page/edit_profile_view.dart';
@@ -12,13 +13,53 @@ class ProfileView extends StatefulWidget {
 }
 
 class ProfileViewState extends State<ProfileView> {
+  late UserModel updatedUser;
+  String imageUrl = '';
+
+  @override
+  void initState() {
+    super.initState();
+    updatedUser = widget.user; // Initialize with the passed user data
+    _fetchUserPhoto();
+  }
+
+  Future<void> _fetchUserPhoto() async {
+    String? fetchedUrl = '';
+    try {
+      fetchedUrl = await ProfileController().fetchPhoto(updatedUser.uid);
+      setState(() {
+        imageUrl = fetchedUrl!;
+      });
+    } catch (e) {
+      print('Error fetching photo: $e');
+      setState(() {
+        imageUrl = '';
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Profile'),
+        title: const Text(
+          'Profile',
+          style: TextStyle(color: Colors.black),
+        ),
         backgroundColor: Colors.green[100],
         elevation: 0,
+        actions: [
+          IconButton(
+            onPressed: () async {
+              await ProfileController().logout();
+              Navigator.pushReplacementNamed(context, '/front_page');
+            },
+            icon: const Icon(
+              Icons.logout,
+              color: Colors.black,
+            ),
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -26,33 +67,38 @@ class ProfileViewState extends State<ProfileView> {
             SizedBox(height: 20),
             CircleAvatar(
               radius: 50,
-              backgroundImage: widget.user.profilePicture.fileloc.isNotEmpty
-                  ? NetworkImage(widget.user.profilePicture.fileloc)
-                  : AssetImage('lib/assets/logo.png') as ImageProvider,
+              backgroundImage: imageUrl.isNotEmpty
+                  ? NetworkImage(imageUrl.toString())
+                  : AssetImage('lib/assets/default-user.png') as ImageProvider,
             ),
             SizedBox(height: 10),
             Text(
-              '${widget.user.firstName} ${widget.user.lastName}',
+              '${updatedUser.firstName} ${updatedUser.lastName}',
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 5),
             Text(
-              widget.user.bio.isNotEmpty ? widget.user.bio : 'No Bio',
+              updatedUser.bio ?? 'No Bio',
               style: TextStyle(fontSize: 16, color: Colors.grey),
             ),
             SizedBox(height: 10),
             ElevatedButton(
-              onPressed: () {
-                Navigator.pushReplacement(
+              onPressed: () async {
+                final result = await Navigator.push<UserModel>(
                   context,
                   MaterialPageRoute(
                     builder: (context) => EditProfilePage(
-                      currentBio: widget.user.bio,
-                      profilePicUrl: widget.user.profilePicture.fileloc,
-                      mUser: widget.user,
+                      user: updatedUser,
                     ),
                   ),
                 );
+
+                if (result != null) {
+                  setState(() {
+                    updatedUser = result; // Update the user data directly
+                  });
+                  await _fetchUserPhoto();
+                }
               },
               child: Text('Edit Profile'),
               style: ElevatedButton.styleFrom(backgroundColor: Colors.pink),

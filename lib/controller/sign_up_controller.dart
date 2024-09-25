@@ -30,17 +30,32 @@ class SignUpController {
   Future<bool> addUserDataToFirestore(BuildContext context) async {
     UserCredential user;
     try {
+      // Create user with email and password
       user = await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: emailController.text,
         password: passwordController.text,
       );
+
+      // Send email verification
+      await user.user!.sendEmailVerification();
+
+      // Show message to the user to check email
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+              'A verification email has been sent to your email. Please verify your email to continue.'),
+        ),
+      );
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
         ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('The password provided is too weak.')));
+          const SnackBar(content: Text('The password provided is too weak.')),
+        );
       } else if (e.code == 'email-already-in-use') {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text('The account already exists for that email.')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              content: Text('An account already exists for this email.')),
+        );
       }
       return false;
     } catch (e) {
@@ -48,8 +63,9 @@ class SignUpController {
       return false;
     }
 
+    // Save user data to Firestore
     try {
-      final String userId = user.user!.uid; // Use email as ID or generate a unique ID
+      final String userId = user.user!.uid;
       DocumentReference docRef =
           FirebaseFirestore.instance.collection('users').doc(userId);
       await docRef.set({
@@ -57,10 +73,7 @@ class SignUpController {
         'last_name': lastNameController.text,
         'email': emailController.text,
         'bio': null,
-        'profile_pict': {
-          'filename': null,
-          'fileloc': null,
-        },
+        'uid': userId,
         'created_at': FieldValue.serverTimestamp(),
       });
     } catch (e) {
@@ -69,6 +82,15 @@ class SignUpController {
       );
       return false;
     }
+
+    // Notify the user to verify their email
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text(
+            'Registration successful! Please verify your email before signing in.'),
+      ),
+    );
+
     return true;
   }
 
@@ -79,4 +101,3 @@ class SignUpController {
     passwordController.dispose();
   }
 }
-

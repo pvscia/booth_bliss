@@ -1,5 +1,3 @@
-import 'package:booth_bliss/view/01_Front_page/login_view.dart';
-import 'package:booth_bliss/view/01_Front_page/sign_up_view.dart';
 import 'package:flutter/material.dart';
 
 class SignInUpView extends StatelessWidget {
