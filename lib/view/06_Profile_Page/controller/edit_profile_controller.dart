@@ -4,7 +4,6 @@ import 'package:booth_bliss/view/06_Profile_Page/controller/profile_controller.d
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http; // For downloading the image
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart'; // For getting app's local storage path
