@@ -4,7 +4,7 @@ import '02_Home_Page/home_view.dart';
 import '03_Search_Page/search_view.dart';
 import '04_Custom_Page/custom_view.dart';
 import '05_QR_Page/qr_view.dart';
-import '06_Profile_Page/profile_view.dart';
+import '06_Profile_Page/view/profile_view.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
