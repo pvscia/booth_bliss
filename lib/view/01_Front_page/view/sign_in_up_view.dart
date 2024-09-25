@@ -9,7 +9,7 @@ class SignInUpView extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Image.asset(
-              'lib/assets/logo.png', // Path to your logo image
+              'assets/logo.png', // Path to your logo image
               width: 200,
               height: 200,
             ),

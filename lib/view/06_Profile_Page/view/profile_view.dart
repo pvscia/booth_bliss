@@ -69,7 +69,7 @@ class ProfileViewState extends State<ProfileView> {
               radius: 50,
               backgroundImage: imageUrl.isNotEmpty
                   ? NetworkImage(imageUrl.toString())
-                  : AssetImage('lib/assets/default-user.png') as ImageProvider,
+                  : AssetImage('assets/default-user.png') as ImageProvider,
             ),
             SizedBox(height: 10),
             Text(
