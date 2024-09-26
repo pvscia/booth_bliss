@@ -92,14 +92,18 @@ class _EditProfilePageState extends State<EditProfilePage> {
       setState(() {
         isSaving = false;
       });
-      isValid ? Navigator.pop(context, updatedProfile) : null;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        isValid ? Navigator.pop(context, updatedProfile) : null;
+      });
     } catch (e) {
       setState(() {
         isSaving = false;
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to save profile: ${e.toString()}')),
-      );
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to save profile: ${e.toString()}')),
+        );
+      });
     }
   }
 

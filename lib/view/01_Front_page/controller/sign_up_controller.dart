@@ -40,22 +40,28 @@ class SignUpController {
       await user.user!.sendEmailVerification();
 
       // Show message to the user to check email
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-              'A verification email has been sent to your email. Please verify your email to continue.'),
-        ),
-      );
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'weak-password') {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('The password provided is too weak.')),
-        );
-      } else if (e.code == 'email-already-in-use') {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-              content: Text('An account already exists for this email.')),
+            content: Text(
+                'A verification email has been sent to your email. Please verify your email to continue.'),
+          ),
         );
+      });
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'weak-password') {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('The password provided is too weak.')),
+          );
+        });
+      } else if (e.code == 'email-already-in-use') {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+                content: Text('An account already exists for this email.')),
+          );
+        });
       }
       return false;
     } catch (e) {
@@ -77,19 +83,23 @@ class SignUpController {
         'created_at': FieldValue.serverTimestamp(),
       });
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to add user: $e')),
-      );
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to add user: $e')),
+        );
+      });
       return false;
     }
 
     // Notify the user to verify their email
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text(
-            'Registration successful! Please verify your email before signing in.'),
-      ),
-    );
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+              'Registration successful! Please verify your email before signing in.'),
+        ),
+      );
+    });
 
     return true;
   }

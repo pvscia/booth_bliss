@@ -108,19 +108,21 @@ class _SignUpPageState extends State<SignUpPage> {
                           bool success =
                               await _controller.addUserDataToFirestore(context);
                           if (success) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('Successfuly Sign Up')),
-                            );
-                            Navigator.of(context).pop();
+                            WidgetsBinding.instance.addPostFrameCallback((_) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text('Successfuly Sign Up')),
+                              );
+                              Navigator.of(context).pop();
+                            });
                           }
                         }
                       }
                     : null,
-                child: Text('Agree and continue'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor:
                       _controller.isFormFilled ? Colors.pink : Colors.grey,
                 ),
+                child: Text('Agree and continue'),
               ),
               Text(
                 'By selecting Agree and continue, I agree to BoothBliss Terms of Service, Payments Terms of Service, and acknowledge the Privacy Policy.',

@@ -16,6 +16,8 @@ class _SplashScreenState extends State<SplashScreen> {
   _navigateToHome() async {
     await Future.delayed(
         Duration(seconds: 5), () {}); // Duration for the splash screen
+
+    // if (!mounted) return;
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (context) => AuthCheck()),

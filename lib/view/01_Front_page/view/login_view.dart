@@ -50,11 +50,13 @@ class _LoginPageState extends State<LoginPage> {
         });
 
         // Navigate to HomeView
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Login successful!')),
-        );
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Login successful!')),
+          );
 
-        Navigator.of(context).pushReplacementNamed("/home", arguments: user);
+          Navigator.of(context).pushReplacementNamed("/home", arguments: user);
+        });
       } else {
         setState(() {
           _loginError = 'Check you email or password again';
