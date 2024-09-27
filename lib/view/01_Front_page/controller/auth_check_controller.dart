@@ -12,7 +12,6 @@ class AuthCheck extends StatelessWidget {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(child: CircularProgressIndicator());
         }
-        print('halo');
 
         if (snapshot.hasData) {
           // User is logged in
@@ -25,18 +24,14 @@ class AuthCheck extends StatelessWidget {
                 return Center(child: CircularProgressIndicator());
               }
 
-              WidgetsBinding.instance.addPostFrameCallback((_) {
                 if (userSnapshot.hasData) {
                   // UserModel is ready, navigate to the home screen after the build phase
                   Navigator.pushReplacementNamed(context, '/home',
                       arguments: userSnapshot.data!);
                 } else {
                   // If there's no user data, show an error or redirect to login
-                  WidgetsBinding.instance.addPostFrameCallback((_) {
                     Navigator.pushReplacementNamed(context, '/front_page');
-                  });
                 }
-              });
 
               return SizedBox(); // Temporary widget until navigation is complete
             },

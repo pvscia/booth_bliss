@@ -24,8 +24,6 @@ final routes = {
   '/home': (BuildContext context) => const MainScreen(),
 };
 
-// TODO change all routes nav using named
-
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
