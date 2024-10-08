@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 
 class ScanResult extends StatelessWidget {
-  const ScanResult({super.key});
+  final String code;
+  final Function() closeScreen;
+
+  const ScanResult({super.key, required this.closeScreen, required this.code});
 
   @override
   Widget build(BuildContext context) {
@@ -32,21 +36,36 @@ class ScanResult extends StatelessWidget {
           ),
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            Text(
-              'Scanned Result',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              Text(
+                'Scanned Result',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            ),
-            SizedBox(
-              height: 10,
-            ),
-          ],
+              SizedBox(
+                height: 10,
+              ),
+              QrImageView(
+                data: code,
+                size: 150,
+                version: QrVersions.auto,
+              ),
+              Image.network('https://qr.me-qr.com/data/image-pack/ZjPDvg7X'),
+              Text(code),
+              IconButton(
+                  onPressed: () {
+                    closeScreen();
+                    Navigator.pop(context);
+                  },
+                  icon: Icon(Icons.settings))
+            ],
+          ),
         ),
       ),
     );
