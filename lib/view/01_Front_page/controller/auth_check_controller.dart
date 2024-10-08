@@ -23,15 +23,16 @@ class AuthCheck extends StatelessWidget {
               if (userSnapshot.connectionState == ConnectionState.waiting) {
                 return Center(child: CircularProgressIndicator());
               }
-
+              WidgetsBinding.instance.addPostFrameCallback((_) {
                 if (userSnapshot.hasData) {
                   // UserModel is ready, navigate to the home screen after the build phase
                   Navigator.pushReplacementNamed(context, '/home',
                       arguments: userSnapshot.data!);
                 } else {
                   // If there's no user data, show an error or redirect to login
-                    Navigator.pushReplacementNamed(context, '/front_page');
+                  Navigator.pushReplacementNamed(context, '/front_page');
                 }
+              });
 
               return SizedBox(); // Temporary widget until navigation is complete
             },
