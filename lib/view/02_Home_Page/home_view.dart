@@ -6,7 +6,7 @@ class HomeView extends StatelessWidget {
     return SafeArea(
       child: Scaffold(
         appBar: PreferredSize(
-          preferredSize: Size.fromHeight(80.0), // Adjust AppBar height
+          preferredSize: Size.fromHeight(100.0), // Adjust AppBar height
           child: AppBar(
             backgroundColor: Color(0xffffe5e5),
             flexibleSpace: Center(
