@@ -1,13 +1,65 @@
+import 'package:booth_bliss/view/06_Profile_Page/controller/profile_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:booth_bliss/model/user_model.dart';
+import 'package:booth_bliss/view/06_Profile_Page/view/edit_profile_view.dart';
 
-class ProfileView extends StatelessWidget {
+class ProfileView extends StatefulWidget {
+  final UserModel user;
+
+  const ProfileView({super.key, required this.user});
+
+  @override
+  ProfileViewState createState() => ProfileViewState();
+}
+
+class ProfileViewState extends State<ProfileView> {
+  late UserModel updatedUser;
+  String imageUrl = '';
+
+  @override
+  void initState() {
+    super.initState();
+    updatedUser = widget.user; // Initialize with the passed user data
+    _fetchUserPhoto();
+  }
+
+  Future<void> _fetchUserPhoto() async {
+    String? fetchedUrl = '';
+    try {
+      fetchedUrl = await ProfileController().fetchPhoto(updatedUser.uid);
+      setState(() {
+        imageUrl = fetchedUrl!;
+      });
+    } catch (e) {
+      print('Error fetching photo: $e');
+      setState(() {
+        imageUrl = '';
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Profile'),
+        title: const Text(
+          'Profile',
+          style: TextStyle(color: Colors.black),
+        ),
         backgroundColor: Colors.green[100],
         elevation: 0,
+        actions: [
+          IconButton(
+            onPressed: () async {
+              await ProfileController().logout();
+              Navigator.pushReplacementNamed(context, '/front_page');
+            },
+            icon: const Icon(
+              Icons.logout,
+              color: Colors.black,
+            ),
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -15,27 +67,38 @@ class ProfileView extends StatelessWidget {
             SizedBox(height: 20),
             CircleAvatar(
               radius: 50,
-              backgroundImage: NetworkImage('https://via.placeholder.com/150'),
+              backgroundImage: imageUrl.isNotEmpty
+                  ? NetworkImage(imageUrl.toString())
+                  : AssetImage('assets/default-user.png') as ImageProvider,
             ),
             SizedBox(height: 10),
             Text(
-              'User_Profile_Name',
+              '${updatedUser.firstName} ${updatedUser.lastName}',
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 5),
             Text(
-              'Bio profile text',
-              style: TextStyle(fontSize: 16, color: Colors.grey),
-            ),
-            SizedBox(height: 5),
-            Text(
-              '25000 followers · 15000 following',
+              updatedUser.bio ?? 'No Bio',
               style: TextStyle(fontSize: 16, color: Colors.grey),
             ),
             SizedBox(height: 10),
             ElevatedButton(
-              onPressed: () {
-                // Edit profile action
+              onPressed: () async {
+                final result = await Navigator.push<UserModel>(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => EditProfilePage(
+                      user: updatedUser,
+                    ),
+                  ),
+                );
+
+                if (result != null) {
+                  setState(() {
+                    updatedUser = result; // Update the user data directly
+                  });
+                  await _fetchUserPhoto();
+                }
               },
               child: Text('Edit Profile'),
               style: ElevatedButton.styleFrom(backgroundColor: Colors.pink),
@@ -67,10 +130,11 @@ class ProfileView extends StatelessWidget {
                     shrinkWrap: true,
                     physics: NeverScrollableScrollPhysics(),
                     gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                        maxCrossAxisExtent: 150,
-                        crossAxisSpacing: 2,
-                        mainAxisSpacing: 8,
-                        childAspectRatio: 3 / 5),
+                      maxCrossAxisExtent: 150,
+                      crossAxisSpacing: 2,
+                      mainAxisSpacing: 8,
+                      childAspectRatio: 3 / 5,
+                    ),
                     itemCount: 12,
                     itemBuilder: (BuildContext context, int index) {
                       return Container(

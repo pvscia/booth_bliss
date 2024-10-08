@@ -1,5 +1,3 @@
-import 'package:booth_bliss/view/01_Front_page/login_view.dart';
-import 'package:booth_bliss/view/01_Front_page/sign_up_view.dart';
 import 'package:flutter/material.dart';
 
 class SignInUpView extends StatelessWidget {
@@ -11,7 +9,7 @@ class SignInUpView extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Image.asset(
-              'lib/assets/logo.png', // Path to your logo image
+              'assets/logo.png', // Path to your logo image
               width: 200,
               height: 200,
             ),
@@ -24,10 +22,7 @@ class SignInUpView extends StatelessWidget {
             ElevatedButton(
               onPressed: () {
                 // Navigate to the Login Page
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => LoginPage()),
-                );
+                Navigator.of(context).pushNamed("/login");
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.green, // Background color
@@ -39,10 +34,7 @@ class SignInUpView extends StatelessWidget {
             ElevatedButton(
               onPressed: () {
                 // Navigate to the Sign Up Page
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => SignUpPage()),
-                );
+                Navigator.of(context).pushNamed("/register");
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.pink, // Background color

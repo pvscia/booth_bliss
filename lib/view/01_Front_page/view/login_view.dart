@@ -1,7 +1,6 @@
+import 'package:booth_bliss/view/01_Front_page/view/forgot_password.dart';
 import 'package:flutter/material.dart';
-import 'package:booth_bliss/controller/login_controller.dart';
-import '../main_screen_view.dart';
-import 'forgot_password.dart';
+import 'package:booth_bliss/view/01_Front_page/controller/login_controller.dart';
 import 'package:booth_bliss/model/user_model.dart';
 
 class LoginPage extends StatefulWidget {
@@ -41,6 +40,7 @@ class _LoginPageState extends State<LoginPage> {
       UserModel? user = await _loginController.login(
         _emailController.text,
         _passwordController.text,
+        context,
       );
 
       if (user != null) {
@@ -53,13 +53,11 @@ class _LoginPageState extends State<LoginPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Login successful!')),
         );
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => MainScreen(user: user)),
-        );
+
+        Navigator.of(context).pushReplacementNamed("/home", arguments: user);
       } else {
         setState(() {
-          _loginError = 'Invalid email or password';
+          _loginError = 'Check you email or password again';
         });
       }
     } catch (e) {
@@ -122,7 +120,7 @@ class _LoginPageState extends State<LoginPage> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => ForgotPasswordPage()),
+                        builder: (context) => ForgetPasswordPage()),
                   );
                 },
                 child: Text(

@@ -4,27 +4,27 @@ import '02_Home_Page/home_view.dart';
 import '03_Search_Page/search_view.dart';
 import '04_Custom_Page/custom_view.dart';
 import '05_QR_Page/qr_view.dart';
-import '06_Profile_Page/profile_view.dart';
+import '06_Profile_Page/view/profile_view.dart';
 
 class MainScreen extends StatefulWidget {
-  final UserModel user;
-  const MainScreen({super.key, required this.user});
+  const MainScreen({super.key});
 
   @override
   _MainScreenState createState() => _MainScreenState();
 }
 
 class _MainScreenState extends State<MainScreen> {
+  UserModel? user;
   int _selectedIndex = 0;
 
-  // Passing user data to views that require it
-  late final List<Widget> _widgetOptions = <Widget>[
-    HomeView(user: widget.user),
-    SearchView(),
-    CustomView(),
-    ScanQR(),
-    ProfileView(),
-  ];
+  // Create widget options list dynamically, based on the user being passed in
+  List<Widget> get _widgetOptions => <Widget>[
+        HomeView(),
+        SearchView(),
+        CustomView(),
+        ScanQR(),
+        ProfileView(user: user!),
+      ];
 
   void _onItemTapped(int index) {
     setState(() {
@@ -34,6 +34,7 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
+    user = ModalRoute.of(context)?.settings.arguments as UserModel?;
     return Scaffold(
       body: _widgetOptions.elementAt(_selectedIndex),
       bottomNavigationBar: BottomNavigationBar(
@@ -60,7 +61,7 @@ class _MainScreenState extends State<MainScreen> {
           ),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: Colors.amber[800],
+        selectedItemColor: Colors.purple[800],
         unselectedItemColor: Colors.grey,
         onTap: _onItemTapped,
       ),
