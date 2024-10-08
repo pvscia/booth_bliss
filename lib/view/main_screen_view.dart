@@ -36,35 +36,53 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     user = ModalRoute.of(context)?.settings.arguments as UserModel?;
     return Scaffold(
-      body: _widgetOptions.elementAt(_selectedIndex),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
+        body: _widgetOptions.elementAt(_selectedIndex),
+        bottomNavigationBar: Container(
+          height: 90,
+          child: BottomNavigationBar(
+            type: BottomNavigationBarType.fixed,
+            backgroundColor: Color(0xffffe5e5),
+            showSelectedLabels: true,
+            showUnselectedLabels: true,
+            items: [
+              BottomNavigationBarItem(
+                icon: Container(
+                  width: 40,
+                  height: 40,
+                  child: Icon(Icons.home, size: 45), // Larger home icon
+                ),
+                label: 'Home',
+              ),
+              BottomNavigationBarItem(
+                icon: Container(
+                  width: 40,
+                  height: 40,
+                  child: Icon(Icons.add_box, size: 45), // Larger custom icon
+                ),
+                label: 'Custom',
+              ),
+              BottomNavigationBarItem(
+                icon: Container(
+                  width: 40,
+                  height: 40,
+                  child: Icon(Icons.qr_code, size: 45), // Larger scan icon
+                ),
+                label: 'Scan',
+              ),
+              BottomNavigationBarItem(
+                icon: Container(
+                  width: 40,
+                  height: 40,
+                  child: Icon(Icons.person, size: 45), // Larger profile icon
+                ),
+                label: 'Profile',
+              ),
+            ],
+            currentIndex: _selectedIndex,
+            selectedItemColor: Color(0xff595959),
+            unselectedItemColor: Colors.black,
+            onTap: _onItemTapped,
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.search),
-            label: 'Search',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.add_box),
-            label: 'Custom',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.qr_code),
-            label: 'Scan',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: Colors.purple[800],
-        unselectedItemColor: Colors.grey,
-        onTap: _onItemTapped,
-      ),
-    );
+        ));
   }
 }
