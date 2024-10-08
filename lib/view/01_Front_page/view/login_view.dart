@@ -50,11 +50,13 @@ class _LoginPageState extends State<LoginPage> {
         });
 
         // Navigate to HomeView
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Login successful!')),
-        );
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Login successful!')),
+          );
 
-        Navigator.of(context).pushReplacementNamed("/home", arguments: user);
+          Navigator.of(context).pushReplacementNamed("/home", arguments: user);
+        });
       } else {
         setState(() {
           _loginError = 'Check you email or password again';
@@ -69,79 +71,88 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('I have an account'),
-        backgroundColor: Colors.green[100],
-        elevation: 0,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: <Widget>[
-              if (_loginError.isNotEmpty)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 8.0),
-                  child: Text(
-                    _loginError,
-                    style: TextStyle(color: Colors.red),
-                  ),
-                ),
-              TextFormField(
-                controller: _emailController,
-                decoration: InputDecoration(labelText: 'Email'),
-                onChanged: (value) => _checkFormFilled(),
-              ),
-              TextFormField(
-                controller: _passwordController,
-                decoration: InputDecoration(
-                  labelText: 'Password',
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      _isPasswordVisible
-                          ? Icons.visibility
-                          : Icons.visibility_off,
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (bool didPop, Object? result) {
+        if (didPop) {
+          return;
+        }
+        Navigator.pop(context);
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('I have an account'),
+          backgroundColor: Colors.green[100],
+          elevation: 0,
+        ),
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              children: <Widget>[
+                if (_loginError.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 8.0),
+                    child: Text(
+                      _loginError,
+                      style: TextStyle(color: Colors.red),
                     ),
-                    onPressed: () {
-                      setState(() {
-                        _isPasswordVisible = !_isPasswordVisible;
-                      });
-                    },
+                  ),
+                TextFormField(
+                  controller: _emailController,
+                  decoration: InputDecoration(labelText: 'Email'),
+                  onChanged: (value) => _checkFormFilled(),
+                ),
+                TextFormField(
+                  controller: _passwordController,
+                  decoration: InputDecoration(
+                    labelText: 'Password',
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _isPasswordVisible
+                            ? Icons.visibility
+                            : Icons.visibility_off,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _isPasswordVisible = !_isPasswordVisible;
+                        });
+                      },
+                    ),
+                  ),
+                  obscureText: !_isPasswordVisible,
+                  onChanged: (value) => _checkFormFilled(),
+                ),
+                Spacer(),
+                TextButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ForgetPasswordPage()),
+                    );
+                  },
+                  child: Text(
+                    'Forgot password?',
+                    style: TextStyle(color: Colors.pink),
                   ),
                 ),
-                obscureText: !_isPasswordVisible,
-                onChanged: (value) => _checkFormFilled(),
-              ),
-              Spacer(),
-              TextButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => ForgetPasswordPage()),
-                  );
-                },
-                child: Text(
-                  'Forgot password?',
-                  style: TextStyle(color: Colors.pink),
-                ),
-              ),
-              ElevatedButton(
-                onPressed: _isFormFilled
-                    ? () {
-                        if (_formKey.currentState!.validate()) {
-                          _login();
+                ElevatedButton(
+                  onPressed: _isFormFilled
+                      ? () {
+                          if (_formKey.currentState!.validate()) {
+                            _login();
+                          }
                         }
-                      }
-                    : null,
-                child: Text('Login'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: _isFormFilled ? Colors.pink : Colors.grey,
+                      : null,
+                  child: Text('Login'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: _isFormFilled ? Colors.pink : Colors.grey,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

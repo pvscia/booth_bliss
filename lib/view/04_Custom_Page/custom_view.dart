@@ -1,4 +1,5 @@
 import 'package:booth_bliss/view/04_Custom_Page/frame_edit_view.dart';
+import 'package:booth_bliss/view/04_Custom_Page/add_sticker.dart';
 import 'package:flutter/material.dart';
 
 class CustomView extends StatelessWidget {
@@ -11,6 +12,7 @@ class CustomView extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => FrameEditorView()),
+            // MaterialPageRoute(builder: (context) => ImageManipulatorPage()),
           );
         },
         child: Text('Go to Frame Editor'),

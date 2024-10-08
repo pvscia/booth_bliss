@@ -42,6 +42,7 @@ class ProfileViewState extends State<ProfileView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: const Text(
           'Profile',
           style: TextStyle(color: Colors.black),
@@ -52,7 +53,9 @@ class ProfileViewState extends State<ProfileView> {
           IconButton(
             onPressed: () async {
               await ProfileController().logout();
-              Navigator.pushReplacementNamed(context, '/front_page');
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                Navigator.pushReplacementNamed(context, '/front_page');
+              });
             },
             icon: const Icon(
               Icons.logout,
@@ -100,8 +103,8 @@ class ProfileViewState extends State<ProfileView> {
                   await _fetchUserPhoto();
                 }
               },
-              child: Text('Edit Profile'),
               style: ElevatedButton.styleFrom(backgroundColor: Colors.pink),
+              child: Text('Edit Profile'),
             ),
             SizedBox(height: 20),
             Padding(
@@ -137,13 +140,11 @@ class ProfileViewState extends State<ProfileView> {
                     ),
                     itemCount: 12,
                     itemBuilder: (BuildContext context, int index) {
-                      return Container(
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(20),
-                          child: Image.network(
-                            'https://i.pinimg.com/564x/a9/08/92/a90892abfe20695d601263160cbd234f.jpg',
-                            fit: BoxFit.contain,
-                          ),
+                      return ClipRRect(
+                        borderRadius: BorderRadius.circular(20),
+                        child: Image.network(
+                          'https://i.pinimg.com/564x/a9/08/92/a90892abfe20695d601263160cbd234f.jpg',
+                          fit: BoxFit.contain,
                         ),
                       );
                     },

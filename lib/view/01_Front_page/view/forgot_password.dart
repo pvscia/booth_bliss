@@ -38,63 +38,72 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("I have an account"),
-        backgroundColor: Colors.green[100],
-        elevation: 0,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            TextFormField(
-              controller: _controller.emailController,
-              decoration: InputDecoration(
-                labelText: "Email",
-                errorText: _controller.emailError.isNotEmpty
-                    ? _controller.emailError
-                    : null,
-              ),
-              onChanged: (value) {
-                setState(() {
-                  _controller.validateEmail();
-                });
-              },
-            ),
-            SizedBox(height: 8),
-            Text(
-              "Enter the email address you used to register with BoothBliss. You will receive an email to define a new password.",
-              style: TextStyle(fontSize: 12),
-            ),
-            SizedBox(height: 24),
-            if (statusMessage.isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.only(bottom: 16.0),
-                child: Text(
-                  statusMessage,
-                  style: TextStyle(
-                      color: statusMessage.contains('success')
-                          ? Colors.green
-                          : Colors.red),
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (bool didPop, Object? result) {
+        if (didPop) {
+          return;
+        }
+        Navigator.pop(context);
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text("I have an account"),
+          backgroundColor: Colors.green[100],
+          elevation: 0,
+        ),
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              TextFormField(
+                controller: _controller.emailController,
+                decoration: InputDecoration(
+                  labelText: "Email",
+                  errorText: _controller.emailError.isNotEmpty
+                      ? _controller.emailError
+                      : null,
                 ),
+                onChanged: (value) {
+                  setState(() {
+                    _controller.validateEmail();
+                  });
+                },
               ),
-            ElevatedButton(
-              onPressed: _controller.isButtonEnabled && !isLoading
-                  ? _handlePasswordReset
-                  : null,
-              style: ElevatedButton.styleFrom(
-                backgroundColor:
-                    _controller.isButtonEnabled ? Colors.pink : Colors.grey,
+              SizedBox(height: 8),
+              Text(
+                "Enter the email address you used to register with BoothBliss. You will receive an email to define a new password.",
+                style: TextStyle(fontSize: 12),
               ),
-              child: isLoading
-                  ? CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                    )
-                  : Text("Define new password"),
-            ),
-          ],
+              SizedBox(height: 24),
+              if (statusMessage.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 16.0),
+                  child: Text(
+                    statusMessage,
+                    style: TextStyle(
+                        color: statusMessage.contains('success')
+                            ? Colors.green
+                            : Colors.red),
+                  ),
+                ),
+              ElevatedButton(
+                onPressed: _controller.isButtonEnabled && !isLoading
+                    ? _handlePasswordReset
+                    : null,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor:
+                      _controller.isButtonEnabled ? Colors.pink : Colors.grey,
+                ),
+                child: isLoading
+                    ? CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      )
+                    : Text("Define new password"),
+              ),
+            ],
+          ),
         ),
       ),
     );

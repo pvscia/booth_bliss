@@ -1,11 +1,17 @@
+import 'package:booth_bliss/view/04_Custom_Page/add_text.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+
+import 'add_sticker.dart';
 
 class FrameEditorView extends StatefulWidget {
   @override
-  _FrameEditorPageState createState() => _FrameEditorPageState();
+  FrameEditorPageState createState() => FrameEditorPageState();
 }
 
-class _FrameEditorPageState extends State<FrameEditorView> {
+class FrameEditorPageState extends State<FrameEditorView> {
+  List<Widget> widgets = [];
+  final ImagePicker _picker = ImagePicker();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -59,19 +65,9 @@ class _FrameEditorPageState extends State<FrameEditorView> {
                   ),
                 ),
                 // Polaroid Frames
-                Positioned(
-                  top: 100,
-                  left: 30,
-                  child: Image.asset('assets/default-user.png',
-                      width: 100, height: 120), // Frame 1
-                ),
-                Positioned(
-                  top: 150,
-                  left: 180,
-                  child: Image.asset('assets/default-user.png',
-                      width: 100, height: 120), // Frame 2
-                ),
-                // Add more frames similarly as needed
+                 Stack(
+                   children: widgets,
+                 )
               ],
             ),
           ),
@@ -85,8 +81,46 @@ class _FrameEditorPageState extends State<FrameEditorView> {
               children: [
                 _buildToolbarItem(Icons.grid_on, 'Layout'),
                 _buildToolbarItem(Icons.image, 'Backgrounds'),
-                _buildToolbarItem(Icons.emoji_emotions, 'Stickers'),
-                _buildToolbarItem(Icons.text_fields, 'Text'),
+                GestureDetector(
+                  onTap: () async {
+                    XFile? imageFile = await _pickImage();
+
+                    if (imageFile != null) {
+                      setState(() {
+                        widgets.add(
+                          ResizableImage(
+                            key: UniqueKey(),
+                            imagePath: imageFile.path,
+                            onRemove: (Key key) {
+                              setState(() {
+                                widgets.removeWhere((element) => element.key == key);
+                              });
+                            },
+                          ),
+                        );
+                      });
+                    }
+                  },
+                    child: _buildToolbarItem(Icons.emoji_emotions, 'Stickers')
+                ),
+                GestureDetector(
+                  onTap: () {
+                      setState(() {
+                        widgets.add(
+                          ResizableText(
+                            text: '😂🤣',
+                            key: UniqueKey(),
+                            onRemove: (Key key) {
+                              setState(() {
+                                widgets.removeWhere((element) => element.key == key);
+                              });
+                            },
+                          ),
+                        );
+                      });
+                    },
+                    child: _buildToolbarItem(Icons.text_fields, 'Text')
+                ),
                 _buildToolbarItem(Icons.brush, 'Draw'),
               ],
             ),
@@ -94,6 +128,11 @@ class _FrameEditorPageState extends State<FrameEditorView> {
         ],
       ),
     );
+  }
+
+  Future<XFile?> _pickImage() async {
+    final XFile? imageFile = await _picker.pickImage(source: ImageSource.gallery);
+    return imageFile;
   }
 
   Widget _buildToolbarItem(IconData icon, String label) {

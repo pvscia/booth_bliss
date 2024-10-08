@@ -11,20 +11,28 @@ class LoginController {
           .signInWithEmailAndPassword(email: email, password: password);
 
       if (!user.user!.emailVerified) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text(
-                'Your email is not verified. Please check your inbox for the verification email.')));
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text(
+                  'Your email is not verified. Please check your inbox for the verification email.')));
+        });
         await user.user!.sendEmailVerification();
         await FirebaseAuth.instance.signOut();
         return null;
       }
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+
         ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('No user found for that email.')));
+        });
       } else if (e.code == 'wrong-password') {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
         ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Wrong password provided for that user.')));
+          
+        });
       }
       return null;
     } catch (e) {
