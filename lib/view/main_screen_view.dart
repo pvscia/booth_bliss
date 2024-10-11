@@ -1,7 +1,6 @@
 import 'package:booth_bliss/model/user_model.dart';
 import 'package:flutter/material.dart';
 import '02_Home_Page/home_view.dart';
-import '03_Search_Page/search_view.dart';
 import '04_Custom_Page/custom_view.dart';
 import '05_QR_Page/qr_view.dart';
 import '06_Profile_Page/view/profile_view.dart';
@@ -20,7 +19,6 @@ class _MainScreenState extends State<MainScreen> {
   // Create widget options list dynamically, based on the user being passed in
   List<Widget> get _widgetOptions => <Widget>[
         HomeView(),
-        SearchView(),
         CustomView(),
         ScanQR(),
         ProfileView(user: user!),
@@ -99,7 +97,7 @@ class _MainScreenState extends State<MainScreen> {
       return Scaffold(
         body: _widgetOptions.elementAt(_selectedIndex),
         bottomNavigationBar: Container(
-          height: screenHeight * 0.08, // Adjust the height
+          height: screenHeight * 0.081, // Adjust the height
           child: BottomNavigationBar(
             type: BottomNavigationBarType.fixed,
             backgroundColor: Color(0xffffe5e5),
