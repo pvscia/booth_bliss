@@ -12,6 +12,8 @@ class FrameEditorView extends StatefulWidget {
 class FrameEditorPageState extends State<FrameEditorView> {
   List<Widget> widgets = [];
   final ImagePicker _picker = ImagePicker();
+  bool _showDeletebtn = false;
+  bool _isDeleteBtnActive = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -66,7 +68,17 @@ class FrameEditorPageState extends State<FrameEditorView> {
                 ),
                 // Polaroid Frames
                  Stack(
-                   children: widgets,
+                   children: [
+                     ...widgets,
+                     if(_showDeletebtn)
+                     Align(
+                       alignment: Alignment.bottomCenter,
+                       child: Padding(
+                         padding: const EdgeInsets.all(60.0),
+                         child: Icon(Icons.delete, size: _isDeleteBtnActive ? 38 : 28, color: _isDeleteBtnActive ? Colors.red: Colors.grey,),
+                       ),
+                     ),
+                   ]
                  )
               ],
             ),
@@ -89,12 +101,40 @@ class FrameEditorPageState extends State<FrameEditorView> {
                       setState(() {
                         widgets.add(
                           ResizableImage(
-                            key: UniqueKey(),
+                            key: Key(widgets.length.toString()),
                             imagePath: imageFile.path,
-                            onRemove: (Key key) {
-                              setState(() {
-                                widgets.removeWhere((element) => element.key == key);
-                              });
+                            onDragStart: () {
+                              if(!_showDeletebtn){
+                                setState(() {
+                                  _showDeletebtn = true;
+                                });
+                              }
+                            },
+                            onDragEnd: (Offset offset, Key? key) {
+                              if(_showDeletebtn){
+                                setState(() {
+                                  _showDeletebtn = false;
+                                });
+                              }
+
+                              if(offset.dy > (MediaQuery.of(context).size.height-200)){
+                                widgets.removeWhere((widget)=> widget.key == key);
+                              }
+                            },
+                            onDragUpdate: (Offset offset, Key? key) {
+                              if(offset.dy > (MediaQuery.of(context).size.height-200)){
+                                if(!_isDeleteBtnActive){
+                                  setState(() {
+                                    _isDeleteBtnActive = true;
+                                  });
+                                }
+                              }else{
+                                if(_isDeleteBtnActive){
+                                  setState(() {
+                                    _isDeleteBtnActive = false;
+                                  });
+                                }
+                              }
                             },
                           ),
                         );
@@ -108,12 +148,39 @@ class FrameEditorPageState extends State<FrameEditorView> {
                       setState(() {
                         widgets.add(
                           ResizableText(
-                            text: '😂🤣',
-                            key: UniqueKey(),
-                            onRemove: (Key key) {
-                              setState(() {
-                                widgets.removeWhere((element) => element.key == key);
-                              });
+                            key: Key(widgets.length.toString()),
+                            onDragStart: () {
+                              if(!_showDeletebtn){
+                                setState(() {
+                                  _showDeletebtn = true;
+                                });
+                              }
+                            },
+                            onDragEnd: (Offset offset, Key? key) {
+                              if(_showDeletebtn){
+                                setState(() {
+                                  _showDeletebtn = false;
+                                });
+                              }
+
+                              if(offset.dy > (MediaQuery.of(context).size.height-200)){
+                                widgets.removeWhere((widget)=> widget.key == key);
+                              }
+                            },
+                            onDragUpdate: (Offset offset, Key? key) {
+                              if(offset.dy > (MediaQuery.of(context).size.height-200)){
+                                if(!_isDeleteBtnActive){
+                                  setState(() {
+                                    _isDeleteBtnActive = true;
+                                  });
+                                }
+                              }else{
+                                if(_isDeleteBtnActive){
+                                  setState(() {
+                                    _isDeleteBtnActive = false;
+                                  });
+                                }
+                              }
                             },
                           ),
                         );

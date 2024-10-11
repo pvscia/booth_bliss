@@ -1,5 +1,5 @@
 name: booth_bliss
-description: "A new Flutter project."
+description: "A new Flutter project"
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -46,9 +46,10 @@ dependencies:
   http: ^1.2.2
   path_provider: ^2.1.4
   network_to_file_image: ^6.0.1
-  matrix_gesture_detector_pro: ^1.0.0
-
-
+  text_editor: ^0.7.0
+  matrix_gesture_detector:
+    git:
+      url : https://github.com/besttechguru/matrix_gesture_detector.git
 dev_dependencies:
   flutter_launcher_icons : ^0.13.1
   flutter_test:
