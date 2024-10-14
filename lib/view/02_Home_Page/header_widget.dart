@@ -55,8 +55,13 @@ class HeaderWidget extends StatelessWidget {
                             0.02), // Space between icon and text field
                     Expanded(
                       child: TextField(
-                        style: TextStyle(fontSize: screenHeight * 0.02),
+                        style: TextStyle(
+                          fontSize: screenHeight * 0.02,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        textAlign: TextAlign.start,
                         decoration: InputDecoration(
+                          contentPadding: EdgeInsets.only(top: 10, bottom: 3),
                           hintText: 'Search frame', // Placeholder text
                           border: InputBorder.none, // No internal border
                           isDense:
