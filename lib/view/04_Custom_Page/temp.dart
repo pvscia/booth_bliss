@@ -1,180 +1,158 @@
 import 'dart:io';
+import 'dart:typed_data';
+import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
-import 'package:matrix_gesture_detector/matrix_gesture_detector.dart';
+import 'package:flutter/rendering.dart';
+import 'package:image_gallery_saver/image_gallery_saver.dart';
+import 'package:image_picker/image_picker.dart';
 
-typedef PointMoveCallback = void Function(Offset offset, Key? key);
-class ResizableImage extends StatefulWidget {
-  final String imagePath;
-  final VoidCallback onDragStart;
-  final PointMoveCallback onDragEnd;
-  final PointMoveCallback onDragUpdate;
-
-  const ResizableImage({super.key,
-    required this.imagePath,
-    required this.onDragStart,
-    required this.onDragEnd,
-    required this.onDragUpdate});
-
-  @override
-  ResizableImageState createState() => ResizableImageState();
+void main() {
+  runApp(MyApp());
 }
 
-class ResizableImageState extends State<ResizableImage> {
-  final ValueNotifier<Matrix4> notifier = ValueNotifier(Matrix4.identity());
-  int shapeIndex = 0;
-  bool isEditMode = false;
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: PhotoGrid(),
+    );
+  }
+}
+
+class PhotoGrid extends StatefulWidget {
+  @override
+  _PhotoGridState createState() => _PhotoGridState();
+}
+
+class _PhotoGridState extends State<PhotoGrid> {
+  final ImagePicker _picker = ImagePicker();
+  List<File?> photos = List.generate(6, (index) => null); // 6 photo frames
+  Color? backgroundColor = Colors.white; // Default background
+  GlobalKey _globalKey = GlobalKey();
+
+  Future<void> _pickImage(int index) async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      setState(() {
+        photos[index] = File(pickedFile.path);
+      });
+    }
+  }
+
+  Future<void> _exportToPng() async {
+    try {
+      RenderRepaintBoundary boundary =
+      _globalKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
+      ui.Image image = await boundary.toImage();
+
+      ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+
+      if (byteData != null) {
+        // Convert ByteData to Uint8List, then save it as a file
+        Uint8List pngBytes = byteData.buffer.asUint8List(); // Proper buffer access
+
+        // Save image to gallery
+        final result = await ImageGallerySaver.saveImage(
+          pngBytes,
+          quality: 100,
+          name: "exported_image",
+        );
+
+        if (result['isSuccess'] == true) {
+          ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text("Image saved to gallery successfully!"))
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text("Failed to save image to gallery"))
+          );
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Failed to export"))
+        );
+      }
+    } catch (e) {
+      print("Error during export: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Error during export: $e"))
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    late Offset offset;
-    List<CustomClipper<Path>?> clippers = [
-      null, // Normal shape (no clipper)
-      SquareClipper(),
-      CircleClipper(),
-      LoveClipper(),
-      StarClipper(),
-    ];
-
-
-    return Listener(
-      onPointerMove: (event){
-        offset = event.position;
-        widget.onDragUpdate(offset,widget.key);
-      },
-      child: MatrixGestureDetector(
-        onMatrixUpdate: (m,tm,sm,rm){
-          notifier.value = m;
-        },
-        onScaleStart: () {
-          widget.onDragStart();
-        },
-        onScaleEnd: () {
-          widget.onDragEnd(offset,widget.key);
-        },
-        child: GestureDetector(
-          onLongPress: (){
-            setState(() {
-              isEditMode = true; // Enable edit mode on long press
-            });
-            print('masuk');
-          },
-          child: AnimatedBuilder(
-            animation: notifier,
-            builder: (ctx, child) {
-              return Transform(
-                transform: notifier.value,
-                child: Stack(
-                  children: <Widget>[
-                    Positioned.fill(
-                      child: Container(
-                        transform: notifier.value,
-                        child: FittedBox(
-                          fit: BoxFit.contain,
-                          child: GestureDetector(
-                            onTap: (){
-                              setState(() {
-                                shapeIndex = (shapeIndex + 1) % clippers.length;
-                              });
-                            },
-                            child: ClipPath(
-                              clipper: clippers[shapeIndex],
-                              child: Image.file(
-                                File(widget.imagePath),
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            },
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Photo Grid Exporter"),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.save),
+            onPressed: _exportToPng, // Export to PNG on save
           ),
-        ),
+        ],
+      ),
+      body: Column(
+        children: [
+          Expanded(
+            child: RepaintBoundary(
+              key: _globalKey,
+              child: Container(
+                color: backgroundColor,
+                child: GridView.builder(
+                  padding: EdgeInsets.all(10),
+                  itemCount: 6,
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 10,
+                    mainAxisSpacing: 10,
+                  ),
+                  itemBuilder: (context, index) {
+                    return GestureDetector(
+                      onTap: () => _pickImage(index), // Pick image for the selected frame
+                      child: Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.black, width: 2),
+                          color: Colors.white, // Background of each grid
+                        ),
+                        child: photos[index] != null
+                            ? Image.file(
+                          photos[index]!,
+                          fit: BoxFit.cover,
+                        )
+                            : Center(child: Text('Tap to add photo')),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
+          ),
+          // Background Picker (Color)
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                IconButton(
+                  icon: Icon(Icons.color_lens, color: Colors.black),
+                  onPressed: () => setState(() {
+                    backgroundColor = Colors.white; // Set background color
+                  }),
+                ),
+                IconButton(
+                  icon: Icon(Icons.colorize, color: Colors.black),
+                  onPressed: () => setState(() {
+                    backgroundColor = Colors.blue.shade100; // Change to another color
+                  }),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
 }
 
-// Square clipper
-class SquareClipper extends CustomClipper<Path> {
-  @override
-  Path getClip(Size size) {
-    return Path()..addRect(Rect.fromLTWH(0, 0, size.width, size.width));
-  }
 
-  @override
-  bool shouldReclip(CustomClipper<Path> oldClipper) {
-    return false;
-  }
-}
-
-
-// Circle clipper
-class CircleClipper extends CustomClipper<Path> {
-  @override
-  Path getClip(Size size) {
-    var radius = size.width / 2;
-    return Path()..addOval(Rect.fromCircle(center: Offset(radius, radius), radius: radius));
-  }
-
-  @override
-  bool shouldReclip(CustomClipper<Path> oldClipper) {
-    return false;
-  }
-}
-
-// Heart (love) clipper
-class LoveClipper extends CustomClipper<Path> {
-  @override
-  Path getClip(Size size) {
-    final path = Path();
-    final width = size.width;
-    final height = size.width;
-
-    // Heart shape logic
-    path.moveTo(width / 2, height / 4);
-    path.cubicTo(5 * width / 6, height / 16, width, height / 3, width / 2, 3 * height / 4);
-    path.moveTo(width / 2, height / 4);
-    path.cubicTo(width / 6, height / 16, 0, height / 3, width / 2, 3 * height / 4);
-    path.close();
-
-    return path;
-  }
-
-  @override
-  bool shouldReclip(CustomClipper<Path> oldClipper) {
-    return false;
-  }
-}
-
-// Star clipper
-class StarClipper extends CustomClipper<Path> {
-  @override
-  Path getClip(Size size) {
-    var path = Path();
-    var width = size.width;
-    var height = size.width;
-
-    path.moveTo(width * 0.5, 0);
-    path.lineTo(width * 0.61, height * 0.35);
-    path.lineTo(width * 1.0, height * 0.35);
-    path.lineTo(width * 0.68, height * 0.57);
-    path.lineTo(width * 0.79, height * 1.0);
-    path.lineTo(width * 0.5, height * 0.73);
-    path.lineTo(width * 0.21, height * 1.0);
-    path.lineTo(width * 0.32, height * 0.57);
-    path.lineTo(0, height * 0.35);
-    path.lineTo(width * 0.39, height * 0.35);
-    path.close();
-
-    return path;
-  }
-
-  @override
-  bool shouldReclip(CustomClipper<Path> oldClipper) {
-    return false;
-  }
-}

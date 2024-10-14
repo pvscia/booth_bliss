@@ -14,6 +14,7 @@ class FrameEditorPageState extends State<FrameEditorView> {
   final ImagePicker _picker = ImagePicker();
   bool _showDeletebtn = false;
   bool _isDeleteBtnActive = false;
+  Color _bgColor = Colors.white;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -59,6 +60,7 @@ class FrameEditorPageState extends State<FrameEditorView> {
                 // Background Image
                 Container(
                   decoration: BoxDecoration(
+                    color: _bgColor,
                     image: DecorationImage(
                       image: AssetImage(
                           'assets/logo.png'), // Your background image
@@ -92,7 +94,12 @@ class FrameEditorPageState extends State<FrameEditorView> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 _buildToolbarItem(Icons.grid_on, 'Layout'),
-                _buildToolbarItem(Icons.image, 'Backgrounds'),
+                GestureDetector(
+                    onTap: () {
+                      _showColorPalette(); // Show color palette dialog
+                    },
+                    child: _buildToolbarItem(Icons.image, 'Backgrounds')
+                ),
                 GestureDetector(
                   onTap: () async {
                     XFile? imageFile = await _pickImage();
@@ -214,5 +221,66 @@ class FrameEditorPageState extends State<FrameEditorView> {
         ),
       ],
     );
+  }
+
+  void _showColorPalette() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Select Background Color'),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: _buildColorOptions(),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Close'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  List<Widget> _buildColorOptions() {
+    List<Color> colors = [
+      Colors.red,
+      Colors.green,
+      Colors.blue,
+      Colors.yellow,
+      Colors.orange,
+      Colors.purple,
+      Colors.transparent,
+    ];
+
+    return colors.map((color) {
+      return GestureDetector(
+        onTap: () {
+          setState(() {
+            _bgColor = color; // Change background color
+          });
+          Navigator.of(context).pop(); // Close the dialog after selection
+        },
+        child: Container(
+          width: 40,
+          height: 40,
+          margin: const EdgeInsets.symmetric(vertical: 4),
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: color,
+            border: Border.all(
+              color: Colors.black,
+              width: 1,
+            ),
+          ),
+        ),
+      );
+    }).toList();
   }
 }

@@ -51,8 +51,7 @@ dependencies:
     git:
       url : https://github.com/besttechguru/matrix_gesture_detector.git
   flutter_svg: ^1.1.6
-
-
+  image_gallery_saver: ^2.0.3
 dev_dependencies:
   flutter_launcher_icons : ^0.13.1
   flutter_test:
@@ -98,80 +97,193 @@ flutter:
   # list giving the asset and other descriptors for the font. For
   # example:
   fonts:
-    - family: Montserrat
+    - family: MontserratBlack
       fonts:
         - asset: fonts/Montserrat-Black.ttf
           weight: 900
 
+    - family: MontserratBlackItalic
+      fonts:
         - asset: fonts/Montserrat-BlackItalic.ttf
           style: italic
           weight: 900
 
+    - family: MontserratBold
+      fonts:
         - asset: fonts/Montserrat-Bold.ttf
           weight: 700
 
+    - family: MontserratBoldItalic
+      fonts:
         - asset: fonts/Montserrat-BoldItalic.ttf
           style: italic
           weight: 700
 
+    - family: MontserratExtraBold
+      fonts:
         - asset: fonts/Montserrat-ExtraBold.ttf
           weight: 800
 
+    - family: MontserratExtraBoldItalic
+      fonts:
         - asset: fonts/Montserrat-ExtraBoldItalic.ttf
           style: italic
           weight: 800
 
+    - family: MontserratExtraLight
+      fonts:
         - asset: fonts/Montserrat-ExtraLight.ttf
           weight: 200
 
+    - family: MontserratExtraLightItalic
+      fonts:
         - asset: fonts/Montserrat-ExtraLightItalic.ttf
           style: italic
           weight: 200
 
+    - family: MontserratItalicVariable
+      fonts:
         - asset: fonts/Montserrat-Italic-VariableFont_wght.ttf
           style: italic
           weight: 400
 
+    - family: MontserratItalic
+      fonts:
         - asset: fonts/Montserrat-Italic.ttf
           style: italic
           weight: 400
 
+    - family: MontserratLight
+      fonts:
         - asset: fonts/Montserrat-Light.ttf
           weight: 300
 
+    - family: MontserratLightItalic
+      fonts:
         - asset: fonts/Montserrat-LightItalic.ttf
           style: italic
           weight: 300
 
+    - family: MontserratMedium
+      fonts:
         - asset: fonts/Montserrat-Medium.ttf
           weight: 500
 
+    - family: MontserratMediumItalic
+      fonts:
         - asset: fonts/Montserrat-MediumItalic.ttf
           style: italic
           weight: 500
 
+    - family: MontserratRegular
+      fonts:
         - asset: fonts/Montserrat-Regular.ttf
           weight: 400
 
+    - family: MontserratSemiBold
+      fonts:
         - asset: fonts/Montserrat-SemiBold.ttf
-          weight: 700
+          weight: 600
 
+    - family: MontserratSemiBoldItalic
+      fonts:
         - asset: fonts/Montserrat-SemiBoldItalic.ttf
           style: italic
-          weight: 700
+          weight: 600
 
+    - family: MontserratThin
+      fonts:
         - asset: fonts/Montserrat-Thin.ttf
           weight: 100
 
+    - family: MontserratThinItalic
+      fonts:
         - asset: fonts/Montserrat-ThinItalic.ttf
           style: italic
           weight: 100
 
+    - family: MontserratVariable
+      fonts:
         - asset: fonts/Montserrat-VariableFont_wght.ttf
           weight: 400
 
+    - family: Billabong
+      fonts:
+        - asset: fonts/Billabong.ttf
 
-  #   - family: Trajan Pro
+    - family: GrandHotel
+      fonts:
+        - asset: fonts/GrandHotel.otf
+
+    - family: OpenSans
+      fonts:
+        - asset: fonts/OpenSans.ttf
+
+    - family: Oswald
+      fonts:
+        - asset: fonts/Oswald.ttf
+
+    - family: Quicksand
+      fonts:
+        - asset: fonts/Quicksand.otf
+
+    - family: BeautifulPeople
+      fonts:
+        - asset: fonts/BeautifulPeople.ttf
+
+    - family: BeautyMountains
+      fonts:
+        - asset: fonts/BeautyMountains.ttf
+
+    - family: BiteChocolate
+      fonts:
+        - asset: fonts/BiteChocolate.ttf
+
+    - family: BlackberryJam
+      fonts:
+        - asset: fonts/BlackberryJam.ttf
+
+    - family: Tomatoes
+      fonts:
+        - asset: fonts/Tomatoes.ttf
+
+    - family: BunchBlossoms
+      fonts:
+        - asset: fonts/BunchBlossoms.ttf
+
+    - family: CinderelaRegular
+      fonts:
+        - asset: fonts/CinderelaRegular.ttf
+
+    - family: Countryside
+      fonts:
+        - asset: fonts/Countryside.ttf
+
+    - family: Halimun
+      fonts:
+        - asset: fonts/Halimun.ttf
+
+    - family: LemonJelly
+      fonts:
+        - asset: fonts/LemonJelly.ttf
+
+    - family: QuiteMagicalRegular
+      fonts:
+        - asset: fonts/QuiteMagicalRegular.ttf
+
+    - family: TropicalAsianDemoRegular
+      fonts:
+        - asset: fonts/TropicalAsianDemoRegular.ttf
+
+    - family: VeganStyle
+      fonts:
+        - asset: fonts/VeganStyle.ttf
+
+
+
+
+
+    #   - family: Trajan Pro
   #     fonts:
   #       - asset: fonts/TrajanPro.ttf
   #       - asset: fonts/TrajanPro_Bold.ttf

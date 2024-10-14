@@ -336,6 +336,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.2.0"
+  image_gallery_saver:
+    dependency: "direct main"
+    description:
+      name: image_gallery_saver
+      sha256: "0aba74216a4d9b0561510cb968015d56b701ba1bd94aace26aacdd8ae5761816"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.3"
   image_picker:
     dependency: "direct main"
     description:
@@ -456,14 +464,15 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.11.1"
-  matrix_gesture_detector_pro:
+  matrix_gesture_detector:
     dependency: "direct main"
     description:
-      name: matrix_gesture_detector_pro
-      sha256: "85a5ee5bf3e96300cf20c652119aad9bf90e7ebeaab95cd13d10ad67d3371b01"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.0.0"
+      path: "."
+      ref: HEAD
+      resolved-ref: "29a1bf818434c1f8051892c9b537ac6ef217d45d"
+      url: "https://github.com/besttechguru/matrix_gesture_detector.git"
+    source: git
+    version: "0.2.0-nullsafety"
   meta:
     dependency: transitive
     description:
@@ -733,6 +742,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.7.2"
+  text_editor:
+    dependency: "direct main"
+    description:
+      name: text_editor
+      sha256: "944e68a16dd612da10ab324d69fe64dc70f37f20a8e7200b830ebbddc7ec42dd"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.7.0"
   typed_data:
     dependency: transitive
     description:

@@ -43,7 +43,7 @@ class ResizableTextState extends State<ResizableText> {
   TextStyle _textStyle = TextStyle(
     fontSize: 50,
     color: Colors.white,
-    fontFamily: 'Billabong',
+    fontFamily: 'Oswald',
   );
   String _text = '';
   TextAlign _textAlign = TextAlign.center;
@@ -70,39 +70,39 @@ class ResizableTextState extends State<ResizableText> {
                   textStyle: textStyle,
                   textAlingment: textAlign,
                   minFontSize: 10,
-                  // paletteColors: [
-                  //   Colors.black,
-                  //   Colors.white,
-                  //   Colors.blue,
-                  //   Colors.red,
-                  //   Colors.green,
-                  //   Colors.yellow,
-                  //   Colors.pink,
-                  //   Colors.cyanAccent,
-                  // ],
-                  // decoration: EditorDecoration(
-                  //   textBackground: TextBackgroundDecoration(
-                  //     disable: Text('Disable'),
-                  //     enable: Text('Enable'),
-                  //   ),
-                  //   doneButton: Icon(Icons.close, color: Colors.white),
-                  //   fontFamily: Icon(Icons.title, color: Colors.white),
-                  //   colorPalette: Icon(Icons.palette, color: Colors.white),
-                  //   alignment: AlignmentDecoration(
-                  //     left: Text(
-                  //       'left',
-                  //       style: TextStyle(color: Colors.white),
-                  //     ),
-                  //     center: Text(
-                  //       'center',
-                  //       style: TextStyle(color: Colors.white),
-                  //     ),
-                  //     right: Text(
-                  //       'right',
-                  //       style: TextStyle(color: Colors.white),
-                  //     ),
-                  //   ),
-                  // ),
+                  paletteColors: [
+                    Colors.black,
+                    Colors.white,
+                    Colors.blue,
+                    Colors.red,
+                    Colors.green,
+                    Colors.yellow,
+                    Colors.pink,
+                    Colors.cyanAccent,
+                  ],
+                  decoration: EditorDecoration(
+                    // textBackground: TextBackgroundDecoration(
+                    //   disable: Text('Disable'),
+                    //   enable: Text('Enable'),
+                    // ),
+                    doneButton: Icon(Icons.close, color: Colors.white),
+                    fontFamily: Icon(Icons.title, color: Colors.white),
+                    colorPalette: Icon(Icons.palette, color: Colors.white),
+                    // alignment: AlignmentDecoration(
+                    //   left: Text(
+                    //     'left',
+                    //     style: TextStyle(color: Colors.white),
+                    //   ),
+                    //   center: Text(
+                    //     'center',
+                    //     style: TextStyle(color: Colors.white),
+                    //   ),
+                    //   right: Text(
+                    //     'right',
+                    //     style: TextStyle(color: Colors.white),
+                    //   ),
+                    // ),
+                  ),
                   onEditCompleted: (style, align, text) {
                     setState(() {
                       _text = text;

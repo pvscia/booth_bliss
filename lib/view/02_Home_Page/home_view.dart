@@ -17,57 +17,60 @@ class HomeView extends StatelessWidget {
                   color: Color(0xfff3fde8), // Outer box color
                   borderRadius: BorderRadius.circular(50), // Rounded edges
                 ),
-                child: Row(
-                  // mainAxisAlignment:
-                  //     MainAxisAlignment.spaceEvenly, // Space between inner boxes
-                  children: [
-                    Container(
-                      margin: const EdgeInsets.only(left: 10, right: 10),
-                      height: 70, // Inner box height
-                      width: 110, // Inner box width
-                      decoration: BoxDecoration(
-                        color: Color(0xffffe5e5), // Inner box color
-                        borderRadius:
-                            BorderRadius.circular(50), // Rounded edges
+                child: FittedBox(
+                  fit: BoxFit.contain,
+                  child: Row(
+                    // mainAxisAlignment:
+                    //     MainAxisAlignment.spaceEvenly, // Space between inner boxes
+                    children: [
+                      Container(
+                        margin: const EdgeInsets.only(left: 10, right: 10),
+                        height: 70, // Inner box height
+                        width: 110, // Inner box width
+                        decoration: BoxDecoration(
+                          color: Color(0xffffe5e5), // Inner box color
+                          borderRadius:
+                              BorderRadius.circular(50), // Rounded edges
+                        ),
+                        child: Container(
+                          margin: const EdgeInsets.only(top: 0, bottom: 0),
+                          child:
+                              Image.asset('assets/logo.png', fit: BoxFit.cover),
+                        ),
                       ),
-                      child: Container(
-                        margin: const EdgeInsets.only(top: 0, bottom: 0),
-                        child:
-                            Image.asset('assets/logo.png', fit: BoxFit.cover),
-                      ),
-                    ),
-                    Container(
-                      padding: EdgeInsets.all(8), // Padding inside the border
-                      decoration: BoxDecoration(
-                        color: Color(0xffffe5e5),
-                        border: Border.all(
-                            color: Color(0xffffe5e5), width: 2), // Box border
-                        borderRadius:
-                            BorderRadius.circular(50), // Rounded corners
-                      ),
-                      height: 70,
-                      width: 260, // Adjust width as needed
-                      child: Row(
-                        children: [
-                          Icon(Icons.search,
-                              color: Colors.black, size: 38), // Search Icon
-                          SizedBox(
-                              width: 8), // Space between icon and text field
-                          Expanded(
-                            child: TextField(
-                              style: TextStyle(fontSize: 20),
-                              decoration: InputDecoration(
-                                hintText: 'Search frame', // Placeholder text
-                                border: InputBorder.none, // No internal border
-                                isDense:
-                                    true, // Reduces the padding inside the TextField
+                      Container(
+                        padding: EdgeInsets.all(8), // Padding inside the border
+                        decoration: BoxDecoration(
+                          color: Color(0xffffe5e5),
+                          border: Border.all(
+                              color: Color(0xffffe5e5), width: 2), // Box border
+                          borderRadius:
+                              BorderRadius.circular(50), // Rounded corners
+                        ),
+                        height: 70,
+                        width: 260, // Adjust width as needed
+                        child: Row(
+                          children: [
+                            Icon(Icons.search,
+                                color: Colors.black, size: 38), // Search Icon
+                            SizedBox(
+                                width: 8), // Space between icon and text field
+                            Expanded(
+                              child: TextField(
+                                style: TextStyle(fontSize: 20),
+                                decoration: InputDecoration(
+                                  hintText: 'Search frame', // Placeholder text
+                                  border: InputBorder.none, // No internal border
+                                  isDense:
+                                      true, // Reduces the padding inside the TextField
+                                ),
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
