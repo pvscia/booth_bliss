@@ -1,129 +1,180 @@
-import 'dart:math';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:matrix_gesture_detector/matrix_gesture_detector.dart';
 
+typedef PointMoveCallback = void Function(Offset offset, Key? key);
 class ResizableImage extends StatefulWidget {
   final String imagePath;
-  final Function(Key) onRemove;
+  final VoidCallback onDragStart;
+  final PointMoveCallback onDragEnd;
+  final PointMoveCallback onDragUpdate;
 
-  const ResizableImage({super.key, required this.imagePath, required this.onRemove});
+  const ResizableImage({super.key,
+    required this.imagePath,
+    required this.onDragStart,
+    required this.onDragEnd,
+    required this.onDragUpdate});
 
   @override
   ResizableImageState createState() => ResizableImageState();
 }
 
 class ResizableImageState extends State<ResizableImage> {
-  double _width = 100.0;
-  double _height = 100.0;
-  Offset _position = Offset(50, 50);
-  bool _isFocused = false;
-  double _rotation = 0.0; // Rotation in radians
-  Offset? _initialDragOffset; // To track the initial drag offset for rotation
-
-  void _toggleFocus(bool focus) {
-    setState(() {
-      _isFocused = focus;
-    });
-  }
+  final ValueNotifier<Matrix4> notifier = ValueNotifier(Matrix4.identity());
+  int shapeIndex = 0;
+  bool isEditMode = false;
 
   @override
   Widget build(BuildContext context) {
-    return Positioned(
-      left: _position.dx,
-      top: _position.dy,
-      child: GestureDetector(
-        onPanUpdate: (details) {
-          setState(() {
-            _position += details.delta; // Move the image
-          });
-          _toggleFocus(true);
+    late Offset offset;
+    List<CustomClipper<Path>?> clippers = [
+      null, // Normal shape (no clipper)
+      SquareClipper(),
+      CircleClipper(),
+      LoveClipper(),
+      StarClipper(),
+    ];
+
+
+    return Listener(
+      onPointerMove: (event){
+        offset = event.position;
+        widget.onDragUpdate(offset,widget.key);
+      },
+      child: MatrixGestureDetector(
+        onMatrixUpdate: (m,tm,sm,rm){
+          notifier.value = m;
         },
-        onTap: () {
-          _toggleFocus(true);
+        onScaleStart: () {
+          widget.onDragStart();
         },
-        onPanEnd: (_) {
-          _toggleFocus(false);
+        onScaleEnd: () {
+          widget.onDragEnd(offset,widget.key);
         },
-        child: Stack(
-          children: [
-            Transform.rotate(
-              angle: _rotation,
-              child: Container(
-                width: _width,
-                height: _height,
-                decoration: BoxDecoration(
-                  border: _isFocused
-                      ? Border.all(color: Colors.blue, width: 2)
-                      : Border.all(color: Colors.transparent, width: 0),
+        child: GestureDetector(
+          onLongPress: (){
+            setState(() {
+              isEditMode = true; // Enable edit mode on long press
+            });
+            print('masuk');
+          },
+          child: AnimatedBuilder(
+            animation: notifier,
+            builder: (ctx, child) {
+              return Transform(
+                transform: notifier.value,
+                child: Stack(
+                  children: <Widget>[
+                    Positioned.fill(
+                      child: Container(
+                        transform: notifier.value,
+                        child: FittedBox(
+                          fit: BoxFit.contain,
+                          child: GestureDetector(
+                            onTap: (){
+                              setState(() {
+                                shapeIndex = (shapeIndex + 1) % clippers.length;
+                              });
+                            },
+                            child: ClipPath(
+                              clipper: clippers[shapeIndex],
+                              child: Image.file(
+                                File(widget.imagePath),
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-                child: Image.file(
-                  File(widget.imagePath),
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ),
-            if (_isFocused)
-              Positioned(
-                bottom: 0,
-                right: 0,
-                child: GestureDetector(
-                  onPanUpdate: (details) {
-                    setState(() {
-                      _width = (_width + details.delta.dx).clamp(50.0, double.infinity);
-                      _height = (_height + details.delta.dy).clamp(50.0, double.infinity);
-                    });
-                  },
-
-                  child: const Icon(Icons.zoom_out_map, color: Colors.blue),
-                ),
-              ),
-            if (_isFocused)
-              Positioned(
-                bottom: 0,
-                left: 0,
-                child: GestureDetector(
-                  onPanStart: (details) {
-                    _initialDragOffset = details.localPosition; // Track the initial position for rotation
-                  },
-                  onPanUpdate: (details) {
-                    if (_initialDragOffset != null) {
-                      // Calculate the center of the image
-                      double centerX = _position.dx + _width / 2;
-                      double centerY = _position.dy + _height / 2;
-
-                      // Calculate the angle based on the drag movement
-                      double deltaX = details.localPosition.dx - centerX;
-                      double deltaY = details.localPosition.dy - centerY;
-
-                      // Calculate the angle in radians
-                      double newRotation = atan2(deltaY, deltaX);
-
-                      setState(() {
-                        // Update the rotation angle
-                        _rotation = newRotation % (2 * pi); // Set rotation directly to the calculated angle
-                      });
-                    }
-                  },
-                  onPanEnd: (_) {
-                    _initialDragOffset = null; // Reset the initial drag offset
-                  },
-                  child: const Icon(Icons.rotate_right, color: Colors.green),
-                ),
-              ),
-            if (_isFocused)
-              Positioned(
-                top: 0,
-                right: 0,
-                child: GestureDetector(
-                  onTap: () {
-                    widget.onRemove(widget.key!);
-                  },
-                  child: const Icon(Icons.close, color: Colors.red),
-                ),
-              ),
-          ],
+              );
+            },
+          ),
         ),
       ),
     );
+  }
+}
+
+// Square clipper
+class SquareClipper extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    return Path()..addRect(Rect.fromLTWH(0, 0, size.width, size.width));
+  }
+
+  @override
+  bool shouldReclip(CustomClipper<Path> oldClipper) {
+    return false;
+  }
+}
+
+
+// Circle clipper
+class CircleClipper extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    var radius = size.width / 2;
+    return Path()..addOval(Rect.fromCircle(center: Offset(radius, radius), radius: radius));
+  }
+
+  @override
+  bool shouldReclip(CustomClipper<Path> oldClipper) {
+    return false;
+  }
+}
+
+// Heart (love) clipper
+class LoveClipper extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    final path = Path();
+    final width = size.width;
+    final height = size.width;
+
+    // Heart shape logic
+    path.moveTo(width / 2, height / 4);
+    path.cubicTo(5 * width / 6, height / 16, width, height / 3, width / 2, 3 * height / 4);
+    path.moveTo(width / 2, height / 4);
+    path.cubicTo(width / 6, height / 16, 0, height / 3, width / 2, 3 * height / 4);
+    path.close();
+
+    return path;
+  }
+
+  @override
+  bool shouldReclip(CustomClipper<Path> oldClipper) {
+    return false;
+  }
+}
+
+// Star clipper
+class StarClipper extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    var path = Path();
+    var width = size.width;
+    var height = size.width;
+
+    path.moveTo(width * 0.5, 0);
+    path.lineTo(width * 0.61, height * 0.35);
+    path.lineTo(width * 1.0, height * 0.35);
+    path.lineTo(width * 0.68, height * 0.57);
+    path.lineTo(width * 0.79, height * 1.0);
+    path.lineTo(width * 0.5, height * 0.73);
+    path.lineTo(width * 0.21, height * 1.0);
+    path.lineTo(width * 0.32, height * 0.57);
+    path.lineTo(0, height * 0.35);
+    path.lineTo(width * 0.39, height * 0.35);
+    path.close();
+
+    return path;
+  }
+
+  @override
+  bool shouldReclip(CustomClipper<Path> oldClipper) {
+    return false;
   }
 }
