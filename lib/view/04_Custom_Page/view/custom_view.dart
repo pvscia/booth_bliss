@@ -1,6 +1,6 @@
-import 'package:booth_bliss/view/04_Custom_Page/frame_edit_view.dart';
-import 'package:booth_bliss/view/04_Custom_Page/add_sticker.dart';
 import 'package:flutter/material.dart';
+
+import 'frame_edit_view.dart';
 
 class CustomView extends StatelessWidget {
   @override

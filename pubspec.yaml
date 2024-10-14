@@ -45,14 +45,15 @@ dependencies:
   shared_preferences: ^2.3.2
   http: ^1.2.2
   path_provider: ^2.1.4
+  path : ^1.9.0
   network_to_file_image: ^6.0.1
   text_editor: ^0.7.0
-  matrix_gesture_detector:
-    git:
-      url : https://github.com/besttechguru/matrix_gesture_detector.git
   flutter_svg: ^1.1.6
   image_gallery_saver: ^2.0.3
   get: ^4.6.6
+  matrix_gesture_detector:
+    git:
+      url : https://github.com/besttechguru/matrix_gesture_detector.git
 
 
 dev_dependencies:

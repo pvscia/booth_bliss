@@ -1,7 +1,7 @@
 import 'package:booth_bliss/model/user_model.dart';
 import 'package:flutter/material.dart';
 import '02_Home_Page/home_view.dart';
-import '04_Custom_Page/custom_view.dart';
+import '04_Custom_Page/view/custom_view.dart';
 import '05_QR_Page/qr_view.dart';
 import '06_Profile_Page/view/profile_view.dart';
 

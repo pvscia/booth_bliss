@@ -1,8 +1,17 @@
-import 'package:booth_bliss/view/04_Custom_Page/add_text.dart';
+import 'dart:io';
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
+import 'dart:ui' as ui;
+
+
 
 import 'add_sticker.dart';
+import 'add_text.dart';
 
 class FrameEditorView extends StatefulWidget {
   @override
@@ -15,6 +24,8 @@ class FrameEditorPageState extends State<FrameEditorView> {
   bool _showDeletebtn = false;
   bool _isDeleteBtnActive = false;
   Color _bgColor = Colors.white;
+  final GlobalKey _globalKey = GlobalKey();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -58,13 +69,23 @@ class FrameEditorPageState extends State<FrameEditorView> {
             child: Stack(
               children: [
                 // Background Image
-                Container(
-                  decoration: BoxDecoration(
-                    color: _bgColor,
-                    image: DecorationImage(
-                      image: AssetImage(
-                          'assets/logo.png'), // Your background image
-                      fit: BoxFit.cover,
+                Center(
+                  child: RepaintBoundary(
+                    key: _globalKey,
+                    child: ClipPath(
+                      clipper: PhotoGridClipper(),
+                      child: Container(
+                        width : MediaQuery.sizeOf(context).width - 50,
+                        height : MediaQuery.sizeOf(context).height - 200,
+                        decoration: BoxDecoration(
+                          color: _bgColor,
+                          image: DecorationImage(
+                            image: AssetImage(
+                                'assets/logo.png'), // Your background image
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
                     ),
                   ),
                 ),
@@ -204,6 +225,8 @@ class FrameEditorPageState extends State<FrameEditorView> {
     );
   }
 
+
+
   Future<XFile?> _pickImage() async {
     final XFile? imageFile = await _picker.pickImage(source: ImageSource.gallery);
     return imageFile;
@@ -283,4 +306,55 @@ class FrameEditorPageState extends State<FrameEditorView> {
       );
     }).toList();
   }
+
+  Future<void> _capturePng() async {
+    try {
+      var filename = 'captured_widget.png';
+      RenderRepaintBoundary boundary = _globalKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
+      var image = await boundary.toImage();
+      ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+      if (byteData != null) {
+        final pngBytes = byteData.buffer.asUint8List();
+        final file = await getTemporaryDirectory();
+        final filePath = join(file.path, filename);
+        final fileResult = await File(filePath).writeAsBytes(pngBytes);
+
+        // Save to the gallery using ImageGallerySaver
+        final result = await ImageGallerySaver.saveFile(fileResult.path,name :filename);
+        print("Image saved to gallery: $result");
+      }
+    } catch (e) {
+      print("Error during export: $e");
+    }
+  }
+
+}
+
+class PhotoGridClipper extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    Path path = Path();
+    double width = size.width *3 /7;
+    double height = size.height /4;
+    double gapX = (size.width - (width*2))/3;
+    double gapY = ((size.height*7/8) - (height*3))/3;
+
+    // Draw the outer rectangle
+    path.addRect(Rect.fromLTWH(0, 0, size.width, size.height));
+    path.addRect(Rect.fromLTWH(gapX, gapY, width, height)); // Top left
+    path.addRect(Rect.fromLTWH(size.width - width - gapX, gapY, width, height)); // Top left
+    path.addRect(Rect.fromLTWH(gapX, height + gapY*2, width, height)); // Top left
+    path.addRect(Rect.fromLTWH(size.width - width - gapX,height + gapY*2, width, height)); // Top left
+    path.addRect(Rect.fromLTWH(gapX, height*2 + gapY*3, width, height)); // Top left
+    path.addRect(Rect.fromLTWH(size.width - width - gapX,height*2 + gapY*3, width, height)); // Top left
+
+
+    // Set fill type to evenOdd for transparency
+    path.fillType = PathFillType.evenOdd;
+
+    return path;
+  }
+
+  @override
+  bool shouldReclip(CustomClipper<Path> oldClipper) => true;
 }
