@@ -4,7 +4,7 @@ import 'package:booth_bliss/model/user_model.dart';
 import 'package:booth_bliss/view/06_Profile_Page/view/edit_profile_view.dart';
 
 class ProfileView extends StatefulWidget {
-  final UserModel user;
+  final UserModel? user;
 
   const ProfileView({super.key, required this.user});
 
@@ -19,7 +19,7 @@ class ProfileViewState extends State<ProfileView> {
   @override
   void initState() {
     super.initState();
-    updatedUser = widget.user; // Initialize with the passed user data
+    updatedUser = widget.user!; // Initialize with the passed user data
     _fetchUserPhoto();
   }
 

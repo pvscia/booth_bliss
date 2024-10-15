@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
 
+import '../../../model/user_model.dart';
 import 'frame_edit_view.dart';
 
 class CustomView extends StatelessWidget {
+  final UserModel user;
   final List<String> images = [
     'assets/layout_1.jpg',
     'assets/layout_2.jpg',
     'assets/layout_3.jpg',
     'assets/layout_4.jpg',
   ];
+
+  CustomView({super.key, required this.user});
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +39,7 @@ class CustomView extends StatelessWidget {
               return GestureDetector(
                 onTap: () {
                   Navigator.push(context, MaterialPageRoute(
-                      builder: (context) => FrameEditorView(idx: index))
+                      builder: (context) => FrameEditorView(idx: index,user: user,))
                   );
                 },
                 child: Image.asset(

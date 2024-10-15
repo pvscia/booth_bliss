@@ -1,4 +1,7 @@
 import 'package:booth_bliss/model/user_model.dart';
+import 'package:booth_bliss/view/MainScreenController.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '02_Home_Page/home_view.dart';
 import '04_Custom_Page/view/custom_view.dart';
@@ -6,150 +9,109 @@ import '05_QR_Page/qr_view.dart';
 import '06_Profile_Page/view/profile_view.dart';
 
 class MainScreen extends StatefulWidget {
-  const MainScreen({super.key});
+  final int idx;
+  final UserModel user;
+  const MainScreen({super.key, required this.idx, required this.user});
 
   @override
   _MainScreenState createState() => _MainScreenState();
 }
 
 class _MainScreenState extends State<MainScreen> {
-  UserModel? user;
   int _selectedIndex = 0;
-
-  // Create widget options list dynamically, based on the user being passed in
-  List<Widget> get _widgetOptions => <Widget>[
-        HomeView(),
-        CustomView(),
-        ScanQR(),
-        ProfileView(user: user!),
-      ];
+  late UserModel currUser;
 
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
+    getUser();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedIndex = widget.idx;
+    getUser();
+  }
+
+  Future<void> getUser() async{
+    currUser = (await MainScreenController().getUser())!;
+  }
+
+
+  // Instead of storing widgets in a list, dynamically create them in build method
+  Widget _getSelectedPage(int index) {
+    switch (index) {
+      case 0:
+        return HomeView();
+      case 1:
+        return CustomView(user: currUser);
+      case 2:
+        return ScanQR();
+      case 3:
+        return ProfileView(user: currUser);  // ProfileView will refresh
+      default:
+        return HomeView();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    user = ModalRoute.of(context)?.settings.arguments as UserModel?;
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
 
-    if (screenWidth < 800) {
-      return Scaffold(
-        body: _widgetOptions.elementAt(_selectedIndex),
-        bottomNavigationBar: Container(
-          height: screenHeight * 0.08, // Adjust the height
-          child: BottomNavigationBar(
-            type: BottomNavigationBarType.fixed,
-            backgroundColor: Color(0xffffe5e5),
-            showSelectedLabels: true,
-            showUnselectedLabels: true,
-            selectedLabelStyle: TextStyle(fontSize: screenWidth * 0.02),
-            unselectedLabelStyle: TextStyle(fontSize: screenWidth * 0.02),
-            items: [
-              BottomNavigationBarItem(
-                icon: Container(
-                  width: screenWidth * 0.08, // Adjust the width
-                  height: screenWidth * 0.08, // Adjust the height
-                  child: Icon(Icons.home,
-                      size: screenWidth * 0.08), // Larger home icon
-                ),
-                label: 'Home',
+    return Scaffold(
+      body: _getSelectedPage(_selectedIndex),  // Dynamically get selected page
+      bottomNavigationBar: Container(
+        height: screenHeight * 0.08, // Adjust the height
+        child: BottomNavigationBar(
+          type: BottomNavigationBarType.fixed,
+          backgroundColor: const Color(0xffffe5e5),
+          showSelectedLabels: true,
+          showUnselectedLabels: true,
+          selectedLabelStyle: TextStyle(fontSize: screenWidth * 0.02),
+          unselectedLabelStyle: TextStyle(fontSize: screenWidth * 0.02),
+          items: [
+            BottomNavigationBarItem(
+              icon: Container(
+                width: screenWidth * 0.08, // Adjust the width
+                height: screenWidth * 0.08, // Adjust the height
+                child: Icon(Icons.home, size: screenWidth * 0.08), // Larger home icon
               ),
-              BottomNavigationBarItem(
-                icon: Container(
-                  width: screenWidth * 0.08, // Adjust the width
-                  height: screenWidth * 0.08, // Adjust the height
-                  child: Icon(Icons.add_box,
-                      size: screenWidth * 0.08), // Larger custom icon
-                ),
-                label: 'Custom',
+              label: 'Home',
+            ),
+            BottomNavigationBarItem(
+              icon: Container(
+                width: screenWidth * 0.08, // Adjust the width
+                height: screenWidth * 0.08, // Adjust the height
+                child: Icon(Icons.add_box, size: screenWidth * 0.08), // Larger custom icon
               ),
-              BottomNavigationBarItem(
-                icon: Container(
-                  width: screenWidth * 0.08, // Adjust the width
-                  height: screenWidth * 0.08, // Adjust the height
-                  child: Icon(Icons.qr_code,
-                      size: screenWidth * 0.08), // Larger scan icon
-                ),
-                label: 'Scan',
+              label: 'Custom',
+            ),
+            BottomNavigationBarItem(
+              icon: Container(
+                width: screenWidth * 0.08, // Adjust the width
+                height: screenWidth * 0.08, // Adjust the height
+                child: Icon(Icons.qr_code, size: screenWidth * 0.08), // Larger scan icon
               ),
-              BottomNavigationBarItem(
-                icon: Container(
-                  width: screenWidth * 0.08, // Adjust the width
-                  height: screenWidth * 0.08, // Adjust the height
-                  child: Icon(Icons.person,
-                      size: screenWidth * 0.08), // Larger profile icon
-                ),
-                label: 'Profile',
+              label: 'Scan',
+            ),
+            BottomNavigationBarItem(
+              icon: Container(
+                width: screenWidth * 0.08, // Adjust the width
+                height: screenWidth * 0.08, // Adjust the height
+                child: Icon(Icons.person, size: screenWidth * 0.08), // Larger profile icon
               ),
-            ],
-            currentIndex: _selectedIndex,
-            selectedItemColor: Color(0xff595959),
-            unselectedItemColor: Colors.black,
-            onTap: _onItemTapped,
-          ),
+              label: 'Profile',
+            ),
+          ],
+          currentIndex: _selectedIndex,
+          selectedItemColor: const Color(0xff595959),
+          unselectedItemColor: Colors.black,
+          onTap: _onItemTapped,
         ),
-      );
-    } else {
-      return Scaffold(
-        body: _widgetOptions.elementAt(_selectedIndex),
-        bottomNavigationBar: Container(
-          height: screenHeight * 0.081, // Adjust the height
-          child: BottomNavigationBar(
-            type: BottomNavigationBarType.fixed,
-            backgroundColor: Color(0xffffe5e5),
-            showSelectedLabels: true,
-            showUnselectedLabels: true,
-            selectedLabelStyle: TextStyle(fontSize: screenWidth * 0.02),
-            unselectedLabelStyle: TextStyle(fontSize: screenWidth * 0.02),
-            items: [
-              BottomNavigationBarItem(
-                icon: Container(
-                  width: screenWidth * 0.07, // Adjust the width
-                  height: screenWidth * 0.07, // Adjust the height
-                  child: Icon(Icons.home,
-                      size: screenWidth * 0.07), // Larger home icon
-                ),
-                label: 'Home',
-              ),
-              BottomNavigationBarItem(
-                icon: Container(
-                  width: screenWidth * 0.07, // Adjust the width
-                  height: screenWidth * 0.07, // Adjust the height
-                  child: Icon(Icons.add_box,
-                      size: screenWidth * 0.07), // Larger custom icon
-                ),
-                label: 'Custom',
-              ),
-              BottomNavigationBarItem(
-                icon: Container(
-                  width: screenWidth * 0.07, // Adjust the width
-                  height: screenWidth * 0.07, // Adjust the height
-                  child: Icon(Icons.qr_code,
-                      size: screenWidth * 0.07), // Larger scan icon
-                ),
-                label: 'Scan',
-              ),
-              BottomNavigationBarItem(
-                icon: Container(
-                  width: screenWidth * 0.07, // Adjust the width
-                  height: screenWidth * 0.07, // Adjust the height
-                  child: Icon(Icons.person,
-                      size: screenWidth * 0.07), // Larger profile icon
-                ),
-                label: 'Profile',
-              ),
-            ],
-            currentIndex: _selectedIndex,
-            selectedItemColor: Color(0xff595959),
-            unselectedItemColor: Colors.black,
-            onTap: _onItemTapped,
-          ),
-        ),
-      );
-    }
+      ),
+    );
   }
 }

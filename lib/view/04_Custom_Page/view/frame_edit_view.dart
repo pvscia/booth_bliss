@@ -1,13 +1,16 @@
 import 'package:booth_bliss/view/04_Custom_Page/controller/frame_edit_controller.dart';
+import 'package:booth_bliss/view/main_screen_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:image_picker/image_picker.dart';
+import '../../../model/user_model.dart';
 import 'add_sticker.dart';
 import 'add_text.dart';
 
 class FrameEditorView extends StatefulWidget {
+  final UserModel user;
   final int idx;
-  FrameEditorView({super.key, required this.idx});
+  FrameEditorView({super.key, required this.idx, required this.user});
   @override
   FrameEditorPageState createState() => FrameEditorPageState();
 }
@@ -46,12 +49,25 @@ class FrameEditorPageState extends State<FrameEditorView> {
         centerTitle: true,
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: (){
+            Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(
+                builder: (context) => MainScreen(idx: 1,user: widget.user,), // The page you want to navigate to
+              ),
+                  (Route<dynamic> route) => false, // This removes all the previous routes
+            );
+          },
         ),
         actions: [
           TextButton(
-            onPressed: () {
-              controller.capturePng(_globalKey);
+            onPressed: () async {
+              await controller.capturePng(_globalKey);
+              Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(
+                  builder: (context) => MainScreen(idx: 1,user: widget.user,), // The page you want to navigate to
+                ),
+                    (Route<dynamic> route) => false, // This removes all the previous routes
+              );
             },
             child: Text(
               'Done',
