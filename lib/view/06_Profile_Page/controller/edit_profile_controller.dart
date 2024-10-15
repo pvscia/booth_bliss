@@ -101,7 +101,7 @@ class EditProfileController {
     // Update Firestore user document
     await _firestore
         .collection('users')
-        .doc(user.uid)
+        .doc(user.email)
         .update(updatedUser.toJson());
 
     return updatedUser;
