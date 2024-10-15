@@ -3,6 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import '../../main_screen_view.dart';
+
 class AuthCheck extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -26,8 +28,11 @@ class AuthCheck extends StatelessWidget {
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 if (userSnapshot.hasData) {
                   // UserModel is ready, navigate to the home screen after the build phase
-                  Navigator.pushReplacementNamed(context, '/home',
-                      arguments: userSnapshot.data!);
+                  Navigator.of(context).pushReplacement(
+                      MaterialPageRoute(
+                        builder: (context) => MainScreen(idx: 0,user: userSnapshot.data!), // The page you want to navigate to
+                      ),
+                  );
                 } else {
                   // If there's no user data, show an error or redirect to login
                   Navigator.pushReplacementNamed(context, '/front_page');

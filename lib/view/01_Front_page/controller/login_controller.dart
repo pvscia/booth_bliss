@@ -43,8 +43,7 @@ class LoginController {
       DocumentSnapshot<Map<String, dynamic>> doc =
           await FirebaseFirestore.instance
               .collection('users')
-              .doc(FirebaseAuth.instance.currentUser?.uid) // Document ID
-              // .doc('3FezHRZmHwXPILxNrHwlktxwMUT2') // Document ID
+              .doc(FirebaseAuth.instance.currentUser?.email) // Document ID
               .get();
 
       if (doc.exists) {
