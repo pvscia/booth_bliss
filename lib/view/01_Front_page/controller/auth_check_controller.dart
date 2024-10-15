@@ -20,7 +20,7 @@ class AuthCheck extends StatelessWidget {
           User? firebaseUser = snapshot.data;
 
           return FutureBuilder<UserModel?>(
-            future: getUserModel(firebaseUser!.uid), // Retrieve user data
+            future: getUserModel(firebaseUser!.email), // Retrieve user data
             builder: (context, userSnapshot) {
               if (userSnapshot.connectionState == ConnectionState.waiting) {
                 return Center(child: CircularProgressIndicator());
@@ -54,10 +54,10 @@ class AuthCheck extends StatelessWidget {
     );
   }
 
-  Future<UserModel?> getUserModel(String uid) async {
+  Future<UserModel?> getUserModel(String? email) async {
     try {
       DocumentSnapshot<Map<String, dynamic>> doc =
-          await FirebaseFirestore.instance.collection('users').doc(uid).get();
+          await FirebaseFirestore.instance.collection('users').doc(email).get();
       if (doc.exists) {
         return UserModel.fromJson(doc.data()!);
       } else {

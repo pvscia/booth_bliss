@@ -1,6 +1,5 @@
 import 'package:booth_bliss/model/user_model.dart';
 import 'package:booth_bliss/view/MainScreenController.dart';
-import 'package:booth_bliss/view/bottom_navbar.dart';
 import 'package:flutter/material.dart';
 import '02_Home_Page/home_view.dart';
 import '04_Custom_Page/view/custom_view.dart';
@@ -35,7 +34,9 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   Future<void> getUser() async{
-    currUser = (await MainScreenController().getUser())!;
+    setState(() async {
+      currUser = (await MainScreenController().getUser())!;
+    });
   }
 
 

@@ -50,12 +50,7 @@ class FrameEditorPageState extends State<FrameEditorView> {
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.black),
           onPressed: (){
-            Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(
-                builder: (context) => MainScreen(idx: 1,user: widget.user,), // The page you want to navigate to
-              ),
-                  (Route<dynamic> route) => false, // This removes all the previous routes
-            );
+            Navigator.of(context).pop();
           },
         ),
         actions: [
