@@ -2,7 +2,6 @@ import 'package:booth_bliss/firebase_options.dart';
 import 'package:booth_bliss/view/01_Front_page/view/login_view.dart';
 import 'package:booth_bliss/view/01_Front_page/view/sign_in_up_view.dart';
 import 'package:booth_bliss/view/01_Front_page/view/sign_up_view.dart';
-import 'package:booth_bliss/view/main_screen_view.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/services.dart';
