@@ -1,15 +1,7 @@
-import 'dart:io';
-import 'dart:typed_data';
-
+import 'package:booth_bliss/view/04_Custom_Page/controller/frame_edit_controller.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:image_gallery_saver/image_gallery_saver.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:path_provider/path_provider.dart';
-import 'dart:ui' as ui;
-
-
-
 import 'add_sticker.dart';
 import 'add_text.dart';
 
@@ -21,10 +13,20 @@ class FrameEditorView extends StatefulWidget {
 class FrameEditorPageState extends State<FrameEditorView> {
   List<Widget> widgets = [];
   final ImagePicker _picker = ImagePicker();
-  bool _showDeletebtn = false;
+  bool _showDeleteBtn = false;
   bool _isDeleteBtnActive = false;
   Color _bgColor = Colors.white;
   final GlobalKey _globalKey = GlobalKey();
+  final FrameEditController controller = FrameEditController();
+  int idxClipPath = 1;
+
+  List<CustomClipper<Path>?> clippers = [
+    PhotoGrid1Clipper(),
+    PhotoGrid2x2Clipper(),
+    PhotoGrid2x2StairClipper(),
+    PhotoGrid2x3Clipper(),
+  ];
+
 
   @override
   Widget build(BuildContext context) {
@@ -39,21 +41,9 @@ class FrameEditorPageState extends State<FrameEditorView> {
           onPressed: () => Navigator.of(context).pop(),
         ),
         actions: [
-          IconButton(
-            icon: Icon(Icons.undo, color: Colors.black),
-            onPressed: () {
-              // Handle undo
-            },
-          ),
-          IconButton(
-            icon: Icon(Icons.redo, color: Colors.black),
-            onPressed: () {
-              // Handle redo
-            },
-          ),
           TextButton(
             onPressed: () {
-              // Handle done
+              controller.capturePng(_globalKey);
             },
             child: Text(
               'Done',
@@ -64,46 +54,46 @@ class FrameEditorPageState extends State<FrameEditorView> {
       ),
       body: Column(
         children: [
-          // Frame Area (Background + Polaroid Frames)
           Expanded(
-            child: Stack(
-              children: [
-                // Background Image
-                Center(
-                  child: RepaintBoundary(
-                    key: _globalKey,
-                    child: ClipPath(
-                      clipper: PhotoGridClipper(),
-                      child: Container(
-                        width : MediaQuery.sizeOf(context).width - 50,
-                        height : MediaQuery.sizeOf(context).height - 200,
-                        decoration: BoxDecoration(
-                          color: _bgColor,
-                          image: DecorationImage(
-                            image: AssetImage(
-                                'assets/logo.png'), // Your background image
-                            fit: BoxFit.cover,
+            child: Container(
+              color: Colors.pink[50],
+              child: Center(
+                child: RepaintBoundary(
+                  key: _globalKey,
+                  child: SizedBox(
+                    width : 148*2.3,
+                    height : 210*2.3,
+                    child: Stack(
+                      children: [
+                        // Background Image
+                        ClipPath(
+                          clipper: clippers[idxClipPath],
+                          child: Container(
+                            width : 148*2.3,
+                            height : 210*2.3,
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: Colors.black, // Border color
+                                width: 1.0,
+                              ),
+                              color: _bgColor,
+                            ),
                           ),
                         ),
-                      ),
+                        ...widgets,
+                        if(_showDeleteBtn)
+                          Align(
+                            alignment: Alignment.bottomCenter,
+                            child: Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: Icon(Icons.delete, size: _isDeleteBtnActive ? 38 : 28, color: _isDeleteBtnActive ? Colors.red: Colors.grey,),
+                            ),
+                          ),
+                      ],
                     ),
                   ),
                 ),
-                // Polaroid Frames
-                 Stack(
-                   children: [
-                     ...widgets,
-                     if(_showDeletebtn)
-                     Align(
-                       alignment: Alignment.bottomCenter,
-                       child: Padding(
-                         padding: const EdgeInsets.all(60.0),
-                         child: Icon(Icons.delete, size: _isDeleteBtnActive ? 38 : 28, color: _isDeleteBtnActive ? Colors.red: Colors.grey,),
-                       ),
-                     ),
-                   ]
-                 )
-              ],
+              ),
             ),
           ),
 
@@ -114,10 +104,13 @@ class FrameEditorPageState extends State<FrameEditorView> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                _buildToolbarItem(Icons.grid_on, 'Layout'),
+                GestureDetector(
+                  onTap: _showImageGrid, // Call the method to show the grid
+                  child: _buildToolbarItem(Icons.grid_on, 'Layout'),
+                ),
                 GestureDetector(
                     onTap: () {
-                      _showColorPalette(); // Show color palette dialog
+                      _showColorPicker(); // Show color palette dialog
                     },
                     child: _buildToolbarItem(Icons.image, 'Backgrounds')
                 ),
@@ -132,16 +125,16 @@ class FrameEditorPageState extends State<FrameEditorView> {
                             key: Key(widgets.length.toString()),
                             imagePath: imageFile.path,
                             onDragStart: () {
-                              if(!_showDeletebtn){
+                              if(!_showDeleteBtn){
                                 setState(() {
-                                  _showDeletebtn = true;
+                                  _showDeleteBtn = true;
                                 });
                               }
                             },
                             onDragEnd: (Offset offset, Key? key) {
-                              if(_showDeletebtn){
+                              if(_showDeleteBtn){
                                 setState(() {
-                                  _showDeletebtn = false;
+                                  _showDeleteBtn = false;
                                 });
                               }
 
@@ -178,16 +171,16 @@ class FrameEditorPageState extends State<FrameEditorView> {
                           ResizableText(
                             key: Key(widgets.length.toString()),
                             onDragStart: () {
-                              if(!_showDeletebtn){
+                              if(!_showDeleteBtn){
                                 setState(() {
-                                  _showDeletebtn = true;
+                                  _showDeleteBtn = true;
                                 });
                               }
                             },
                             onDragEnd: (Offset offset, Key? key) {
-                              if(_showDeletebtn){
+                              if(_showDeleteBtn){
                                 setState(() {
-                                  _showDeletebtn = false;
+                                  _showDeleteBtn = false;
                                 });
                               }
 
@@ -216,7 +209,6 @@ class FrameEditorPageState extends State<FrameEditorView> {
                     },
                     child: _buildToolbarItem(Icons.text_fields, 'Text')
                 ),
-                _buildToolbarItem(Icons.brush, 'Draw'),
               ],
             ),
           ),
@@ -225,7 +217,55 @@ class FrameEditorPageState extends State<FrameEditorView> {
     );
   }
 
+  void _showImageGrid() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Select Layout'),
+          content: Container(
+            width: double.maxFinite, // Set width for the dialog
+            height: 200, // Set height for the dialog
+            child: GridView.count(
+              crossAxisCount: 2, // 2 columns
+              children: [
+                _buildGridImage('assets/layout_1.jpg',0),
+                _buildGridImage('assets/layout_2.jpg',1),
+                _buildGridImage('assets/layout_3.jpg',2),
+                _buildGridImage('assets/layout_4.jpg',3),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Close'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
+  Widget _buildGridImage(String assetPath,int idx) {
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          idxClipPath = idx;
+        });
+        Navigator.of(context).pop();
+      },
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Image.asset(
+          assetPath,
+          fit: BoxFit.fitHeight,
+        ),
+      ),
+    );
+  }
 
   Future<XFile?> _pickImage() async {
     final XFile? imageFile = await _picker.pickImage(source: ImageSource.gallery);
@@ -246,7 +286,10 @@ class FrameEditorPageState extends State<FrameEditorView> {
     );
   }
 
-  void _showColorPalette() {
+
+  void _showColorPicker() {
+    Color selectedColor = _bgColor; // Use the current background color as the initial value
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -254,83 +297,39 @@ class FrameEditorPageState extends State<FrameEditorView> {
           title: Text('Select Background Color'),
           content: SingleChildScrollView(
             child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: _buildColorOptions(),
+              children: [
+                // Color Picker
+                ColorPicker(
+                  pickerColor: selectedColor,
+                  enableAlpha: false,
+                  onColorChanged: (Color color) {
+                    setState(() {
+                      selectedColor = color; // Update the selected color
+                    });
+                  },
+                  pickerAreaHeightPercent: 0.7,
+                ),
+                SizedBox(height: 20),
+                TextButton(
+                  onPressed: () {
+                    setState(() {
+                      _bgColor = selectedColor; // Set the background color
+                    });
+                    Navigator.of(context).pop(); // Close the dialog
+                  },
+                  child: Text('Select Color'),
+                ),
+              ],
             ),
           ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text('Close'),
-            ),
-          ],
         );
       },
     );
   }
 
-  List<Widget> _buildColorOptions() {
-    List<Color> colors = [
-      Colors.red,
-      Colors.green,
-      Colors.blue,
-      Colors.yellow,
-      Colors.orange,
-      Colors.purple,
-      Colors.transparent,
-    ];
-
-    return colors.map((color) {
-      return GestureDetector(
-        onTap: () {
-          setState(() {
-            _bgColor = color; // Change background color
-          });
-          Navigator.of(context).pop(); // Close the dialog after selection
-        },
-        child: Container(
-          width: 40,
-          height: 40,
-          margin: const EdgeInsets.symmetric(vertical: 4),
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: color,
-            border: Border.all(
-              color: Colors.black,
-              width: 1,
-            ),
-          ),
-        ),
-      );
-    }).toList();
-  }
-
-  Future<void> _capturePng() async {
-    try {
-      var filename = 'captured_widget.png';
-      RenderRepaintBoundary boundary = _globalKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
-      var image = await boundary.toImage();
-      ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
-      if (byteData != null) {
-        final pngBytes = byteData.buffer.asUint8List();
-        final file = await getTemporaryDirectory();
-        final filePath = join(file.path, filename);
-        final fileResult = await File(filePath).writeAsBytes(pngBytes);
-
-        // Save to the gallery using ImageGallerySaver
-        final result = await ImageGallerySaver.saveFile(fileResult.path,name :filename);
-        print("Image saved to gallery: $result");
-      }
-    } catch (e) {
-      print("Error during export: $e");
-    }
-  }
-
 }
 
-class PhotoGridClipper extends CustomClipper<Path> {
+class PhotoGrid2x3Clipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
     Path path = Path();
@@ -349,6 +348,82 @@ class PhotoGridClipper extends CustomClipper<Path> {
     path.addRect(Rect.fromLTWH(size.width - width - gapX,height*2 + gapY*3, width, height)); // Top left
 
 
+    // Set fill type to evenOdd for transparency
+    path.fillType = PathFillType.evenOdd;
+
+    return path;
+  }
+
+  @override
+  bool shouldReclip(CustomClipper<Path> oldClipper) => true;
+}
+
+class PhotoGrid2x2Clipper extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    Path path = Path();
+    double width = size.width *3 /7;
+    double height = size.height /2.5;
+    double gapX = (size.width - (width*2))/3;
+    double gapY = ((size.height*7/8) - (height*2))/2;
+
+    // Draw the outer rectangle
+    path.addRect(Rect.fromLTWH(0, 0, size.width, size.height));
+    path.addRect(Rect.fromLTWH(gapX, gapY, width, height)); // Top left
+    path.addRect(Rect.fromLTWH(size.width - width - gapX, gapY, width, height)); // Top left
+    path.addRect(Rect.fromLTWH(gapX, height + gapY*2, width, height)); // Top left
+    path.addRect(Rect.fromLTWH(size.width - width - gapX,height + gapY*2, width, height)); // Top left
+
+    // Set fill type to evenOdd for transparency
+    path.fillType = PathFillType.evenOdd;
+
+    return path;
+  }
+
+  @override
+  bool shouldReclip(CustomClipper<Path> oldClipper) => true;
+}
+
+class PhotoGrid2x2StairClipper extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    Path path = Path();
+    double width = size.width *3 /7;
+    double height = size.height /2.5;
+    double gapX = (size.width - (width*2))/3;
+    double gapY = ((size.height*7/8) - (height*2))/2;
+
+
+    // Draw the outer rectangle
+    path.addRect(Rect.fromLTWH(0, 0, size.width, size.height));
+    path.addRect(Rect.fromLTWH(gapX, gapY, width, height)); // Top left
+    path.addRect(Rect.fromLTWH(size.width - width - gapX, size.height*1/8, width, height)); // Top left
+    path.addRect(Rect.fromLTWH(gapX, height + gapY*2, width, height)); // Top left
+    path.addRect(Rect.fromLTWH(size.width - width - gapX,height + gapY + size.height*1/8, width, height)); // Top left
+
+    // Set fill type to evenOdd for transparency
+    path.fillType = PathFillType.evenOdd;
+
+    return path;
+  }
+
+  @override
+  bool shouldReclip(CustomClipper<Path> oldClipper) => true;
+}
+
+class PhotoGrid1Clipper extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    Path path = Path();
+    double width = size.width *0.9;
+    double height = size.height *6.5/8;
+    double gapX = (size.width - width)/2;
+    double gapY = (size.height*7/8) - height;
+
+
+    // Draw the outer rectangle
+    path.addRect(Rect.fromLTWH(0, 0, size.width, size.height));
+    path.addRect(Rect.fromLTWH(gapX, gapY, width, height)); // Top left
     // Set fill type to evenOdd for transparency
     path.fillType = PathFillType.evenOdd;
 
