@@ -3,19 +3,49 @@ import 'package:flutter/material.dart';
 import 'frame_edit_view.dart';
 
 class CustomView extends StatelessWidget {
+  final List<String> images = [
+    'assets/layout_1.jpg',
+    'assets/layout_2.jpg',
+    'assets/layout_3.jpg',
+    'assets/layout_4.jpg',
+  ];
+
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: ElevatedButton(
-        onPressed: () {
-          // Navigate to FrameEditorPage when the button is pressed
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => FrameEditorView()),
-            // MaterialPageRoute(builder: (context) => ImageManipulatorPage()),
-          );
-        },
-        child: Text('Go to Frame Editor'),
+    return Scaffold(
+      appBar: AppBar(
+          backgroundColor: Colors.pink[50],
+          elevation: 0,
+          title: Text('Choose Frame', style: TextStyle(color: Colors.black)),
+          centerTitle: true,
+      ),
+      body: Center(
+        child: SizedBox(
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height,
+          child: GridView.builder(
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2, // 2x2 grid
+              crossAxisSpacing: 7,
+              mainAxisSpacing: 10,
+              childAspectRatio: 2/3,
+            ),
+            itemCount: images.length,
+            itemBuilder: (context, index) {
+              return GestureDetector(
+                onTap: () {
+                  Navigator.push(context, MaterialPageRoute(
+                      builder: (context) => FrameEditorView(idx: index))
+                  );
+                },
+                child: Image.asset(
+                  images[index],
+                  // fit: BoxFit.cover,
+                ),
+              );
+            },
+          ),
+        ),
       ),
     );
   }

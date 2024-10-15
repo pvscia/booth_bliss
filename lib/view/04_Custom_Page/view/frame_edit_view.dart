@@ -6,6 +6,8 @@ import 'add_sticker.dart';
 import 'add_text.dart';
 
 class FrameEditorView extends StatefulWidget {
+  final int idx;
+  FrameEditorView({super.key, required this.idx});
   @override
   FrameEditorPageState createState() => FrameEditorPageState();
 }
@@ -26,6 +28,12 @@ class FrameEditorPageState extends State<FrameEditorView> {
     PhotoGrid2x2StairClipper(),
     PhotoGrid2x3Clipper(),
   ];
+
+  @override
+  void initState(){
+    super.initState();
+    idxClipPath = widget.idx;
+  }
 
 
   @override
