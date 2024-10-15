@@ -6,6 +6,7 @@ import 'package:booth_bliss/view/main_screen_view.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'view/01_Front_page/view/splash_screen.dart';
+import 'package:get/get.dart';
 
 void main() async {
   WidgetsFlutterBinding
@@ -27,7 +28,7 @@ final routes = {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(fontFamily: 'MontserratRegular'),
       routes: routes,

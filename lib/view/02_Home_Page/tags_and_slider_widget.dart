@@ -76,12 +76,30 @@ class CategoryButton extends StatefulWidget {
 
 class _CategoryButtonState extends State<CategoryButton> {
   bool isSelected = false;
-  Color buttonColor = Color.fromARGB(
-    Random().nextInt(256),
-    Random().nextInt(256),
-    Random().nextInt(256),
-    Random().nextInt(256),
-  );
+  late Color buttonColor;
+
+  int _randomBrightnessValue() {
+    return 128 + Random().nextInt(128);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    int r = _randomBrightnessValue();
+    int g = _randomBrightnessValue();
+    int b = _randomBrightnessValue();
+    int a = _randomBrightnessValue();
+
+    // Ensure that not all components are 255
+    while (r == 255 && g == 255 && b == 255 && a == 255) {
+      r = _randomBrightnessValue();
+      g = _randomBrightnessValue();
+      b = _randomBrightnessValue();
+      a = _randomBrightnessValue();
+    }
+
+    buttonColor = Color.fromRGBO(r, g, b, a / 255);
+  }
 
   @override
   Widget build(BuildContext context) {

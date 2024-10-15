@@ -1,4 +1,7 @@
+import 'package:booth_bliss/view/07_Detail_Page/detail_main.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/route_manager.dart';
 import 'header_widget.dart';
 import 'tags_and_slider_widget.dart';
 import 'image_grid_widget.dart';
@@ -13,35 +16,51 @@ class _HomeViewState extends State<HomeView> {
     ImageData(
         imageUrl:
             'https://i.pinimg.com/564x/a9/08/92/a90892abfe20695d601263160cbd234f.jpg',
-        categories: ['happy', 'summer']),
+        categories: ['happy', 'summer'],
+        creator: 'John Doe',
+        caption: 'Summer vibes'),
     ImageData(
         imageUrl:
             'https://i.pinimg.com/564x/a9/08/92/a90892abfe20695d601263160cbd234f.jpg',
-        categories: ['sci-fi']),
+        categories: ['sci-fi'],
+        creator: 'Jane Doe',
+        caption: 'Scifi landscape'),
     ImageData(
         imageUrl:
             'https://i.pinimg.com/564x/a9/08/92/a90892abfe20695d601263160cbd234f.jpg',
-        categories: ['summer']),
+        categories: ['summer'],
+        creator: 'Jumadi',
+        caption: 'Summer chilling'),
     ImageData(
         imageUrl:
             'https://i.pinimg.com/564x/a9/08/92/a90892abfe20695d601263160cbd234f.jpg',
-        categories: ['hi']),
+        categories: ['hi'],
+        creator: 'Abang Ganteng',
+        caption: 'Say hi to the world'),
     ImageData(
         imageUrl:
             'https://i.pinimg.com/564x/a9/08/92/a90892abfe20695d601263160cbd234f.jpg',
-        categories: ['happy']),
+        categories: ['happy'],
+        creator: 'Willy Salim',
+        caption: 'Happy Banget Bro'),
     ImageData(
         imageUrl:
             'https://i.pinimg.com/564x/a9/08/92/a90892abfe20695d601263160cbd234f.jpg',
-        categories: ['sci-fi', 'hi']),
+        categories: ['sci-fi', 'hi'],
+        creator: 'Alamak Jang',
+        caption: 'Say Hi to Scifi lovers'),
     ImageData(
         imageUrl:
             'https://i.pinimg.com/564x/a9/08/92/a90892abfe20695d601263160cbd234f.jpg',
-        categories: ['hi', 'happy']),
+        categories: ['hi', 'happy'],
+        creator: 'Bruno Mars',
+        caption: 'Happily Say Hi!!'),
     ImageData(
         imageUrl:
             'https://i.pinimg.com/564x/a9/08/92/a90892abfe20695d601263160cbd234f.jpg',
-        categories: ['summer', 'happy']),
+        categories: ['summer', 'happy'],
+        creator: 'Bu Jumaidah',
+        caption: 'Happy Summer Vacation'),
   ];
 
   List<ImageData> filteredImages = [];
@@ -74,7 +93,15 @@ class _HomeViewState extends State<HomeView> {
                 images: images,
                 onFilter: onFilter,
               ),
-              Flexible(flex: 1, child: ImageGridWidget(images: filteredImages)),
+              Flexible(
+                flex: 1,
+                child: ImageGridWidget(
+                  images: filteredImages,
+                  onTap: (image) {
+                    Get.to(DetailPage(imageData: image));
+                  },
+                ),
+              ),
             ],
           ),
         ),
