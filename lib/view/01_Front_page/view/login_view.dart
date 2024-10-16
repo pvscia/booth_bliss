@@ -59,7 +59,7 @@ class _LoginPageState extends State<LoginPage> {
 
           Navigator.of(context).pushReplacement(
               MaterialPageRoute(
-                builder: (context) => MainScreen(idx: 0,user: user,), // The page you want to navigate to
+                builder: (context) => MainScreen(idx: 0), // The page you want to navigate to
               )
           );
         });

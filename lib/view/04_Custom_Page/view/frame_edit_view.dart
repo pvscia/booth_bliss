@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:booth_bliss/view/04_Custom_Page/controller/frame_edit_controller.dart';
-import 'package:booth_bliss/view/main_screen_view.dart';
+import 'package:booth_bliss/view/04_Custom_Page/view/post_frame.dart';
+import 'package:booth_bliss/view/Utils/view_dialog_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:image_picker/image_picker.dart';
@@ -50,19 +53,38 @@ class FrameEditorPageState extends State<FrameEditorView> {
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.black),
           onPressed: (){
-            Navigator.of(context).pop();
+            ViewDialogUtil().showYesNoActionDialog(
+                'Changes will not be saved, are you sure to go back?',
+                'Yes',
+                'No',
+                context,
+                (){
+                  Navigator.of(context).pop();
+                },
+                (){});
           },
         ),
         actions: [
           TextButton(
-            onPressed: () async {
-              await controller.capturePng(_globalKey);
-              Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(
-                  builder: (context) => MainScreen(idx: 1,user: widget.user,), // The page you want to navigate to
-                ),
-                    (Route<dynamic> route) => false, // This removes all the previous routes
-              );
+            onPressed: (){
+              ViewDialogUtil().showYesNoActionDialog(
+                  'Save Frame?',
+                  'Yes',
+                  'No',
+                  context,
+                      () async {
+                        ViewDialogUtil().showLoadingDialog(context);
+                        File? result = await controller.capturePng(_globalKey);
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          Navigator.of(context).pop();
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => PostFrameView(framePng: result!, user: widget.user,), // The page you want to navigate to
+                            ),
+                          );
+                        });
+                  },
+                      (){});
             },
             child: Text(
               'Done',
@@ -345,7 +367,6 @@ class FrameEditorPageState extends State<FrameEditorView> {
       },
     );
   }
-
 }
 
 class PhotoGrid2x3Clipper extends CustomClipper<Path> {
