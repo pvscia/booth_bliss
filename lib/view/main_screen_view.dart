@@ -1,5 +1,5 @@
 import 'package:booth_bliss/model/user_model.dart';
-import 'package:booth_bliss/view/MainScreenController.dart';
+import 'package:booth_bliss/view/main_screen_controller.dart';
 import 'package:flutter/material.dart';
 import '02_Home_Page/home_view.dart';
 import '04_Custom_Page/view/custom_view.dart';
@@ -8,8 +8,7 @@ import '06_Profile_Page/view/profile_view.dart';
 
 class MainScreen extends StatefulWidget {
   final int idx;
-  final UserModel user;
-  const MainScreen({super.key, required this.idx, required this.user});
+  const MainScreen({super.key, required this.idx});
 
   @override
   _MainScreenState createState() => _MainScreenState();
@@ -17,7 +16,7 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
-  late UserModel currUser;
+  UserModel? currUser;
 
   void _onItemTapped(int index) {
     setState(() {
@@ -43,18 +42,21 @@ class _MainScreenState extends State<MainScreen> {
 
   // Instead of storing widgets in a list, dynamically create them in build method
   Widget _getSelectedPage(int index) {
-    switch (index) {
-      case 0:
-        return HomeView();
-      case 1:
-        return CustomView(user: currUser);
-      case 2:
-        return ScanQR();
-      case 3:
-        return ProfileView(user: currUser);  // ProfileView will refresh
-      default:
-        return HomeView();
+    if(currUser!= null){
+      switch (index) {
+        case 0:
+          return HomeView();
+        case 1:
+          return CustomView(user: currUser!);
+        case 2:
+          return ScanQR();
+        case 3:
+          return ProfileView(user: currUser!);  // ProfileView will refresh
+        default:
+          return HomeView();
+      }
     }
+    return HomeView();
   }
 
   @override

@@ -30,7 +30,7 @@ class AuthCheck extends StatelessWidget {
                   // UserModel is ready, navigate to the home screen after the build phase
                   Navigator.of(context).pushReplacement(
                       MaterialPageRoute(
-                        builder: (context) => MainScreen(idx: 0,user: userSnapshot.data!), // The page you want to navigate to
+                        builder: (context) => MainScreen(idx: 0), // The page you want to navigate to
                       ),
                   );
                 } else {

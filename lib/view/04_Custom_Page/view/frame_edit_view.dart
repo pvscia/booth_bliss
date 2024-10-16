@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:booth_bliss/view/04_Custom_Page/controller/frame_edit_controller.dart';
-import 'package:booth_bliss/view/main_screen_view.dart';
+import 'package:booth_bliss/view/04_Custom_Page/view/post_frame.dart';
+import 'package:booth_bliss/view/Utils/view_dialog_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:image_picker/image_picker.dart';
@@ -30,6 +33,8 @@ class FrameEditorPageState extends State<FrameEditorView> {
     PhotoGrid2x2Clipper(),
     PhotoGrid2x2StairClipper(),
     PhotoGrid2x3Clipper(),
+    PhotoGrid1CircleClipper(),
+    PhotoGrid2x3CircleClipper(),
   ];
 
   @override
@@ -50,19 +55,38 @@ class FrameEditorPageState extends State<FrameEditorView> {
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.black),
           onPressed: (){
-            Navigator.of(context).pop();
+            ViewDialogUtil().showYesNoActionDialog(
+                'Changes will not be saved, are you sure to go back?',
+                'Yes',
+                'No',
+                context,
+                (){
+                  Navigator.of(context).pop();
+                },
+                (){});
           },
         ),
         actions: [
           TextButton(
-            onPressed: () async {
-              await controller.capturePng(_globalKey);
-              Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(
-                  builder: (context) => MainScreen(idx: 1,user: widget.user,), // The page you want to navigate to
-                ),
-                    (Route<dynamic> route) => false, // This removes all the previous routes
-              );
+            onPressed: (){
+              ViewDialogUtil().showYesNoActionDialog(
+                  'Save Frame?',
+                  'Yes',
+                  'No',
+                  context,
+                      () async {
+                        ViewDialogUtil().showLoadingDialog(context);
+                        File? result = await controller.capturePng(_globalKey);
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          Navigator.of(context).pop();
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => PostFrameView(framePng: result!, user: widget.user,), // The page you want to navigate to
+                            ),
+                          );
+                        });
+                  },
+                      (){});
             },
             child: Text(
               'Done',
@@ -252,6 +276,8 @@ class FrameEditorPageState extends State<FrameEditorView> {
                 _buildGridImage('assets/layout_2.jpg',1),
                 _buildGridImage('assets/layout_3.jpg',2),
                 _buildGridImage('assets/layout_4.jpg',3),
+                _buildGridImage('assets/layout_5.jpg',4),
+                _buildGridImage('assets/layout_6.jpg',5),
               ],
             ),
           ),
@@ -345,7 +371,6 @@ class FrameEditorPageState extends State<FrameEditorView> {
       },
     );
   }
-
 }
 
 class PhotoGrid2x3Clipper extends CustomClipper<Path> {
@@ -443,6 +468,56 @@ class PhotoGrid1Clipper extends CustomClipper<Path> {
     // Draw the outer rectangle
     path.addRect(Rect.fromLTWH(0, 0, size.width, size.height));
     path.addRect(Rect.fromLTWH(gapX, gapY, width, height)); // Top left
+    // Set fill type to evenOdd for transparency
+    path.fillType = PathFillType.evenOdd;
+
+    return path;
+  }
+
+  @override
+  bool shouldReclip(CustomClipper<Path> oldClipper) => true;
+}
+
+class PhotoGrid1CircleClipper extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    Path path = Path();
+    double width = size.width *0.9;
+    double height = size.height *6.5/8;
+    double gapX = (size.width - width)/2;
+    double gapY = (size.height*7/8) - height;
+
+
+    // Draw the outer rectangle
+    path.addRect(Rect.fromLTWH(0, 0, size.width, size.height));
+    path.addOval(Rect.fromCircle(center: Offset(width/2+gapX, width/2+gapY), radius: width/2)); // Top left
+    // Set fill type to evenOdd for transparency
+    path.fillType = PathFillType.evenOdd;
+
+    return path;
+  }
+
+  @override
+  bool shouldReclip(CustomClipper<Path> oldClipper) => true;
+}
+
+class PhotoGrid2x3CircleClipper extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    Path path = Path();
+    double width = size.width *3 /7;
+    double height = size.height /2.5;
+    double gapX = (size.width - (width*2))/3;
+    double gapY = ((size.height*7/8) - (height*2))/3;
+
+    // Draw the outer rectangle
+    path.addRect(Rect.fromLTWH(0, 0, size.width, size.height));
+    path.addOval(Rect.fromCircle(center: Offset(width/2+gapX, width/2+gapY), radius: width/2)); // Top left
+    path.addOval(Rect.fromCircle(center: Offset(width/2+gapX*2+width, width/2+gapY), radius: width/2)); // Top left
+    path.addOval(Rect.fromCircle(center: Offset(width/2+gapX, width/2+gapY*2 + width), radius: width/2)); // Top left
+    path.addOval(Rect.fromCircle(center: Offset(width/2+gapX*2+width, width/2+gapY*2 + width), radius: width/2)); // Top left
+    path.addOval(Rect.fromCircle(center: Offset(width/2+gapX, width/2+gapY*3 + width*2), radius: width/2)); // Top left
+    path.addOval(Rect.fromCircle(center: Offset(width/2+gapX*2+width, width/2+gapY*3 + width*2), radius: width/2)); // Top left
     // Set fill type to evenOdd for transparency
     path.fillType = PathFillType.evenOdd;
 

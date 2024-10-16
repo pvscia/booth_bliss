@@ -1,187 +1,163 @@
 import 'dart:io';
-import 'dart:ui' as ui;
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/services.dart';
-import 'package:image_gallery_saver/image_gallery_saver.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:path/path.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:uuid/uuid.dart';
 
-
-void main() {
-  runApp(MaterialApp(
-    home: TransparentPhotoGrid(),
-  ));
-}
-
-class TransparentPhotoGrid extends StatefulWidget {
+class NewPostPage extends StatefulWidget {
   @override
-  _TransparentPhotoGridState createState() => _TransparentPhotoGridState();
+  _NewPostPageState createState() => _NewPostPageState();
 }
 
-class _TransparentPhotoGridState extends State<TransparentPhotoGrid> {
-  final GlobalKey _globalKey = GlobalKey();
-  List<Uint8List?> imageList = List.filled(6, null);
+class _NewPostPageState extends State<NewPostPage> {
+  File? _image;
+  final _picker = ImagePicker();
+  final TextEditingController _descriptionController = TextEditingController();
+  List<String> categories = ["Happy", "Excited", "Adventure", "Calm"];
+  List<String> selectedCategories = [];
+  bool isLoading = false;
+
+  Future<void> _pickImage() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      setState(() {
+        _image = File(pickedFile.path);
+      });
+    }
+  }
+
+  Future<void> _postImage() async {
+    if (_image == null || _descriptionController.text.isEmpty || selectedCategories.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Please complete all fields and select an image.'),
+      ));
+      return;
+    }
+
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      // Generate unique file name for the image
+      String fileName = Uuid().v4();
+      User? user = FirebaseAuth.instance.currentUser;
+
+      // Upload the image to Firebase Storage
+      Reference storageReference =
+      FirebaseStorage.instance.ref().child('frames/$fileName.png');
+      await storageReference.putFile(_image!);
+
+      // Get the download URL
+      String imageUrl = await storageReference.getDownloadURL();
+
+      // Save post details in Firestore
+      await FirebaseFirestore.instance.collection('posts').add({
+        'userEmail': user?.email,
+        'description': _descriptionController.text,
+        'categories': selectedCategories,
+        'imageUrl': imageUrl,
+        'timestamp': FieldValue.serverTimestamp(),
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Post uploaded successfully!'),
+      ));
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Failed to upload post: $e'),
+      ));
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Transparent Photo Grid"),
+        title: Text('New Post'),
         actions: [
           IconButton(
-            icon: Icon(Icons.save),
-            onPressed: _capturePng,
-          ),
+            icon: Icon(Icons.check),
+            onPressed: isLoading ? null : _postImage,
+          )
         ],
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: Center(
-              child: RepaintBoundary(
-                key: _globalKey,
-                child:
-                Stack(
-                  children: [
-
-                    ClipPath(
-                      clipper: PhotoGridClipper(),
-                      child: Container(
-                        color: Colors.blue, // Maintain transparency in the clip path
-                      ),
-                    ),
-                    // Photo Grid
-                    GridView.builder(
-                      shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        crossAxisSpacing: 10,
-                        mainAxisSpacing: 10,
-                      ),
-                      itemCount: 6,
-                      itemBuilder: (context, index) {
-                        return GestureDetector(
-                          onTap: () async {
-                            // Load an image from assets on tap
-                            ByteData bytes = await rootBundle.load('assets/img.png');
-                            setState(() {
-                              imageList[index] = bytes.buffer.asUint8List();
-                            });
-                          },
-                          child: Container(
-                            // decoration: BoxDecoration(
-                            //   border: Border.all(color: Colors.black, width: 2),
-                            //   color: Colors.transparent, // Keep the box itself transparent
-                            // ),
-                            child: Stack(
-                              children: [
-                                // Display the photo if available
-                                if (imageList[index] != null)
-                                  Image.memory(
-                                    imageList[index]!,
-                                    fit: BoxFit.cover,
-                                  ),
-                                // Create a transparent overlay for unfilled boxes
-                                if (imageList[index] == null)
-                                  Container(
-                                    color: Colors.transparent, // Maintain transparency for unfilled
-                                  ),
-                              ],
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  ],
-                ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              GestureDetector(
+                onTap: _pickImage,
+                child: _image == null
+                    ? Container(
+                  height: 150,
+                  width: double.infinity,
+                  color: Colors.grey[300],
+                  child: Icon(Icons.add_photo_alternate, size: 100),
+                )
+                    : Image.file(_image!),
               ),
-            ),
+              SizedBox(height: 16),
+              TextField(
+                controller: _descriptionController,
+                decoration: InputDecoration(
+                  hintText: 'Write a caption...',
+                  border: OutlineInputBorder(),
+                ),
+                maxLines: 2,
+              ),
+              SizedBox(height: 16),
+              Text('Add Category:', style: TextStyle(fontSize: 16)),
+              GridView.builder(
+                shrinkWrap: true,
+                itemCount: categories.length,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 3, crossAxisSpacing: 10, mainAxisSpacing: 10),
+                itemBuilder: (context, index) {
+                  String category = categories[index];
+                  bool isSelected = selectedCategories.contains(category);
+                  return GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        if (isSelected) {
+                          selectedCategories.remove(category);
+                        } else {
+                          selectedCategories.add(category);
+                        }
+                      });
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: isSelected ? Colors.green : Colors.grey[200],
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Center(
+                        child: Text(category,
+                            style: TextStyle(
+                                color: isSelected ? Colors.white : Colors.black)),
+                      ),
+                    ),
+                  );
+                },
+              ),
+              SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: isLoading ? null : _postImage,
+                child: isLoading
+                    ? CircularProgressIndicator(color: Colors.white)
+                    : Text('Post'),
+              ),
+            ],
           ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              "Tap on any square to add a photo. When you save, unfilled squares will be transparent.",
-              textAlign: TextAlign.center,
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
-
-  Future<void> _capturePng() async {
-    try {
-      var filename = 'captured_widget.png';
-      RenderRepaintBoundary boundary = _globalKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
-      var image = await boundary.toImage();
-      ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
-      if (byteData != null) {
-        final pngBytes = byteData.buffer.asUint8List();
-        final file = await getTemporaryDirectory();
-        final filePath = join(file.path, filename);
-        final fileResult = await File(filePath).writeAsBytes(pngBytes);
-
-        // Save to the gallery using ImageGallerySaver
-        final result = await ImageGallerySaver.saveFile(fileResult.path,name :filename);
-        print("Image saved to gallery: $result");
-      }
-    } catch (e) {
-      print("Error during export: $e");
-    }
-  }
-}
-
-class PhotoGridClipper extends CustomClipper<Path> {
-  @override
-  Path getClip(Size size) {
-    Path path = Path();
-    double width = size.width *3 /7;
-    double height = size.height /4;
-    // Draw the outer rectangle
-    path.addRect(Rect.fromLTWH(0, 0, size.width, size.height));
-    path.addRect(Rect.fromLTWH(10, 20, width, height)); // Top left
-    path.addRect(Rect.fromLTWH(width + 45, 20, width, height)); // Top left
-    path.addRect(Rect.fromLTWH(10, height + 50, width, height)); // Top left
-    path.addRect(Rect.fromLTWH(width + 45, height + 50, width, height)); // Top left
-    path.addRect(Rect.fromLTWH(10, height * 2 + 80, width, height)); // Top left
-    path.addRect(Rect.fromLTWH(width + 45, height * 2 + 80, width, height)); // Top left
-
-
-    // Set fill type to evenOdd for transparency
-    path.fillType = PathFillType.evenOdd;
-
-    return path;
-  }
-
-  @override
-  bool shouldReclip(CustomClipper<Path> oldClipper) => true;
-}
-
-class PhotoFrameClipper extends CustomClipper<Path> {
-  @override
-  Path getClip(Size size) {
-    // Define the path for the photo frame outline
-    Path path = Path();
-
-    // Define the outer rectangle
-    path.addRect(Rect.fromLTRB(0, 0, size.width, size.height));
-
-    // Define the inner rectangle (cutout for the photo)
-    double cutoutWidth = size.width * 0.8;  // Adjust cutout width
-    double cutoutHeight = size.height * 0.8; // Adjust cutout height
-    path.addRect(Rect.fromLTRB((size.width - cutoutWidth) / 2,
-        (size.height - cutoutHeight) / 2,
-        (size.width + cutoutWidth) / 2,
-        (size.height + cutoutHeight) / 2));
-
-    // Use the difference to create the frame outline
-    path = Path.combine(ui.PathOperation.difference, path, path);
-
-    return path;
-  }
-
-  @override
-  bool shouldReclip(CustomClipper<Path> oldClipper) => true;
 }
