@@ -18,7 +18,7 @@ class ProfileView extends StatefulWidget {
 class ProfileViewState extends State<ProfileView> {
   late UserModel updatedUser;
   String imageUrl = '';
-  int selectedIndex =0;
+  int selectedIndex = 1;
   List<ImageModel> images =[];
   bool isLoading = false;
 
