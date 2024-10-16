@@ -1,7 +1,10 @@
+import 'package:booth_bliss/model/image_model.dart';
 import 'package:booth_bliss/view/06_Profile_Page/controller/profile_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:booth_bliss/model/user_model.dart';
 import 'package:booth_bliss/view/06_Profile_Page/view/edit_profile_view.dart';
+
+import '../../Utils/view_dialog_util.dart';
 
 class ProfileView extends StatefulWidget {
   final UserModel? user;
@@ -15,25 +18,64 @@ class ProfileView extends StatefulWidget {
 class ProfileViewState extends State<ProfileView> {
   late UserModel updatedUser;
   String imageUrl = '';
+  int selectedIndex =0;
+  List<ImageModel> images =[];
+  bool isLoading = false;
 
   @override
-  void initState() {
+  void initState(){
     super.initState();
     updatedUser = widget.user!; // Initialize with the passed user data
     _fetchUserPhoto();
+    _fetchUserCreated();
   }
 
   Future<void> _fetchUserPhoto() async {
+    setState(() {
+      isLoading = true;
+    });
     String? fetchedUrl = '';
     try {
       fetchedUrl = await ProfileController().fetchPhoto(updatedUser.uid);
       setState(() {
         imageUrl = fetchedUrl!;
+        isLoading = false;
       });
     } catch (e) {
       print('Error fetching photo: $e');
       setState(() {
         imageUrl = '';
+        isLoading=false;
+      });
+    }
+  }
+
+  Future<void> _fetchUserResult() async {
+    setState(() {
+      images=[];
+    });
+  }
+
+  Future<void> _fetchUserLiked() async {
+    setState(() {
+      images=[];
+    });
+  }
+
+  Future<void> _fetchUserCreated() async {
+    setState(() {
+      isLoading = true;
+    });
+    try {
+      var temp = await ProfileController().fetchCreated(updatedUser.email ?? '');
+      setState(() {
+        images = temp;
+        isLoading = false;
+      });
+    } catch (e) {
+      print('Error fetching photo: $e');
+      setState(() {
+        isLoading=false;
       });
     }
   }
@@ -52,10 +94,18 @@ class ProfileViewState extends State<ProfileView> {
         actions: [
           IconButton(
             onPressed: () async {
-              await ProfileController().logout();
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                Navigator.pushReplacementNamed(context, '/front_page');
-              });
+              ViewDialogUtil().showYesNoActionDialog(
+                  'Are you sure you want to log out?',
+                  'Yes',
+                  'No',
+                  context,
+                      () async {
+                        await ProfileController().logout();
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          Navigator.pushReplacementNamed(context, '/front_page');
+                        });
+                  },
+                      (){});
             },
             icon: const Icon(
               Icons.logout,
@@ -115,21 +165,51 @@ class ProfileViewState extends State<ProfileView> {
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       TextButton(
-                        onPressed: () {},
-                        child: Text('Results'),
+                        onPressed: () {
+                          _fetchUserResult();
+                          setState(() {
+                            selectedIndex = 0; // Update the selected index
+                          });
+                        },
+                        child: Text(
+                          'Results',
+                          style: TextStyle(
+                            color: selectedIndex == 0 ? Colors.blue : Colors.black,
+                          ),
+                        ),
                       ),
                       TextButton(
-                        onPressed: () {},
-                        child: Text('Created'),
+                        onPressed: () {
+                          _fetchUserCreated();
+                          setState(() {
+                            selectedIndex = 1; // Update the selected index
+                          });
+                        },
+                        child: Text(
+                          'Created',
+                          style: TextStyle(
+                            color: selectedIndex == 1 ? Colors.blue : Colors.black,
+                          ),
+                        ),
                       ),
                       TextButton(
-                        onPressed: () {},
-                        child: Text('Liked'),
+                        onPressed: () {
+                          _fetchUserLiked();
+                          setState(() {
+                            selectedIndex = 2; // Update the selected index
+                          });
+                        },
+                        child: Text(
+                          'Liked',
+                          style: TextStyle(
+                            color: selectedIndex == 2 ? Colors.blue : Colors.black,
+                          ),
+                        ),
                       ),
                     ],
                   ),
                   SizedBox(height: 20),
-                  GridView.builder(
+                  !isLoading ? GridView.builder(
                     shrinkWrap: true,
                     physics: NeverScrollableScrollPhysics(),
                     gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
@@ -138,17 +218,17 @@ class ProfileViewState extends State<ProfileView> {
                       mainAxisSpacing: 8,
                       childAspectRatio: 3 / 5,
                     ),
-                    itemCount: 12,
+                    itemCount: images.length,
                     itemBuilder: (BuildContext context, int index) {
                       return ClipRRect(
                         borderRadius: BorderRadius.circular(20),
                         child: Image.network(
-                          'https://i.pinimg.com/564x/a9/08/92/a90892abfe20695d601263160cbd234f.jpg',
+                          images[index].imageUrl,
                           fit: BoxFit.contain,
                         ),
                       );
                     },
-                  ),
+                  ) : Center(child: CircularProgressIndicator()),
                 ],
               ),
             ),

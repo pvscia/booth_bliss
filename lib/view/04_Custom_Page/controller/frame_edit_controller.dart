@@ -13,7 +13,7 @@ class FrameEditController {
     try {
       var filename = 'captured_widget${Random().nextInt(10000)}.png';
       RenderRepaintBoundary boundary = globalKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
-      var image = await boundary.toImage(pixelRatio: 11);
+      var image = await boundary.toImage(pixelRatio: 9);
       ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
       if (byteData != null) {
         final pngBytes = byteData.buffer.asUint8List();

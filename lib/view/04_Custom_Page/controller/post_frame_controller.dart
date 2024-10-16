@@ -19,7 +19,7 @@ class PostFrameController{
       await storageReference.putFile(image);
 
       // Save post details in Firestore
-      await FirebaseFirestore.instance.collection('posts').add({
+      await FirebaseFirestore.instance.collection('frames').add({
         'userEmail': user?.email,
         'description': desc,
         'categories': categories,

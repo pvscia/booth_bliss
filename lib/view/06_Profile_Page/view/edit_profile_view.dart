@@ -2,6 +2,8 @@ import 'package:booth_bliss/model/user_model.dart';
 import 'package:flutter/material.dart';
 import 'package:booth_bliss/view/06_Profile_Page/controller/edit_profile_controller.dart';
 
+import '../../Utils/view_dialog_util.dart';
+
 class EditProfilePage extends StatefulWidget {
   final UserModel user;
 
@@ -79,32 +81,40 @@ class _EditProfilePageState extends State<EditProfilePage> {
   }
 
   Future<void> _handleSave() async {
-    setState(() {
-      isSaving = true;
-    });
+    ViewDialogUtil().showYesNoActionDialog(
+        'Save Frame?',
+        'Yes',
+        'No',
+        context,
+            () async {
+          ViewDialogUtil().showLoadingDialog(context);
+          try {
+            var updatedProfile = await _controller.saveProfile(
+                firstName: _firstNameController.text,
+                lastName: _lastNameController.text,
+                bio: _bioController.text,
+                mUser: mUser);
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              Navigator.of(context).pop();
+              ViewDialogUtil().showOneButtonActionDialog(
+                  'Frame Saved',
+                  'Ok',
+                  'success.gif',
+                  context,
+                      (){
+                        Navigator.pop(context, updatedProfile);
+                  });
 
-    try {
-      var updatedProfile = await _controller.saveProfile(
-          firstName: _firstNameController.text,
-          lastName: _lastNameController.text,
-          bio: _bioController.text,
-          mUser: mUser);
-      setState(() {
-        isSaving = false;
-      });
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        isValid ? Navigator.pop(context, updatedProfile) : null;
-      });
-    } catch (e) {
-      setState(() {
-        isSaving = false;
-      });
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to save profile: ${e.toString()}')),
-        );
-      });
-    }
+            });
+          } catch (e) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Failed to save profile: ${e.toString()}')),
+              );
+            });
+          }
+        },
+            (){});
   }
 
   Future<void> _removeProfile() async {
@@ -144,7 +154,15 @@ class _EditProfilePageState extends State<EditProfilePage> {
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () {
-              Navigator.pop(context);
+              ViewDialogUtil().showYesNoActionDialog(
+                  'Changes will not be saved, are you sure to go back?',
+                  'Yes',
+                  'No',
+                  context,
+                      (){
+                    Navigator.of(context).pop();
+                  },
+                      (){});
             },
           ),
           actions: [
