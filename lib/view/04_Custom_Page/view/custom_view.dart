@@ -10,6 +10,8 @@ class CustomView extends StatelessWidget {
     'assets/layout_2.jpg',
     'assets/layout_3.jpg',
     'assets/layout_4.jpg',
+    'assets/layout_5.jpg',
+    'assets/layout_6.jpg',
   ];
 
   CustomView({super.key, required this.user});
