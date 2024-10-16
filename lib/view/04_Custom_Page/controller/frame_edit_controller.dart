@@ -5,7 +5,6 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/rendering.dart';
-import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
