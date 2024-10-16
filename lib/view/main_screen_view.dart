@@ -34,8 +34,9 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   Future<void> getUser() async{
-    setState(() async {
-      currUser = (await MainScreenController().getUser())!;
+    UserModel? temp = await MainScreenController().getUser();
+    setState(() {
+      currUser = temp!;
     });
   }
 

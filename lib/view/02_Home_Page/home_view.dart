@@ -85,25 +85,23 @@ class _HomeViewState extends State<HomeView> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        body: Expanded(
-          child: Column(
-            children: [
-              HeaderWidget(),
-              TagsAndSliderWidget(
-                images: images,
-                onFilter: onFilter,
+        body: Column(
+          children: [
+            HeaderWidget(),
+            TagsAndSliderWidget(
+              images: images,
+              onFilter: onFilter,
+            ),
+            Flexible(
+              flex: 1,
+              child: ImageGridWidget(
+                images: filteredImages,
+                onTap: (image) {
+                  Get.to(DetailPage(imageData: image));
+                },
               ),
-              Flexible(
-                flex: 1,
-                child: ImageGridWidget(
-                  images: filteredImages,
-                  onTap: (image) {
-                    Get.to(DetailPage(imageData: image));
-                  },
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
