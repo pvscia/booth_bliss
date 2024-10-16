@@ -21,7 +21,7 @@ class ConstantVar{
     "Vintage Retro", "Fantasy", "Medieval", "Renaissance",
     "Trendy", "Boisterous", "Muted Pastel", "Cool", "Warm", "Muted Tones",
     "Luxurious", "Chilled", "Rebellious", "Experimental", "Organic",
-    "Radiant", "Timeless", "Introspective"
+    "Radiant", "Timeless", "Introspective",'Sci-fi'
   ];
 
 }
