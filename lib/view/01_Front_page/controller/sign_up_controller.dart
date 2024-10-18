@@ -73,7 +73,7 @@ class SignUpController {
     try {
       final String userId = user.user!.uid;
       DocumentReference docRef =
-          FirebaseFirestore.instance.collection('users').doc(userId);
+          FirebaseFirestore.instance.collection('users').doc(emailController.text);
       await docRef.set({
         'first_name': firstNameController.text,
         'last_name': lastNameController.text,

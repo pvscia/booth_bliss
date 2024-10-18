@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:booth_bliss/view/01_Front_page/controller/login_controller.dart';
 import 'package:booth_bliss/model/user_model.dart';
 
+import '../../bottom_nav_bar_view.dart';
+
 class LoginPage extends StatefulWidget {
   @override
   _LoginPageState createState() => _LoginPageState();
@@ -55,7 +57,11 @@ class _LoginPageState extends State<LoginPage> {
             SnackBar(content: Text('Login successful!')),
           );
 
-          Navigator.of(context).pushReplacementNamed("/home", arguments: user);
+          Navigator.of(context).pushReplacement(
+              MaterialPageRoute(
+                builder: (context) => BottomNavBarMain(idx: 0), // The page you want to navigate to
+              )
+          );
         });
       } else {
         setState(() {

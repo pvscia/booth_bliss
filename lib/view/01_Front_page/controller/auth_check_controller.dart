@@ -3,6 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import '../../bottom_nav_bar_view.dart';
+
 class AuthCheck extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -18,7 +20,7 @@ class AuthCheck extends StatelessWidget {
           User? firebaseUser = snapshot.data;
 
           return FutureBuilder<UserModel?>(
-            future: getUserModel(firebaseUser!.uid), // Retrieve user data
+            future: getUserModel(firebaseUser!.email), // Retrieve user data
             builder: (context, userSnapshot) {
               if (userSnapshot.connectionState == ConnectionState.waiting) {
                 return Center(child: CircularProgressIndicator());
@@ -26,8 +28,11 @@ class AuthCheck extends StatelessWidget {
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 if (userSnapshot.hasData) {
                   // UserModel is ready, navigate to the home screen after the build phase
-                  Navigator.pushReplacementNamed(context, '/home',
-                      arguments: userSnapshot.data!);
+                  Navigator.of(context).pushReplacement(
+                      MaterialPageRoute(
+                        builder: (context) => BottomNavBarMain(idx: 0), // The page you want to navigate to
+                      ),
+                  );
                 } else {
                   // If there's no user data, show an error or redirect to login
                   Navigator.pushReplacementNamed(context, '/front_page');
@@ -49,10 +54,10 @@ class AuthCheck extends StatelessWidget {
     );
   }
 
-  Future<UserModel?> getUserModel(String uid) async {
+  Future<UserModel?> getUserModel(String? email) async {
     try {
       DocumentSnapshot<Map<String, dynamic>> doc =
-          await FirebaseFirestore.instance.collection('users').doc(uid).get();
+          await FirebaseFirestore.instance.collection('users').doc(email).get();
       if (doc.exists) {
         return UserModel.fromJson(doc.data()!);
       } else {

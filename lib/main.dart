@@ -2,10 +2,11 @@ import 'package:booth_bliss/firebase_options.dart';
 import 'package:booth_bliss/view/01_Front_page/view/login_view.dart';
 import 'package:booth_bliss/view/01_Front_page/view/sign_in_up_view.dart';
 import 'package:booth_bliss/view/01_Front_page/view/sign_up_view.dart';
-import 'package:booth_bliss/view/main_screen_view.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/services.dart';
 import 'view/01_Front_page/view/splash_screen.dart';
+import 'package:get/get.dart';
 
 void main() async {
   WidgetsFlutterBinding
@@ -13,7 +14,10 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(MyApp());
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
+      .then((_) {
+    runApp(MyApp());
+  });
 }
 
 final routes = {
@@ -21,13 +25,14 @@ final routes = {
   '/login': (BuildContext context) => LoginPage(),
   '/register': (BuildContext context) => SignUpPage(),
   '/front_page': (BuildContext context) => SignInUpView(),
-  '/home': (BuildContext context) => const MainScreen(),
 };
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(fontFamily: 'MontserratRegular'),
       routes: routes,
     );
   }
