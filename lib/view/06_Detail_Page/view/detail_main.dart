@@ -1,4 +1,5 @@
 import 'package:booth_bliss/model/image_model.dart';
+import 'package:booth_bliss/view/06_Detail_Page/controller/detail_controller.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 
@@ -13,6 +14,35 @@ class DetailPage extends StatefulWidget {
 
 class _DetailPageState extends State<DetailPage> {
   bool _isHeartPressed = false;
+  String profileUrl = '';
+  bool isLoading = false;
+
+  @override
+  void initState(){
+    super.initState();
+    _fetchUserPhoto();
+
+  }
+
+  Future<void> _fetchUserPhoto() async {
+    setState(() {
+      isLoading = true;
+    });
+    String? fetchedUrl = '';
+    try {
+      fetchedUrl = await DetailController().fetchProfilePhoto(widget.imageData.user.uid);
+      setState(() {
+        profileUrl = fetchedUrl!;
+        isLoading = false;
+      });
+    } catch (e) {
+      print('Error fetching photo: $e');
+      setState(() {
+        profileUrl = '';
+        isLoading=false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +54,7 @@ class _DetailPageState extends State<DetailPage> {
     }
 
     return SafeArea(
-      child: Scaffold(
+      child: !isLoading ? Scaffold(
         backgroundColor: Colors.grey[100],
         body: SingleChildScrollView(
           child: Column(
@@ -69,10 +99,9 @@ class _DetailPageState extends State<DetailPage> {
                       children: [
                         CircleAvatar(
                           radius: screenWidth * 0.07,
-                          backgroundImage: NetworkImage(
-                            widget.imageData
-                                .imageUrl, // Use the selected image URL
-                          ),
+                          backgroundImage: profileUrl.isNotEmpty
+                              ? NetworkImage(profileUrl.toString())
+                              : AssetImage('assets/default-user.png') as ImageProvider,
                         ),
                         SizedBox(width: screenWidth * 0.03),
                         Column(
@@ -166,7 +195,7 @@ class _DetailPageState extends State<DetailPage> {
             ],
           ),
         ),
-      ),
+      ) : Center(child: CircularProgressIndicator()),
     );
   }
 }
