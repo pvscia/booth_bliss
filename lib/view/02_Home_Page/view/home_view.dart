@@ -1,8 +1,6 @@
 import 'package:booth_bliss/view/02_Home_Page/controller/home_controller.dart';
 import 'package:booth_bliss/view/07_Detail_Page/view/detail_main.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get/route_manager.dart';
 import '../../../model/image_model.dart';
 import 'header_widget.dart';
 import 'tags_and_slider_widget.dart';

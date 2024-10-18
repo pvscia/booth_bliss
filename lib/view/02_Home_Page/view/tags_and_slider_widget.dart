@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'dart:math';
 
 import '../../../model/image_model.dart';
-import 'image_grid_widget.dart';
 
 class TagsAndSliderWidget extends StatefulWidget {
   final List<ImageModel> images;
