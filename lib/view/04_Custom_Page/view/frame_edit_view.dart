@@ -46,216 +46,233 @@ class FrameEditorPageState extends State<FrameEditorView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.pink[50],
-        elevation: 0,
-        title: Text('Make Frame', style: TextStyle(color: Colors.black)),
-        centerTitle: true,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: (){
-            ViewDialogUtil().showYesNoActionDialog(
-                'Changes will not be saved, are you sure to go back?',
-                'Yes',
-                'No',
-                context,
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (bool didPop, Object? result) {
+        if (didPop) {
+          return;
+        }
+        ViewDialogUtil().showYesNoActionDialog(
+            'Changes will not be saved, are you sure to go back?',
+            'Yes',
+            'No',
+            context,
                 (){
-                  Navigator.of(context).pop();
-                },
+              Navigator.of(context).pop();
+            },
                 (){});
-          },
-        ),
-        actions: [
-          TextButton(
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.pink[50],
+          elevation: 0,
+          title: Text('Make Frame', style: TextStyle(color: Colors.black)),
+          centerTitle: true,
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back, color: Colors.black),
             onPressed: (){
               ViewDialogUtil().showYesNoActionDialog(
-                  'Save Frame?',
+                  'Changes will not be saved, are you sure to go back?',
                   'Yes',
                   'No',
                   context,
-                      () async {
-                        ViewDialogUtil().showLoadingDialog(context);
-                        File? result = await controller.capturePng(_globalKey);
-                        WidgetsBinding.instance.addPostFrameCallback((_) {
-                          Navigator.of(context).pop();
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) => PostFrameView(framePng: result!, user: widget.user,), // The page you want to navigate to
-                            ),
-                          );
-                        });
+                  (){
+                    Navigator.of(context).pop();
                   },
-                      (){});
+                  (){});
             },
-            child: Text(
-              'Done',
-              style: TextStyle(color: Colors.green),
-            ),
           ),
-        ],
-      ),
-      body: Column(
-        children: [
-          Expanded(
-            child: Container(
-              color: Colors.pink[50],
-              child: Center(
-                child: RepaintBoundary(
-                  key: _globalKey,
-                  child: SizedBox(
-                    width : 148*2.3,
-                    height : 210*2.3,
-                    child: Stack(
-                      children: [
-                        // Background Image
-                        ClipPath(
-                          clipper: clippers[idxClipPath],
-                          child: Container(
-                            width : 148*2.3,
-                            height : 210*2.3,
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                color: Colors.black, // Border color
-                                width: 1.0,
+          actions: [
+            TextButton(
+              onPressed: (){
+                ViewDialogUtil().showYesNoActionDialog(
+                    'Save Frame?',
+                    'Yes',
+                    'No',
+                    context,
+                        () async {
+                          ViewDialogUtil().showLoadingDialog(context);
+                          File? result = await controller.capturePng(_globalKey);
+                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                            Navigator.of(context).pop();
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => PostFrameView(framePng: result!, user: widget.user,), // The page you want to navigate to
                               ),
-                              color: _bgColor,
+                            );
+                          });
+                    },
+                        (){});
+              },
+              child: Text(
+                'Done',
+                style: TextStyle(color: Colors.green),
+              ),
+            ),
+          ],
+        ),
+        body: Column(
+          children: [
+            Expanded(
+              child: Container(
+                color: Colors.pink[50],
+                child: Center(
+                  child: RepaintBoundary(
+                    key: _globalKey,
+                    child: SizedBox(
+                      width : 148*2.3,
+                      height : 210*2.3,
+                      child: Stack(
+                        children: [
+                          // Background Image
+                          ClipPath(
+                            clipper: clippers[idxClipPath],
+                            child: Container(
+                              width : 148*2.3,
+                              height : 210*2.3,
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                  color: Colors.black, // Border color
+                                  width: 1.0,
+                                ),
+                                color: _bgColor,
+                              ),
                             ),
                           ),
-                        ),
-                        ...widgets,
-                        if(_showDeleteBtn)
-                          Align(
-                            alignment: Alignment.bottomCenter,
-                            child: Padding(
-                              padding: const EdgeInsets.all(10.0),
-                              child: Icon(Icons.delete, size: _isDeleteBtnActive ? 38 : 28, color: _isDeleteBtnActive ? Colors.red: Colors.grey,),
+                          ...widgets,
+                          if(_showDeleteBtn)
+                            Align(
+                              alignment: Alignment.bottomCenter,
+                              child: Padding(
+                                padding: const EdgeInsets.all(10.0),
+                                child: Icon(Icons.delete, size: _isDeleteBtnActive ? 38 : 28, color: _isDeleteBtnActive ? Colors.red: Colors.grey,),
+                              ),
                             ),
-                          ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ),
               ),
             ),
-          ),
 
-          // Bottom Toolbar
-          Container(
-            color: Colors.pink[50],
-            padding: const EdgeInsets.symmetric(vertical: 10),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                GestureDetector(
-                  onTap: _showImageGrid, // Call the method to show the grid
-                  child: _buildToolbarItem(Icons.grid_on, 'Layout'),
-                ),
-                GestureDetector(
+            // Bottom Toolbar
+            Container(
+              color: Colors.pink[50],
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  GestureDetector(
+                    onTap: _showImageGrid, // Call the method to show the grid
+                    child: _buildToolbarItem(Icons.grid_on, 'Layout'),
+                  ),
+                  GestureDetector(
+                      onTap: () {
+                        _showColorPicker(); // Show color palette dialog
+                      },
+                      child: _buildToolbarItem(Icons.image, 'Backgrounds')
+                  ),
+                  GestureDetector(
+                    onTap: () async {
+                      XFile? imageFile = await _pickImage();
+
+                      if (imageFile != null) {
+                        setState(() {
+                          widgets.add(
+                            ResizableImage(
+                              key: Key(widgets.length.toString()),
+                              imagePath: imageFile.path,
+                              onDragStart: () {
+                                if(!_showDeleteBtn){
+                                  setState(() {
+                                    _showDeleteBtn = true;
+                                  });
+                                }
+                              },
+                              onDragEnd: (Offset offset, Key? key) {
+                                if(_showDeleteBtn){
+                                  setState(() {
+                                    _showDeleteBtn = false;
+                                  });
+                                }
+
+                                if(offset.dy > (MediaQuery.of(context).size.height-200)){
+                                  widgets.removeWhere((widget)=> widget.key == key);
+                                }
+                              },
+                              onDragUpdate: (Offset offset, Key? key) {
+                                if(offset.dy > (MediaQuery.of(context).size.height-200)){
+                                  if(!_isDeleteBtnActive){
+                                    setState(() {
+                                      _isDeleteBtnActive = true;
+                                    });
+                                  }
+                                }else{
+                                  if(_isDeleteBtnActive){
+                                    setState(() {
+                                      _isDeleteBtnActive = false;
+                                    });
+                                  }
+                                }
+                              },
+                            ),
+                          );
+                        });
+                      }
+                    },
+                      child: _buildToolbarItem(Icons.emoji_emotions, 'Stickers')
+                  ),
+                  GestureDetector(
                     onTap: () {
-                      _showColorPicker(); // Show color palette dialog
-                    },
-                    child: _buildToolbarItem(Icons.image, 'Backgrounds')
-                ),
-                GestureDetector(
-                  onTap: () async {
-                    XFile? imageFile = await _pickImage();
+                        setState(() {
+                          widgets.add(
+                            ResizableText(
+                              key: Key(widgets.length.toString()),
+                              onDragStart: () {
+                                if(!_showDeleteBtn){
+                                  setState(() {
+                                    _showDeleteBtn = true;
+                                  });
+                                }
+                              },
+                              onDragEnd: (Offset offset, Key? key) {
+                                if(_showDeleteBtn){
+                                  setState(() {
+                                    _showDeleteBtn = false;
+                                  });
+                                }
 
-                    if (imageFile != null) {
-                      setState(() {
-                        widgets.add(
-                          ResizableImage(
-                            key: Key(widgets.length.toString()),
-                            imagePath: imageFile.path,
-                            onDragStart: () {
-                              if(!_showDeleteBtn){
-                                setState(() {
-                                  _showDeleteBtn = true;
-                                });
-                              }
-                            },
-                            onDragEnd: (Offset offset, Key? key) {
-                              if(_showDeleteBtn){
-                                setState(() {
-                                  _showDeleteBtn = false;
-                                });
-                              }
-
-                              if(offset.dy > (MediaQuery.of(context).size.height-200)){
-                                widgets.removeWhere((widget)=> widget.key == key);
-                              }
-                            },
-                            onDragUpdate: (Offset offset, Key? key) {
-                              if(offset.dy > (MediaQuery.of(context).size.height-200)){
-                                if(!_isDeleteBtnActive){
-                                  setState(() {
-                                    _isDeleteBtnActive = true;
-                                  });
+                                if(offset.dy > (MediaQuery.of(context).size.height-200)){
+                                  widgets.removeWhere((widget)=> widget.key == key);
                                 }
-                              }else{
-                                if(_isDeleteBtnActive){
-                                  setState(() {
-                                    _isDeleteBtnActive = false;
-                                  });
+                              },
+                              onDragUpdate: (Offset offset, Key? key) {
+                                if(offset.dy > (MediaQuery.of(context).size.height-200)){
+                                  if(!_isDeleteBtnActive){
+                                    setState(() {
+                                      _isDeleteBtnActive = true;
+                                    });
+                                  }
+                                }else{
+                                  if(_isDeleteBtnActive){
+                                    setState(() {
+                                      _isDeleteBtnActive = false;
+                                    });
+                                  }
                                 }
-                              }
-                            },
-                          ),
-                        );
-                      });
-                    }
-                  },
-                    child: _buildToolbarItem(Icons.emoji_emotions, 'Stickers')
-                ),
-                GestureDetector(
-                  onTap: () {
-                      setState(() {
-                        widgets.add(
-                          ResizableText(
-                            key: Key(widgets.length.toString()),
-                            onDragStart: () {
-                              if(!_showDeleteBtn){
-                                setState(() {
-                                  _showDeleteBtn = true;
-                                });
-                              }
-                            },
-                            onDragEnd: (Offset offset, Key? key) {
-                              if(_showDeleteBtn){
-                                setState(() {
-                                  _showDeleteBtn = false;
-                                });
-                              }
-
-                              if(offset.dy > (MediaQuery.of(context).size.height-200)){
-                                widgets.removeWhere((widget)=> widget.key == key);
-                              }
-                            },
-                            onDragUpdate: (Offset offset, Key? key) {
-                              if(offset.dy > (MediaQuery.of(context).size.height-200)){
-                                if(!_isDeleteBtnActive){
-                                  setState(() {
-                                    _isDeleteBtnActive = true;
-                                  });
-                                }
-                              }else{
-                                if(_isDeleteBtnActive){
-                                  setState(() {
-                                    _isDeleteBtnActive = false;
-                                  });
-                                }
-                              }
-                            },
-                          ),
-                        );
-                      });
-                    },
-                    child: _buildToolbarItem(Icons.text_fields, 'Text')
-                ),
-              ],
+                              },
+                            ),
+                          );
+                        });
+                      },
+                      child: _buildToolbarItem(Icons.text_fields, 'Text')
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

@@ -38,7 +38,6 @@ class ProfileController {
 
         // Create the image path based on filename
         String imagePath = 'frames/${data['filename']}.png';
-        print(imagePath);
         // Reference the image in Firebase Storage
         final ref = FirebaseStorage.instance.ref().child(imagePath);
 

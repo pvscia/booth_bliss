@@ -141,13 +141,21 @@ class _EditProfilePageState extends State<EditProfilePage> {
   @override
   Widget build(BuildContext context) {
     return PopScope(
-        canPop: false,
-        onPopInvokedWithResult: (bool didPop, Object? result) {
-          if (didPop) {
-            return;
-          }
-          Navigator.pop(context);
-        },
+      canPop: false,
+      onPopInvokedWithResult: (bool didPop, Object? result) {
+        if (didPop) {
+          return;
+        }
+        ViewDialogUtil().showYesNoActionDialog(
+            'Changes will not be saved, are you sure to go back?',
+            'Yes',
+            'No',
+            context,
+                (){
+              Navigator.of(context).pop();
+            },
+                (){});
+      },
       child: Scaffold(
         appBar: AppBar(
           title: const Text('Edit Profile'),
