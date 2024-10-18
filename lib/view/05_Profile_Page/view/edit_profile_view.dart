@@ -1,8 +1,8 @@
 import 'package:booth_bliss/model/user_model.dart';
 import 'package:flutter/material.dart';
-import 'package:booth_bliss/view/06_Profile_Page/controller/edit_profile_controller.dart';
 
 import '../../Utils/view_dialog_util.dart';
+import '../controller/edit_profile_controller.dart';
 
 class EditProfilePage extends StatefulWidget {
   final UserModel user;

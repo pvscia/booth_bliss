@@ -1,9 +1,9 @@
-import 'package:booth_bliss/view/02_Home_Page/image_grid_widget.dart';
+import 'package:booth_bliss/model/image_model.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 
 class DetailPage extends StatefulWidget {
-  final ImageData imageData;
+  final ImageModel imageData;
 
   DetailPage({required this.imageData});
 
@@ -79,8 +79,7 @@ class _DetailPageState extends State<DetailPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              widget
-                                  .imageData.creator, // Use the creator's name
+                              '${widget.imageData.user.firstName} ${widget.imageData.user.lastName}', // Use the creator's name
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: screenWidth * 0.05,
@@ -102,7 +101,7 @@ class _DetailPageState extends State<DetailPage> {
                     Row(
                       children: [
                         Text(
-                          widget.imageData.caption, // Use the image's caption
+                          widget.imageData.desc, // Use the image's caption
                           style: TextStyle(
                             fontSize: screenWidth * 0.034,
                             color: Colors.black,

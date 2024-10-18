@@ -1,11 +1,11 @@
 import 'dart:io';
-import 'package:booth_bliss/view/04_Custom_Page/controller/post_frame_controller.dart';
 import 'package:booth_bliss/view/Utils/constant_var.dart';
 import 'package:flutter/material.dart';
 
 import '../../../model/user_model.dart';
 import '../../Utils/view_dialog_util.dart';
-import '../../main_screen_view.dart';
+import '../../bottom_nav_bar_view.dart';
+import '../controller/post_frame_controller.dart';
 
 class PostFrameView extends StatefulWidget {
   final File framePng;
@@ -84,7 +84,7 @@ class _PostFrameViewState extends State<PostFrameView> {
                                   (){
                                     Navigator.of(context).pushAndRemoveUntil(
                                       MaterialPageRoute(
-                                        builder: (context) => MainScreen(idx: 1), // The page you want to navigate to
+                                        builder: (context) => BottomNavBarMain(idx: 1), // The page you want to navigate to
                                       ),
                                           (Route<dynamic> route) => false, // This removes all the previous routes
                                     );

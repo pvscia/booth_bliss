@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:booth_bliss/view/01_Front_page/controller/login_controller.dart';
 import 'package:booth_bliss/model/user_model.dart';
 
-import '../../main_screen_view.dart';
+import '../../bottom_nav_bar_view.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -59,7 +59,7 @@ class _LoginPageState extends State<LoginPage> {
 
           Navigator.of(context).pushReplacement(
               MaterialPageRoute(
-                builder: (context) => MainScreen(idx: 0), // The page you want to navigate to
+                builder: (context) => BottomNavBarMain(idx: 0), // The page you want to navigate to
               )
           );
         });

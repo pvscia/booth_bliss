@@ -3,13 +3,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
 import '../../../model/image_model.dart';
+import '../../../model/user_model.dart';
 
 class ProfileController {
   Future<void> logout() async {
     await FirebaseAuth.instance.signOut();
   }
 
-  Future<String?> fetchPhoto(String? uid) async {
+  Future<String?> fetchProfilePhoto(String? uid) async {
     String imagePath = 'profilePics/$uid.png';
     try {
       final ref = FirebaseStorage.instance.ref().child(imagePath);
@@ -44,17 +45,48 @@ class ProfileController {
         // Fetch the download URL asynchronously
         String url = await ref.getDownloadURL();
 
+        UserModel? tempUser = await getUser();
         // Return the ImageModel with the correct download URL
-        return ImageModel(
-          imageUrl: url, // Use the URL instead of the image path
-          desc: data['description'],
-          categories: List<String>.from(data['categories'] ?? []),
-        );
+        if(tempUser != null){
+          return ImageModel(
+            imageUrl: url, // Use the URL instead of the image path
+            desc: data['description'],
+            categories: List<String>.from(data['categories'] ?? []),
+            user: tempUser,
+          );
+        }else{
+          return ImageModel(
+            imageUrl: url, // Use the URL instead of the image path
+            desc: data['description'],
+            categories: List<String>.from(data['categories'] ?? []),
+            user: tempUser!,
+          );
+        }
       }).toList());
       return frames;
     } catch (e) {
       print('Error fetching frames: $e');
       return [];
+    }
+  }
+
+  Future<UserModel?> getUser() async {
+    try {
+      DocumentSnapshot<Map<String, dynamic>> doc =
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser?.email) // Document ID
+          .get();
+
+      if (doc.exists) {
+        // Convert Firestore document to ModelUser
+        UserModel currUser = UserModel.fromJson(doc.data()!);
+        return currUser;
+      } else {
+        return null; // Invalid login
+      }
+    } catch (e) {
+      return null;
     }
   }
 }

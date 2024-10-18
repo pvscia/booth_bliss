@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'dart:math';
-import 'package:booth_bliss/view/06_Profile_Page/controller/profile_controller.dart';
+import 'package:booth_bliss/view/05_Profile_Page/controller/profile_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -28,7 +28,7 @@ class EditProfileController {
   Future<void> initImageController(String? uid) async {
     try {
       // Fetch image URL from Firebase Storage
-      final imageUrl = await ProfileController().fetchPhoto(uid);
+      final imageUrl = await ProfileController().fetchProfilePhoto(uid);
 
       // Check if the imageUrl is null or empty
       if (imageUrl == null || imageUrl.isEmpty) {

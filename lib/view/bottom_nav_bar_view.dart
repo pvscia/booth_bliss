@@ -1,20 +1,19 @@
 import 'package:booth_bliss/model/user_model.dart';
-import 'package:booth_bliss/view/main_screen_controller.dart';
+import 'package:booth_bliss/view/bottom_nav_bar_controller.dart';
 import 'package:flutter/material.dart';
-import '02_Home_Page/home_view.dart';
-import '04_Custom_Page/view/custom_view.dart';
-import '05_QR_Page/qr_view.dart';
-import '06_Profile_Page/view/profile_view.dart';
-
-class MainScreen extends StatefulWidget {
+import '02_Home_Page/view/home_view.dart';
+import '03_Custom_Page/view/custom_view.dart';
+import '04_QR_Page/view/qr_view.dart';
+import '05_Profile_Page/view/profile_view.dart';
+class BottomNavBarMain extends StatefulWidget {
   final int idx;
-  const MainScreen({super.key, required this.idx});
+  const BottomNavBarMain({super.key, required this.idx});
 
   @override
-  _MainScreenState createState() => _MainScreenState();
+  _BottomNavBarMainState createState() => _BottomNavBarMainState();
 }
 
-class _MainScreenState extends State<MainScreen> {
+class _BottomNavBarMainState extends State<BottomNavBarMain> {
   int _selectedIndex = 0;
   UserModel? currUser;
 
@@ -34,9 +33,11 @@ class _MainScreenState extends State<MainScreen> {
 
   Future<void> getUser() async{
     UserModel? temp = await MainScreenController().getUser();
-    setState(() {
-      currUser = temp!;
-    });
+    if(temp != null){
+      setState(() {
+        currUser = temp;
+      });
+    }
   }
 
 

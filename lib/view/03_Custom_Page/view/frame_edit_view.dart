@@ -1,12 +1,12 @@
 import 'dart:io';
 
-import 'package:booth_bliss/view/04_Custom_Page/controller/frame_edit_controller.dart';
-import 'package:booth_bliss/view/04_Custom_Page/view/post_frame.dart';
+import 'package:booth_bliss/view/03_Custom_Page/view/post_frame_view.dart';
 import 'package:booth_bliss/view/Utils/view_dialog_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../../model/user_model.dart';
+import '../controller/frame_edit_controller.dart';
 import 'add_sticker.dart';
 import 'add_text.dart';
 

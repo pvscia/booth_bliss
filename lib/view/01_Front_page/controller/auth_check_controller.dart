@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import '../../main_screen_view.dart';
+import '../../bottom_nav_bar_view.dart';
 
 class AuthCheck extends StatelessWidget {
   @override
@@ -30,7 +30,7 @@ class AuthCheck extends StatelessWidget {
                   // UserModel is ready, navigate to the home screen after the build phase
                   Navigator.of(context).pushReplacement(
                       MaterialPageRoute(
-                        builder: (context) => MainScreen(idx: 0), // The page you want to navigate to
+                        builder: (context) => BottomNavBarMain(idx: 0), // The page you want to navigate to
                       ),
                   );
                 } else {

@@ -1,10 +1,12 @@
-import 'package:booth_bliss/view/02_Home_Page/image_grid_widget.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
 
+import '../../../model/image_model.dart';
+import 'image_grid_widget.dart';
+
 class TagsAndSliderWidget extends StatefulWidget {
-  final List<ImageData> images;
-  final Function(List<ImageData>) onFilter;
+  final List<ImageModel> images;
+  final Function(List<ImageModel>) onFilter;
 
   TagsAndSliderWidget({required this.images, required this.onFilter});
 

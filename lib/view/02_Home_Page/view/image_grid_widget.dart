@@ -1,22 +1,11 @@
 import 'package:flutter/material.dart';
 
+import '../../../model/image_model.dart';
 
-class ImageData {
-  final String imageUrl;
-  final List<String> categories;
-  final String creator;
-  final String caption;
-
-  ImageData(
-      {required this.imageUrl,
-      required this.categories,
-      required this.creator,
-      required this.caption});
-}
 
 class ImageGridWidget extends StatelessWidget {
-  final List<ImageData> images;
-  final Function(ImageData) onTap;
+  final List<ImageModel> images;
+  final Function(ImageModel) onTap;
 
   ImageGridWidget({required this.images, required this.onTap});
 
@@ -35,8 +24,8 @@ class ImageGridWidget extends StatelessWidget {
 }
 
 class ImageItem extends StatelessWidget {
-  final ImageData image;
-  final Function(ImageData) onTap;
+  final ImageModel image;
+  final Function(ImageModel) onTap;
 
   ImageItem({required this.image, required this.onTap});
 

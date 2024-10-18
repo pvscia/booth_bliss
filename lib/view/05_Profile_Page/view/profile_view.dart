@@ -1,10 +1,10 @@
 import 'package:booth_bliss/model/image_model.dart';
-import 'package:booth_bliss/view/06_Profile_Page/controller/profile_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:booth_bliss/model/user_model.dart';
-import 'package:booth_bliss/view/06_Profile_Page/view/edit_profile_view.dart';
 
 import '../../Utils/view_dialog_util.dart';
+import '../controller/profile_controller.dart';
+import 'edit_profile_view.dart';
 
 class ProfileView extends StatefulWidget {
   final UserModel? user;
@@ -36,7 +36,7 @@ class ProfileViewState extends State<ProfileView> {
     });
     String? fetchedUrl = '';
     try {
-      fetchedUrl = await ProfileController().fetchPhoto(updatedUser.uid);
+      fetchedUrl = await ProfileController().fetchProfilePhoto(updatedUser.uid);
       setState(() {
         imageUrl = fetchedUrl!;
         isLoading = false;
