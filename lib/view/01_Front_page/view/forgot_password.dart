@@ -47,9 +47,11 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
         Navigator.pop(context);
       },
       child: Scaffold(
+        backgroundColor: Color(0xFFF3FDE8),
         appBar: AppBar(
-          title: Text("I have an account"),
-          backgroundColor: Colors.green[100],
+          centerTitle: true,
+          title: Text("Change Password"),
+          backgroundColor: Color(0xFFF3FDE8),
           elevation: 0,
         ),
         body: Padding(
@@ -57,26 +59,43 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              SizedBox(height: 30),
               TextFormField(
                 controller: _controller.emailController,
                 decoration: InputDecoration(
-                  labelText: "Email",
-                  errorText: _controller.emailError.isNotEmpty
-                      ? _controller.emailError
-                      : null,
-                ),
+                    labelText: "Email",
+                    errorText: _controller.emailError.isNotEmpty
+                        ? _controller.emailError
+                        : null,
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius:
+                          BorderRadius.circular(10), // Rounded corners
+                      borderSide: BorderSide(
+                        color:
+                            Color(0xFF55CF00), // Outline color when not focused
+                        width: 2, // Outline thickness
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius:
+                          BorderRadius.circular(10), // Rounded corners
+                      borderSide: BorderSide(
+                        color: Color(0xFF55CF00), // Outline color when focused
+                        width: 2, // Outline thickness
+                      ),
+                    )),
                 onChanged: (value) {
                   setState(() {
                     _controller.validateEmail();
                   });
                 },
               ),
-              SizedBox(height: 8),
+              SizedBox(height: 15),
               Text(
                 "Enter the email address you used to register with BoothBliss. You will receive an email to define a new password.",
                 style: TextStyle(fontSize: 12),
               ),
-              SizedBox(height: 24),
+              Spacer(),
               if (statusMessage.isNotEmpty)
                 Padding(
                   padding: const EdgeInsets.only(bottom: 16.0),
@@ -88,19 +107,24 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
                             : Colors.red),
                   ),
                 ),
-              ElevatedButton(
-                onPressed: _controller.isButtonEnabled && !isLoading
-                    ? _handlePasswordReset
-                    : null,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor:
-                      _controller.isButtonEnabled ? Colors.pink : Colors.grey,
+              Center(
+                child: ElevatedButton(
+                  onPressed: _controller.isButtonEnabled && !isLoading
+                      ? _handlePasswordReset
+                      : null,
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: _controller.isButtonEnabled
+                          ? Color(0xFFFFAFCC)
+                          : Colors.grey,
+                      minimumSize: Size(300, 60),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      )),
+                  child: Text(
+                    'Define New Password',
+                    style: TextStyle(color: Colors.black),
+                  ),
                 ),
-                child: isLoading
-                    ? CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                      )
-                    : Text("Define new password"),
               ),
             ],
           ),

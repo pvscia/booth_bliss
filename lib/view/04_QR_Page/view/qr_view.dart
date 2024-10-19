@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:booth_bliss/view/05_QR_Page/scan_result.dart';
+import 'package:booth_bliss/view/04_QR_Page/view/scan_result.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';

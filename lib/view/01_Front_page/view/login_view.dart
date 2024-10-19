@@ -57,11 +57,10 @@ class _LoginPageState extends State<LoginPage> {
             SnackBar(content: Text('Login successful!')),
           );
 
-          Navigator.of(context).pushReplacement(
-              MaterialPageRoute(
-                builder: (context) => BottomNavBarMain(idx: 0), // The page you want to navigate to
-              )
-          );
+          Navigator.of(context).pushReplacement(MaterialPageRoute(
+            builder: (context) =>
+                BottomNavBarMain(idx: 0), // The page you want to navigate to
+          ));
         });
       } else {
         setState(() {
@@ -86,9 +85,11 @@ class _LoginPageState extends State<LoginPage> {
         Navigator.pop(context);
       },
       child: Scaffold(
+        backgroundColor: Color(0xFFF3FDE8),
         appBar: AppBar(
+          centerTitle: true,
           title: Text('I have an account'),
-          backgroundColor: Colors.green[100],
+          backgroundColor: Color(0xFFF3FDE8),
           elevation: 0,
         ),
         body: Padding(
@@ -105,15 +106,53 @@ class _LoginPageState extends State<LoginPage> {
                       style: TextStyle(color: Colors.red),
                     ),
                   ),
+                SizedBox(height: 30),
                 TextFormField(
                   controller: _emailController,
-                  decoration: InputDecoration(labelText: 'Email'),
+                  decoration: InputDecoration(
+                      labelText: 'Email',
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius:
+                            BorderRadius.circular(10), // Rounded corners
+                        borderSide: BorderSide(
+                          color: Color(
+                              0xFF55CF00), // Outline color when not focused
+                          width: 2, // Outline thickness
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius:
+                            BorderRadius.circular(10), // Rounded corners
+                        borderSide: BorderSide(
+                          color:
+                              Color(0xFF55CF00), // Outline color when focused
+                          width: 2, // Outline thickness
+                        ),
+                      )),
                   onChanged: (value) => _checkFormFilled(),
                 ),
+                SizedBox(height: 15),
                 TextFormField(
                   controller: _passwordController,
                   decoration: InputDecoration(
                     labelText: 'Password',
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius:
+                          BorderRadius.circular(10), // Rounded corners
+                      borderSide: BorderSide(
+                        color:
+                            Color(0xFF55CF00), // Outline color when not focused
+                        width: 2, // Outline thickness
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius:
+                          BorderRadius.circular(10), // Rounded corners
+                      borderSide: BorderSide(
+                        color: Color(0xFF55CF00), // Outline color when focused
+                        width: 2, // Outline thickness
+                      ),
+                    ),
                     suffixIcon: IconButton(
                       icon: Icon(
                         _isPasswordVisible
@@ -152,9 +191,16 @@ class _LoginPageState extends State<LoginPage> {
                           }
                         }
                       : null,
-                  child: Text('Login'),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: _isFormFilled ? Colors.pink : Colors.grey,
+                      backgroundColor:
+                          _isFormFilled ? Color(0xFFFFAFCC) : Colors.grey,
+                      minimumSize: Size(300, 60),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      )),
+                  child: Text(
+                    'Login',
+                    style: TextStyle(color: Colors.black),
                   ),
                 ),
               ],
