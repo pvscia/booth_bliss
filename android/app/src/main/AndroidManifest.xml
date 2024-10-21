@@ -8,8 +8,9 @@
 
 
     <application
-        android:label="booth_bliss"
+        android:label="Booth Bliss"
         android:name="${applicationName}"
+        android:extractNativeLibs="true"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"

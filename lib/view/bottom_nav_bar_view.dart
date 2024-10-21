@@ -52,7 +52,7 @@ class _BottomNavBarMainState extends State<BottomNavBarMain> {
         case 2:
           return ScanQR();
         case 3:
-          return ProfileView(user: currUser!);  // ProfileView will refresh
+          return ProfileView(user: currUser!);
         default:
           return HomeView();
       }

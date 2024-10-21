@@ -1,6 +1,8 @@
 import 'package:booth_bliss/view/01_Front_page/controller/sign_up_controller.dart';
 import 'package:flutter/material.dart';
 
+import '../../Utils/view_dialog_util.dart';
+
 class SignUpPage extends StatefulWidget {
   @override
   _SignUpPageState createState() => _SignUpPageState();
@@ -9,6 +11,7 @@ class SignUpPage extends StatefulWidget {
 class _SignUpPageState extends State<SignUpPage> {
   final SignUpController _controller = SignUpController();
   final _formKey = GlobalKey<FormState>();
+  bool isLoading = false;
 
   @override
   void dispose() {
@@ -195,37 +198,49 @@ class _SignUpPageState extends State<SignUpPage> {
                   style: TextStyle(fontSize: 12.0),
                 ),
                 SizedBox(height: 15),
-                ElevatedButton(
-                  onPressed: _controller.isFormFilled
-                      ? () async {
-                          if (_formKey.currentState!.validate()) {
-                            bool success = await _controller
-                                .addUserDataToFirestore(context);
-                            if (success) {
-                              WidgetsBinding.instance.addPostFrameCallback((_) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                      content: Text('Successfuly Sign Up')),
-                                );
-                                Navigator.of(context).pop();
-                              });
-                            }
-                          }
-                        }
-                      : null,
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor: _controller.isFormFilled
-                          ? Color(0xFFFFAFCC)
-                          : Colors.grey,
-                      minimumSize: Size(300, 60),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      )),
-                  child: Text(
-                    'Agree and continue',
-                    style: TextStyle(color: Colors.black),
-                  ),
-                ),
+                !isLoading
+                    ? ElevatedButton(
+                        onPressed: _controller.isFormFilled
+                            ? () async {
+                                FocusManager.instance.primaryFocus?.unfocus();
+                                if (_formKey.currentState!.validate()) {
+                                  setState(() {
+                                    isLoading = true;
+                                  });
+                                  bool success = await _controller
+                                      .addUserDataToFirestore(context);
+                                  setState(() {
+                                    isLoading = false;
+                                  });
+                                  if (success) {
+                                    WidgetsBinding.instance
+                                        .addPostFrameCallback((_) {
+                                      ViewDialogUtil().showOneButtonActionDialog(
+                                          'Registration successful! Please verify your email before signing in.',
+                                          'Ok',
+                                          'success.gif',
+                                          context, () {
+                                        Navigator.of(context).pop();
+                                      });
+                                    });
+                                  }
+                                }
+                              }
+                            : null,
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: _controller.isFormFilled
+                                ? Color(0xFFFFAFCC)
+                                : Colors.grey,
+                            minimumSize: Size(300, 60),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            )),
+                        child: Text(
+                          'Agree and continue',
+                          style: TextStyle(color: Colors.black),
+                        ),
+                      )
+                    : Center(child: CircularProgressIndicator()),
               ],
             ),
           ),

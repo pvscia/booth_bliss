@@ -38,42 +38,63 @@ class SignUpController {
 
       // Send email verification
       await user.user!.sendEmailVerification();
-
-      // Show message to the user to check email
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-                'A verification email has been sent to your email. Please verify your email to continue.'),
-          ),
-        );
-      });
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('The password provided is too weak.')),
+            const SnackBar(
+              content: Text('The password provided is too weak.'),
+              backgroundColor: Colors.red,
+            ),
           );
         });
       } else if (e.code == 'email-already-in-use') {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-                content: Text('An account already exists for this email.')),
+              content: Text('An account already exists for this email.'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        });
+      } else if (e.code == 'invalid-email') {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Invalid email format'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        });
+      } else {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Error register user, check again'),
+              backgroundColor: Colors.red,
+            ),
           );
         });
       }
       return false;
     } catch (e) {
-      print(e);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Error register user, check again'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      });
       return false;
     }
 
     // Save user data to Firestore
     try {
       final String userId = user.user!.uid;
-      DocumentReference docRef =
-          FirebaseFirestore.instance.collection('users').doc(emailController.text);
+      DocumentReference docRef = FirebaseFirestore.instance
+          .collection('users')
+          .doc(emailController.text);
       await docRef.set({
         'first_name': firstNameController.text,
         'last_name': lastNameController.text,
@@ -85,22 +106,14 @@ class SignUpController {
     } catch (e) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to add user: $e')),
+          SnackBar(
+            content: Text('Failed to add user: $e'),
+            backgroundColor: Colors.red,
+          ),
         );
       });
       return false;
     }
-
-    // Notify the user to verify their email
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-              'Registration successful! Please verify your email before signing in.'),
-        ),
-      );
-    });
-
     return true;
   }
 

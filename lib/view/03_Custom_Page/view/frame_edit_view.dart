@@ -5,6 +5,7 @@ import 'package:booth_bliss/view/Utils/view_dialog_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:image_picker/image_picker.dart';
+
 import '../../../model/user_model.dart';
 import '../controller/frame_edit_controller.dart';
 import 'add_sticker.dart';
@@ -13,7 +14,9 @@ import 'add_text.dart';
 class FrameEditorView extends StatefulWidget {
   final UserModel user;
   final int idx;
+
   FrameEditorView({super.key, required this.idx, required this.user});
+
   @override
   FrameEditorPageState createState() => FrameEditorPageState();
 }
@@ -38,11 +41,10 @@ class FrameEditorPageState extends State<FrameEditorView> {
   ];
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
     idxClipPath = widget.idx;
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -56,11 +58,9 @@ class FrameEditorPageState extends State<FrameEditorView> {
             'Changes will not be saved, are you sure to go back?',
             'Yes',
             'No',
-            context,
-                (){
-              Navigator.of(context).pop();
-            },
-                (){});
+            context, () {
+          Navigator.of(context).pop();
+        }, () {});
       },
       child: Scaffold(
         appBar: AppBar(
@@ -70,39 +70,44 @@ class FrameEditorPageState extends State<FrameEditorView> {
           centerTitle: true,
           leading: IconButton(
             icon: Icon(Icons.arrow_back, color: Colors.black),
-            onPressed: (){
+            onPressed: () {
               ViewDialogUtil().showYesNoActionDialog(
                   'Changes will not be saved, are you sure to go back?',
                   'Yes',
                   'No',
-                  context,
-                  (){
-                    Navigator.of(context).pop();
-                  },
-                  (){});
+                  context, () {
+                Navigator.of(context).pop();
+              }, () {});
             },
           ),
           actions: [
             TextButton(
-              onPressed: (){
+              onPressed: () {
                 ViewDialogUtil().showYesNoActionDialog(
-                    'Save Frame?',
-                    'Yes',
-                    'No',
-                    context,
-                        () async {
-                          ViewDialogUtil().showLoadingDialog(context);
-                          File? result = await controller.capturePng(_globalKey);
-                          WidgetsBinding.instance.addPostFrameCallback((_) {
-                            Navigator.of(context).pop();
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) => PostFrameView(framePng: result!, user: widget.user,), // The page you want to navigate to
-                              ),
-                            );
-                          });
-                    },
-                        (){});
+                    'Save Frame?', 'Yes', 'No', context, () async {
+                  ViewDialogUtil().showLoadingDialog(context);
+                  File? result = await controller.capturePng(_globalKey);
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    Navigator.of(context).pop();
+                    if (result != null) {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => PostFrameView(
+                            framePng: result,
+                            user: widget.user,
+                          ), // The page you want to navigate to
+                        ),
+                      );
+                    }else{
+                      ViewDialogUtil().showOneButtonActionDialog(
+                          'Error saving frame, try again',
+                          'back',
+                          'warning.gif',
+                          context,
+                          (){});
+                    }
+                  });
+                }, () {});
               },
               child: Text(
                 'Done',
@@ -120,16 +125,16 @@ class FrameEditorPageState extends State<FrameEditorView> {
                   child: RepaintBoundary(
                     key: _globalKey,
                     child: SizedBox(
-                      width : 148*2.3,
-                      height : 210*2.3,
+                      width: 148 * 2.3,
+                      height: 210 * 2.3,
                       child: Stack(
                         children: [
                           // Background Image
                           ClipPath(
                             clipper: clippers[idxClipPath],
                             child: Container(
-                              width : 148*2.3,
-                              height : 210*2.3,
+                              width: 148 * 2.3,
+                              height: 210 * 2.3,
                               decoration: BoxDecoration(
                                 border: Border.all(
                                   color: Colors.black, // Border color
@@ -140,12 +145,18 @@ class FrameEditorPageState extends State<FrameEditorView> {
                             ),
                           ),
                           ...widgets,
-                          if(_showDeleteBtn)
+                          if (_showDeleteBtn)
                             Align(
                               alignment: Alignment.bottomCenter,
                               child: Padding(
                                 padding: const EdgeInsets.all(10.0),
-                                child: Icon(Icons.delete, size: _isDeleteBtnActive ? 38 : 28, color: _isDeleteBtnActive ? Colors.red: Colors.grey,),
+                                child: Icon(
+                                  Icons.delete,
+                                  size: _isDeleteBtnActive ? 38 : 28,
+                                  color: _isDeleteBtnActive
+                                      ? Colors.red
+                                      : Colors.grey,
+                                ),
                               ),
                             ),
                         ],
@@ -171,91 +182,100 @@ class FrameEditorPageState extends State<FrameEditorView> {
                       onTap: () {
                         _showColorPicker(); // Show color palette dialog
                       },
-                      child: _buildToolbarItem(Icons.image, 'Backgrounds')
-                  ),
+                      child: _buildToolbarItem(Icons.image, 'Backgrounds')),
                   GestureDetector(
-                    onTap: () async {
-                      XFile? imageFile = await _pickImage();
+                      onTap: () async {
+                        XFile? imageFile = await _pickImage();
 
-                      if (imageFile != null) {
-                        setState(() {
-                          widgets.add(
-                            ResizableImage(
-                              key: Key(widgets.length.toString()),
-                              imagePath: imageFile.path,
-                              onDragStart: () {
-                                if(!_showDeleteBtn){
-                                  setState(() {
-                                    _showDeleteBtn = true;
-                                  });
-                                }
-                              },
-                              onDragEnd: (Offset offset, Key? key) {
-                                if(_showDeleteBtn){
-                                  setState(() {
-                                    _showDeleteBtn = false;
-                                  });
-                                }
-
-                                if(offset.dy > (MediaQuery.of(context).size.height-200)){
-                                  widgets.removeWhere((widget)=> widget.key == key);
-                                }
-                              },
-                              onDragUpdate: (Offset offset, Key? key) {
-                                if(offset.dy > (MediaQuery.of(context).size.height-200)){
-                                  if(!_isDeleteBtnActive){
+                        if (imageFile != null) {
+                          setState(() {
+                            widgets.add(
+                              ResizableImage(
+                                key: Key(widgets.length.toString()),
+                                imagePath: imageFile.path,
+                                onDragStart: () {
+                                  if (!_showDeleteBtn) {
                                     setState(() {
-                                      _isDeleteBtnActive = true;
+                                      _showDeleteBtn = true;
                                     });
                                   }
-                                }else{
-                                  if(_isDeleteBtnActive){
+                                },
+                                onDragEnd: (Offset offset, Key? key) {
+                                  if (_showDeleteBtn) {
                                     setState(() {
-                                      _isDeleteBtnActive = false;
+                                      _showDeleteBtn = false;
                                     });
                                   }
-                                }
-                              },
-                            ),
-                          );
-                        });
-                      }
-                    },
-                      child: _buildToolbarItem(Icons.emoji_emotions, 'Stickers')
-                  ),
+
+                                  if (offset.dy >
+                                      (MediaQuery.of(context).size.height -
+                                          200)) {
+                                    widgets.removeWhere(
+                                        (widget) => widget.key == key);
+                                  }
+                                },
+                                onDragUpdate: (Offset offset, Key? key) {
+                                  if (offset.dy >
+                                      (MediaQuery.of(context).size.height -
+                                          200)) {
+                                    if (!_isDeleteBtnActive) {
+                                      setState(() {
+                                        _isDeleteBtnActive = true;
+                                      });
+                                    }
+                                  } else {
+                                    if (_isDeleteBtnActive) {
+                                      setState(() {
+                                        _isDeleteBtnActive = false;
+                                      });
+                                    }
+                                  }
+                                },
+                              ),
+                            );
+                          });
+                        }
+                      },
+                      child:
+                          _buildToolbarItem(Icons.emoji_emotions, 'Stickers')),
                   GestureDetector(
-                    onTap: () {
+                      onTap: () {
                         setState(() {
                           widgets.add(
                             ResizableText(
                               key: Key(widgets.length.toString()),
                               onDragStart: () {
-                                if(!_showDeleteBtn){
+                                if (!_showDeleteBtn) {
                                   setState(() {
                                     _showDeleteBtn = true;
                                   });
                                 }
                               },
                               onDragEnd: (Offset offset, Key? key) {
-                                if(_showDeleteBtn){
+                                if (_showDeleteBtn) {
                                   setState(() {
                                     _showDeleteBtn = false;
                                   });
                                 }
 
-                                if(offset.dy > (MediaQuery.of(context).size.height-200)){
-                                  widgets.removeWhere((widget)=> widget.key == key);
+                                if (offset.dy >
+                                    (MediaQuery.of(context).size.height -
+                                        200)) {
+                                  widgets.removeWhere(
+                                      (widget) => widget.key == key);
                                 }
                               },
                               onDragUpdate: (Offset offset, Key? key) {
-                                if(offset.dy > (MediaQuery.of(context).size.height-200)){
-                                  if(!_isDeleteBtnActive){
+                                if (offset.dy >
+                                    (MediaQuery.of(context).size.height -
+                                        200)) {
+                                  if (!_isDeleteBtnActive) {
                                     setState(() {
                                       _isDeleteBtnActive = true;
                                     });
                                   }
-                                }else{
-                                  if(_isDeleteBtnActive){
+                                } else {
+                                  if (_isDeleteBtnActive) {
                                     setState(() {
                                       _isDeleteBtnActive = false;
                                     });
@@ -266,8 +286,7 @@ class FrameEditorPageState extends State<FrameEditorView> {
                           );
                         });
                       },
-                      child: _buildToolbarItem(Icons.text_fields, 'Text')
-                  ),
+                      child: _buildToolbarItem(Icons.text_fields, 'Text')),
                 ],
               ),
             ),
@@ -289,12 +308,12 @@ class FrameEditorPageState extends State<FrameEditorView> {
             child: GridView.count(
               crossAxisCount: 2, // 2 columns
               children: [
-                _buildGridImage('assets/layout_1.jpg',0),
-                _buildGridImage('assets/layout_2.jpg',1),
-                _buildGridImage('assets/layout_3.jpg',2),
-                _buildGridImage('assets/layout_4.jpg',3),
-                _buildGridImage('assets/layout_5.jpg',4),
-                _buildGridImage('assets/layout_6.jpg',5),
+                _buildGridImage('assets/layout_1.jpg', 0),
+                _buildGridImage('assets/layout_2.jpg', 1),
+                _buildGridImage('assets/layout_3.jpg', 2),
+                _buildGridImage('assets/layout_4.jpg', 3),
+                _buildGridImage('assets/layout_5.jpg', 4),
+                _buildGridImage('assets/layout_6.jpg', 5),
               ],
             ),
           ),
@@ -311,7 +330,7 @@ class FrameEditorPageState extends State<FrameEditorView> {
     );
   }
 
-  Widget _buildGridImage(String assetPath,int idx) {
+  Widget _buildGridImage(String assetPath, int idx) {
     return GestureDetector(
       onTap: () {
         setState(() {
@@ -330,7 +349,8 @@ class FrameEditorPageState extends State<FrameEditorView> {
   }
 
   Future<XFile?> _pickImage() async {
-    final XFile? imageFile = await _picker.pickImage(source: ImageSource.gallery);
+    final XFile? imageFile =
+        await _picker.pickImage(source: ImageSource.gallery);
     return imageFile;
   }
 
@@ -348,9 +368,9 @@ class FrameEditorPageState extends State<FrameEditorView> {
     );
   }
 
-
   void _showColorPicker() {
-    Color selectedColor = _bgColor; // Use the current background color as the initial value
+    Color selectedColor =
+        _bgColor; // Use the current background color as the initial value
 
     showDialog(
       context: context,
@@ -394,20 +414,24 @@ class PhotoGrid2x3Clipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
     Path path = Path();
-    double width = size.width *3 /7;
-    double height = size.height /4;
-    double gapX = (size.width - (width*2))/3;
-    double gapY = ((size.height*7/8) - (height*3))/3;
+    double width = size.width * 3 / 7;
+    double height = size.height / 4;
+    double gapX = (size.width - (width * 2)) / 3;
+    double gapY = ((size.height * 7 / 8) - (height * 3)) / 3;
 
     // Draw the outer rectangle
     path.addRect(Rect.fromLTWH(0, 0, size.width, size.height));
     path.addRect(Rect.fromLTWH(gapX, gapY, width, height)); // Top left
-    path.addRect(Rect.fromLTWH(size.width - width - gapX, gapY, width, height)); // Top left
-    path.addRect(Rect.fromLTWH(gapX, height + gapY*2, width, height)); // Top left
-    path.addRect(Rect.fromLTWH(size.width - width - gapX,height + gapY*2, width, height)); // Top left
-    path.addRect(Rect.fromLTWH(gapX, height*2 + gapY*3, width, height)); // Top left
-    path.addRect(Rect.fromLTWH(size.width - width - gapX,height*2 + gapY*3, width, height)); // Top left
-
+    path.addRect(Rect.fromLTWH(
+        size.width - width - gapX, gapY, width, height)); // Top left
+    path.addRect(
+        Rect.fromLTWH(gapX, height + gapY * 2, width, height)); // Top left
+    path.addRect(Rect.fromLTWH(size.width - width - gapX, height + gapY * 2,
+        width, height)); // Top left
+    path.addRect(
+        Rect.fromLTWH(gapX, height * 2 + gapY * 3, width, height)); // Top left
+    path.addRect(Rect.fromLTWH(size.width - width - gapX, height * 2 + gapY * 3,
+        width, height)); // Top left
 
     // Set fill type to evenOdd for transparency
     path.fillType = PathFillType.evenOdd;
@@ -423,17 +447,20 @@ class PhotoGrid2x2Clipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
     Path path = Path();
-    double width = size.width *3 /7;
-    double height = size.height /2.5;
-    double gapX = (size.width - (width*2))/3;
-    double gapY = ((size.height*7/8) - (height*2))/2;
+    double width = size.width * 3 / 7;
+    double height = size.height / 2.5;
+    double gapX = (size.width - (width * 2)) / 3;
+    double gapY = ((size.height * 7 / 8) - (height * 2)) / 2;
 
     // Draw the outer rectangle
     path.addRect(Rect.fromLTWH(0, 0, size.width, size.height));
     path.addRect(Rect.fromLTWH(gapX, gapY, width, height)); // Top left
-    path.addRect(Rect.fromLTWH(size.width - width - gapX, gapY, width, height)); // Top left
-    path.addRect(Rect.fromLTWH(gapX, height + gapY*2, width, height)); // Top left
-    path.addRect(Rect.fromLTWH(size.width - width - gapX,height + gapY*2, width, height)); // Top left
+    path.addRect(Rect.fromLTWH(
+        size.width - width - gapX, gapY, width, height)); // Top left
+    path.addRect(
+        Rect.fromLTWH(gapX, height + gapY * 2, width, height)); // Top left
+    path.addRect(Rect.fromLTWH(size.width - width - gapX, height + gapY * 2,
+        width, height)); // Top left
 
     // Set fill type to evenOdd for transparency
     path.fillType = PathFillType.evenOdd;
@@ -449,18 +476,20 @@ class PhotoGrid2x2StairClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
     Path path = Path();
-    double width = size.width *3 /7;
-    double height = size.height /2.5;
-    double gapX = (size.width - (width*2))/3;
-    double gapY = ((size.height*7/8) - (height*2))/2;
-
+    double width = size.width * 3 / 7;
+    double height = size.height / 2.5;
+    double gapX = (size.width - (width * 2)) / 3;
+    double gapY = ((size.height * 7 / 8) - (height * 2)) / 2;
 
     // Draw the outer rectangle
     path.addRect(Rect.fromLTWH(0, 0, size.width, size.height));
     path.addRect(Rect.fromLTWH(gapX, gapY, width, height)); // Top left
-    path.addRect(Rect.fromLTWH(size.width - width - gapX, size.height*1/8, width, height)); // Top left
-    path.addRect(Rect.fromLTWH(gapX, height + gapY*2, width, height)); // Top left
-    path.addRect(Rect.fromLTWH(size.width - width - gapX,height + gapY + size.height*1/8, width, height)); // Top left
+    path.addRect(Rect.fromLTWH(size.width - width - gapX, size.height * 1 / 8,
+        width, height)); // Top left
+    path.addRect(
+        Rect.fromLTWH(gapX, height + gapY * 2, width, height)); // Top left
+    path.addRect(Rect.fromLTWH(size.width - width - gapX,
+        height + gapY + size.height * 1 / 8, width, height)); // Top left
 
     // Set fill type to evenOdd for transparency
     path.fillType = PathFillType.evenOdd;
@@ -476,11 +505,10 @@ class PhotoGrid1Clipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
     Path path = Path();
-    double width = size.width *0.9;
-    double height = size.height *6.5/8;
-    double gapX = (size.width - width)/2;
-    double gapY = (size.height*7/8) - height;
-
+    double width = size.width * 0.9;
+    double height = size.height * 6.5 / 8;
+    double gapX = (size.width - width) / 2;
+    double gapY = (size.height * 7 / 8) - height;
 
     // Draw the outer rectangle
     path.addRect(Rect.fromLTWH(0, 0, size.width, size.height));
@@ -499,15 +527,16 @@ class PhotoGrid1CircleClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
     Path path = Path();
-    double width = size.width *0.9;
-    double height = size.height *6.5/8;
-    double gapX = (size.width - width)/2;
-    double gapY = (size.height*7/8) - height;
-
+    double width = size.width * 0.9;
+    double height = size.height * 6.5 / 8;
+    double gapX = (size.width - width) / 2;
+    double gapY = (size.height * 7 / 8) - height;
 
     // Draw the outer rectangle
     path.addRect(Rect.fromLTWH(0, 0, size.width, size.height));
-    path.addOval(Rect.fromCircle(center: Offset(width/2+gapX, width/2+gapY), radius: width/2)); // Top left
+    path.addOval(Rect.fromCircle(
+        center: Offset(width / 2 + gapX, width / 2 + gapY),
+        radius: width / 2)); // Top left
     // Set fill type to evenOdd for transparency
     path.fillType = PathFillType.evenOdd;
 
@@ -522,19 +551,33 @@ class PhotoGrid2x3CircleClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
     Path path = Path();
-    double width = size.width *3 /7;
-    double height = size.height /2.5;
-    double gapX = (size.width - (width*2))/3;
-    double gapY = ((size.height*7/8) - (height*2))/3;
+    double width = size.width * 3 / 7;
+    double height = size.height / 2.5;
+    double gapX = (size.width - (width * 2)) / 3;
+    double gapY = ((size.height * 7 / 8) - (height * 2)) / 3;
 
     // Draw the outer rectangle
     path.addRect(Rect.fromLTWH(0, 0, size.width, size.height));
-    path.addOval(Rect.fromCircle(center: Offset(width/2+gapX, width/2+gapY), radius: width/2)); // Top left
-    path.addOval(Rect.fromCircle(center: Offset(width/2+gapX*2+width, width/2+gapY), radius: width/2)); // Top left
-    path.addOval(Rect.fromCircle(center: Offset(width/2+gapX, width/2+gapY*2 + width), radius: width/2)); // Top left
-    path.addOval(Rect.fromCircle(center: Offset(width/2+gapX*2+width, width/2+gapY*2 + width), radius: width/2)); // Top left
-    path.addOval(Rect.fromCircle(center: Offset(width/2+gapX, width/2+gapY*3 + width*2), radius: width/2)); // Top left
-    path.addOval(Rect.fromCircle(center: Offset(width/2+gapX*2+width, width/2+gapY*3 + width*2), radius: width/2)); // Top left
+    path.addOval(Rect.fromCircle(
+        center: Offset(width / 2 + gapX, width / 2 + gapY),
+        radius: width / 2)); // Top left
+    path.addOval(Rect.fromCircle(
+        center: Offset(width / 2 + gapX * 2 + width, width / 2 + gapY),
+        radius: width / 2)); // Top left
+    path.addOval(Rect.fromCircle(
+        center: Offset(width / 2 + gapX, width / 2 + gapY * 2 + width),
+        radius: width / 2)); // Top left
+    path.addOval(Rect.fromCircle(
+        center:
+            Offset(width / 2 + gapX * 2 + width, width / 2 + gapY * 2 + width),
+        radius: width / 2)); // Top left
+    path.addOval(Rect.fromCircle(
+        center: Offset(width / 2 + gapX, width / 2 + gapY * 3 + width * 2),
+        radius: width / 2)); // Top left
+    path.addOval(Rect.fromCircle(
+        center: Offset(
+            width / 2 + gapX * 2 + width, width / 2 + gapY * 3 + width * 2),
+        radius: width / 2)); // Top left
     // Set fill type to evenOdd for transparency
     path.fillType = PathFillType.evenOdd;
 

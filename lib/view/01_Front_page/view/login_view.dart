@@ -1,7 +1,7 @@
+import 'package:booth_bliss/model/user_model.dart';
+import 'package:booth_bliss/view/01_Front_page/controller/login_controller.dart';
 import 'package:booth_bliss/view/01_Front_page/view/forgot_password.dart';
 import 'package:flutter/material.dart';
-import 'package:booth_bliss/view/01_Front_page/controller/login_controller.dart';
-import 'package:booth_bliss/model/user_model.dart';
 
 import '../../bottom_nav_bar_view.dart';
 
@@ -15,6 +15,7 @@ class _LoginPageState extends State<LoginPage> {
   bool _isPasswordVisible = false;
   bool _isFormFilled = false;
   String _loginError = '';
+  bool isLoading = false;
 
   // Instantiate the controller
   final LoginController _loginController = LoginController();
@@ -39,11 +40,18 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<void> _login() async {
     try {
+      setState(() {
+        isLoading = true;
+      });
       UserModel? user = await _loginController.login(
         _emailController.text,
         _passwordController.text,
         context,
+        setLoginError,
       );
+      setState(() {
+        isLoading = false;
+      });
 
       if (user != null) {
         // Clear previous error
@@ -62,16 +70,18 @@ class _LoginPageState extends State<LoginPage> {
                 BottomNavBarMain(idx: 0), // The page you want to navigate to
           ));
         });
-      } else {
-        setState(() {
-          _loginError = 'Check you email or password again';
-        });
       }
     } catch (e) {
       setState(() {
         _loginError = 'An error occurred during login: $e';
       });
     }
+  }
+
+  void setLoginError(String str) {
+    setState(() {
+      _loginError = str;
+    });
   }
 
   @override
@@ -183,26 +193,29 @@ class _LoginPageState extends State<LoginPage> {
                     style: TextStyle(color: Colors.pink),
                   ),
                 ),
-                ElevatedButton(
-                  onPressed: _isFormFilled
-                      ? () {
-                          if (_formKey.currentState!.validate()) {
-                            _login();
-                          }
-                        }
-                      : null,
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor:
-                          _isFormFilled ? Color(0xFFFFAFCC) : Colors.grey,
-                      minimumSize: Size(300, 60),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      )),
-                  child: Text(
-                    'Login',
-                    style: TextStyle(color: Colors.black),
-                  ),
-                ),
+                !isLoading
+                    ? ElevatedButton(
+                        onPressed: _isFormFilled
+                            ? () {
+                                FocusManager.instance.primaryFocus?.unfocus();
+                                if (_formKey.currentState!.validate()) {
+                                  _login();
+                                }
+                              }
+                            : null,
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor:
+                                _isFormFilled ? Color(0xFFFFAFCC) : Colors.grey,
+                            minimumSize: Size(300, 60),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            )),
+                        child: Text(
+                          'Login',
+                          style: TextStyle(color: Colors.black),
+                        ),
+                      )
+                    : Center(child: CircularProgressIndicator()),
               ],
             ),
           ),

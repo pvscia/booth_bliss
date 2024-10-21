@@ -3,39 +3,34 @@ import 'package:booth_bliss/model/user_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import '../../Utils/view_dialog_util.dart';
+
 class LoginController {
   Future<UserModel?> login(
-      String email, String password, BuildContext context) async {
+      String email, String password,
+      BuildContext context,
+      Function setLoginError) async {
     try {
       UserCredential user = await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email, password: password);
 
       if (!user.user!.emailVerified) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text(
-                  'Your email is not verified. Please check your inbox for the verification email.')));
-        });
+        setLoginError('Your email is not verified. Please check your inbox for the verification email.');
         await user.user!.sendEmailVerification();
         await FirebaseAuth.instance.signOut();
         return null;
       }
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-
-        ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('No user found for that email.')));
-        });
+        setLoginError('No user found for that email.');
       } else if (e.code == 'wrong-password') {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-        ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Wrong password provided for that user.')));
-          
-        });
+        setLoginError('Wrong Password!');
+      }else if (e.code == 'invalid-credential'){
+        setLoginError('Credentials invalid! Check email and password again');
       }
       return null;
     } catch (e) {
+      setLoginError(e);
       return null;
     }
 

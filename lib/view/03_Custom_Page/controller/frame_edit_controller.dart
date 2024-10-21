@@ -1,12 +1,13 @@
 import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
-import 'dart:ui' as ui;
+import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/rendering.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
+
 
 class FrameEditController {
   Future<File?> capturePng(GlobalKey globalKey) async {
@@ -14,7 +15,7 @@ class FrameEditController {
       var filename = 'captured_widget${Random().nextInt(10000)}.png';
       RenderRepaintBoundary boundary = globalKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
       var image = await boundary.toImage(pixelRatio: 9);
-      ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+      ByteData? byteData = await image.toByteData(format: ImageByteFormat.png);
       if (byteData != null) {
         final pngBytes = byteData.buffer.asUint8List();
         final file = await getTemporaryDirectory();
