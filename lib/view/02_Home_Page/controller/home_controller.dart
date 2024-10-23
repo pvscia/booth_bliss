@@ -28,7 +28,7 @@ class HomeController {
 
         UserModel? tempUser = await getUser(data['userEmail']);
 
-        DateTime date = (data['date'] as Timestamp).toDate();
+        DateTime date = (data['timestamp'] as Timestamp).toDate();
 
         // Return the ImageModel with the correct download URL
         if (tempUser != null) {
