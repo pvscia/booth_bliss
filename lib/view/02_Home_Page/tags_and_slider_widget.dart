@@ -1,7 +1,6 @@
-import 'package:booth_bliss/view/Utils/constant_var.dart';
+import 'package:booth_bliss/model/image_model.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
-import '../../../model/image_model.dart';
 
 class TagsAndSliderWidget extends StatefulWidget {
   final List<ImageModel> images;
@@ -15,9 +14,6 @@ class TagsAndSliderWidget extends StatefulWidget {
 
 class _TagsAndSliderWidgetState extends State<TagsAndSliderWidget> {
   List<String> selectedCategories = [];
-  final ConstantVar constantVar = ConstantVar();
-  String selectedSortingOption =
-      'Newest to Oldest'; // State variable for sorting option
 
   void onSelectionChanged(String category, bool isSelected) {
     setState(() {
@@ -28,35 +24,13 @@ class _TagsAndSliderWidgetState extends State<TagsAndSliderWidget> {
       }
     });
 
-    _filterAndSortImages();
-  }
-
-  void _filterAndSortImages() {
     // Filter images based on selected categories
-    List<ImageModel> filteredImages = widget.images.where((image) {
-      // If no categories are selected, show all images
-      if (selectedCategories.isEmpty) return true;
-
-      // Check if the image belongs to any of the selected categories
-      return selectedCategories.any((category) =>
+    final filteredImages = widget.images.where((image) {
+      return selectedCategories.every((category) =>
           image.categories.any((c) => c.toLowerCase() == category));
     }).toList();
 
-    // Sort images based on the selected order
-    if (selectedSortingOption == 'Newest to Oldest') {
-      filteredImages.sort((a, b) => b.date.compareTo(a.date)); // Newest first
-    } else if (selectedSortingOption == 'Oldest to Newest') {
-      filteredImages.sort((a, b) => a.date.compareTo(b.date)); // Oldest first
-    }
-
     widget.onFilter(filteredImages);
-  }
-
-  void _toggleSortingOrder(String newValue) {
-    setState(() {
-      selectedSortingOption = newValue; // Update sorting option
-    });
-    _filterAndSortImages(); // Reapply filtering and sorting
   }
 
   @override
@@ -68,43 +42,18 @@ class _TagsAndSliderWidgetState extends State<TagsAndSliderWidget> {
       children: [
         Container(
           padding: EdgeInsets.symmetric(
-              vertical: screenHeight * 0.01, horizontal: screenWidth * 0.02),
+              vertical: screenHeight * 0.01, horizontal: screenWidth * 0.0007),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              Expanded(
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: constantVar.categories.map((category) {
-                      return CategoryButton(
-                        category,
-                        onSelectionChanged,
-                        selectedCategories,
-                      );
-                    }).toList(),
-                  ),
-                ),
-              ),
-              // Sorting icon with popup menu
-              PopupMenuButton(
+              CategoryButton('Happy', onSelectionChanged, selectedCategories),
+              CategoryButton('Sci-fi', onSelectionChanged, selectedCategories),
+              CategoryButton('Summer', onSelectionChanged, selectedCategories),
+              CategoryButton('HI', onSelectionChanged, selectedCategories),
+              IconButton(
                 icon: Icon(Icons.tune),
-                itemBuilder: (context) => [
-                  PopupMenuItem(
-                    child: Text('Newest to Oldest'),
-                    onTap: () {
-                      _toggleSortingOrder('Newest to Oldest');
-                    },
-                  ),
-                  PopupMenuItem(
-                    child: Text('Oldest to Newest'),
-                    onTap: () {
-                      _toggleSortingOrder('Oldest to Newest');
-                    },
-                  ),
-                ],
-              ),
+                onPressed: () {},
+              )
             ],
           ),
         ),
@@ -112,8 +61,6 @@ class _TagsAndSliderWidgetState extends State<TagsAndSliderWidget> {
     );
   }
 }
-
-// The CategoryButton class remains unchanged
 
 class CategoryButton extends StatefulWidget {
   final String category;
@@ -170,8 +117,6 @@ class _CategoryButtonState extends State<CategoryButton> {
           width: MediaQuery.of(context).size.width * 0.2,
           height: MediaQuery.of(context).size.height * 0.05,
           padding: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
-          margin: EdgeInsets.symmetric(
-              horizontal: MediaQuery.of(context).size.width * 0.01),
           decoration: BoxDecoration(
               color: buttonColor, borderRadius: BorderRadius.circular(16)),
           child: FittedBox(

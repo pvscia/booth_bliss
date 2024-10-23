@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../../../model/image_model.dart';
 
-
 class ImageGridWidget extends StatelessWidget {
   final List<ImageModel> images;
   final Function(ImageModel) onTap;

@@ -4,19 +4,18 @@ import 'package:firebase_storage/firebase_storage.dart';
 import '../../../model/image_model.dart';
 import '../../../model/user_model.dart';
 
-class HomeController{
+class HomeController {
   Future<List<ImageModel>> fetchFrames() async {
     try {
       // Reference to the Firestore instance
       final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
       // Query Firestore collection 'frames' where the 'email' field matches the user's email
-      QuerySnapshot querySnapshot = await firestore
-          .collection('frames')
-          .get();
+      QuerySnapshot querySnapshot = await firestore.collection('frames').get();
 
       // Convert the Firestore documents to ImageModel instances
-      List<ImageModel> frames = await Future.wait(querySnapshot.docs.map((doc) async {
+      List<ImageModel> frames =
+          await Future.wait(querySnapshot.docs.map((doc) async {
         Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
 
         // Create the image path based on filename
@@ -28,20 +27,25 @@ class HomeController{
         String url = await ref.getDownloadURL();
 
         UserModel? tempUser = await getUser(data['userEmail']);
+
+        DateTime date = (data['date'] as Timestamp).toDate();
+
         // Return the ImageModel with the correct download URL
-        if(tempUser != null){
+        if (tempUser != null) {
           return ImageModel(
             imageUrl: url, // Use the URL instead of the image path
             desc: data['description'],
             categories: List<String>.from(data['categories'] ?? []),
             user: tempUser,
+            date: date,
           );
-        }else{
+        } else {
           return ImageModel(
             imageUrl: url, // Use the URL instead of the image path
             desc: data['description'],
             categories: List<String>.from(data['categories'] ?? []),
             user: tempUser!,
+            date: date,
           );
         }
       }).toList());
@@ -55,10 +59,10 @@ class HomeController{
   Future<UserModel?> getUser(String email) async {
     try {
       DocumentSnapshot<Map<String, dynamic>> doc =
-      await FirebaseFirestore.instance
-          .collection('users')
-          .doc(email) // Document ID
-          .get();
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(email) // Document ID
+              .get();
 
       if (doc.exists) {
         // Convert Firestore document to ModelUser

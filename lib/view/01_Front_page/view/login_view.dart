@@ -57,11 +57,10 @@ class _LoginPageState extends State<LoginPage> {
             SnackBar(content: Text('Login successful!')),
           );
 
-          Navigator.of(context).pushReplacement(
-              MaterialPageRoute(
-                builder: (context) => BottomNavBarMain(idx: 0), // The page you want to navigate to
-              )
-          );
+          Navigator.of(context).pushReplacement(MaterialPageRoute(
+            builder: (context) =>
+                BottomNavBarMain(idx: 0), // The page you want to navigate to
+          ));
         });
       } else {
         setState(() {
@@ -152,10 +151,10 @@ class _LoginPageState extends State<LoginPage> {
                           }
                         }
                       : null,
-                  child: Text('Login'),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: _isFormFilled ? Colors.pink : Colors.grey,
                   ),
+                  child: Text('Login'),
                 ),
               ],
             ),
