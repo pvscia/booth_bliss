@@ -3,6 +3,10 @@ allprojects {
         google()
         mavenCentral()
     }
+    tasks.withType(JavaCompile){
+        options.compilerArgs <<"-Xlint:deprecation"
+        options.compilerArgs <<"-Xlint:-options"
+    }
 }
 
 rootProject.buildDir = "../build"
@@ -20,7 +24,16 @@ subprojects {
                 buildToolsVersion "34.0.0"
             }
         }
+        //fix : Could not create an instance of type com.android.build.api.variant.impl.LibraryVariantBuilderImpl.
+        if (project.hasProperty('android')) {
+            project.android {
+                if (namespace == null) {
+                    namespace project.group
+                }
+            }
+        }
     }
+
 }
 
 subprojects {
