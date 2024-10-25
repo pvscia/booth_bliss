@@ -5,6 +5,7 @@ import '02_Home_Page/view/home_view.dart';
 import '03_Custom_Page/view/custom_view.dart';
 import '04_QR_Page/view/qr_view.dart';
 import '05_Profile_Page/view/profile_view.dart';
+
 class BottomNavBarMain extends StatefulWidget {
   final int idx;
   const BottomNavBarMain({super.key, required this.idx});
@@ -31,9 +32,9 @@ class _BottomNavBarMainState extends State<BottomNavBarMain> {
     getUser();
   }
 
-  Future<void> getUser() async{
+  Future<void> getUser() async {
     UserModel? temp = await MainScreenController().getUser();
-    if(temp != null){
+    if (temp != null) {
       setState(() {
         currUser = temp;
       });
@@ -43,7 +44,7 @@ class _BottomNavBarMainState extends State<BottomNavBarMain> {
 
   // Instead of storing widgets in a list, dynamically create them in build method
   Widget _getSelectedPage(int index) {
-    if(currUser!= null){
+    if (currUser != null) {
       switch (index) {
         case 0:
           return HomeView();
@@ -66,8 +67,8 @@ class _BottomNavBarMainState extends State<BottomNavBarMain> {
     final screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      body: _getSelectedPage(_selectedIndex),  // Dynamically get selected page
-      bottomNavigationBar: Container(
+      body: _getSelectedPage(_selectedIndex), // Dynamically get selected page
+      bottomNavigationBar: SizedBox(
         height: screenHeight * 0.08, // Adjust the height
         child: BottomNavigationBar(
           type: BottomNavigationBarType.fixed,
@@ -78,34 +79,38 @@ class _BottomNavBarMainState extends State<BottomNavBarMain> {
           unselectedLabelStyle: TextStyle(fontSize: screenWidth * 0.02),
           items: [
             BottomNavigationBarItem(
-              icon: Container(
+              icon: SizedBox(
                 width: screenWidth * 0.08, // Adjust the width
                 height: screenWidth * 0.08, // Adjust the height
-                child: Icon(Icons.home, size: screenWidth * 0.08), // Larger home icon
+                child: Icon(Icons.home,
+                    size: screenWidth * 0.08), // Larger home icon
               ),
               label: 'Home',
             ),
             BottomNavigationBarItem(
-              icon: Container(
+              icon: SizedBox(
                 width: screenWidth * 0.08, // Adjust the width
                 height: screenWidth * 0.08, // Adjust the height
-                child: Icon(Icons.add_box, size: screenWidth * 0.08), // Larger custom icon
+                child: Icon(Icons.add_box,
+                    size: screenWidth * 0.08), // Larger custom icon
               ),
               label: 'Custom',
             ),
             BottomNavigationBarItem(
-              icon: Container(
+              icon: SizedBox(
                 width: screenWidth * 0.08, // Adjust the width
                 height: screenWidth * 0.08, // Adjust the height
-                child: Icon(Icons.qr_code, size: screenWidth * 0.08), // Larger scan icon
+                child: Icon(Icons.qr_code,
+                    size: screenWidth * 0.08), // Larger scan icon
               ),
               label: 'Scan',
             ),
             BottomNavigationBarItem(
-              icon: Container(
+              icon: SizedBox(
                 width: screenWidth * 0.08, // Adjust the width
                 height: screenWidth * 0.08, // Adjust the height
-                child: Icon(Icons.person, size: screenWidth * 0.08), // Larger profile icon
+                child: Icon(Icons.person,
+                    size: screenWidth * 0.08), // Larger profile icon
               ),
               label: 'Profile',
             ),

@@ -1,13 +1,26 @@
 import 'package:booth_bliss/model/user_model.dart';
 
-class ImageModel{
+class ImageModel {
   String imageUrl;
   String desc;
   List<String> categories;
   UserModel user;
-  ImageModel({
-    required this.imageUrl,
-    required this.desc,
-    required this.categories,
-    required this.user});
+  DateTime date;
+
+  ImageModel(
+      {required this.imageUrl,
+      required this.desc,
+      required this.categories,
+      required this.user,
+      required this.date});
+
+  Map<String, dynamic> toJson() {
+    return {
+      'imageUrl': imageUrl,
+      'desc': desc,
+      'categories': categories,
+      'user': user,
+      'date': date
+    };
+  }
 }

@@ -34,21 +34,19 @@ class _HomeViewState extends State<HomeView> {
       isLoading = true;
     });
     try {
-      var temp =  await HomeController().fetchFrames();
+      var temp = await HomeController().fetchFrames();
       setState(() {
         images = temp;
         filteredImages = images;
-        isLoading=false;
+        isLoading = false;
       });
     } catch (e) {
       print('Error fetching frames: $e');
       setState(() {
-        isLoading=false;
+        isLoading = false;
       });
     }
   }
-
-
 
   void _onSelectionChanged(bool isAnyButtonSelected) {
     // You can add additional logic here if needed
@@ -65,17 +63,21 @@ class _HomeViewState extends State<HomeView> {
               images: images,
               onFilter: onFilter,
             ),
-            !isLoading ? Flexible(
-              flex: 1,
-              child: ImageGridWidget(
-                images: filteredImages,
-                onTap: (image) {
-                  Navigator.push(context, MaterialPageRoute(
-                      builder: (context) => DetailPage(imageData: image))
-                  );
-                },
-              ),
-            ) : Center(child: CircularProgressIndicator()),
+            !isLoading
+                ? Expanded(
+                    flex: 1,
+                    child: ImageGridWidget(
+                      images: filteredImages,
+                      onTap: (image) {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    DetailPage(imageData: image)));
+                      },
+                    ),
+                  )
+                : Center(child: CircularProgressIndicator()),
           ],
         ),
       ),
