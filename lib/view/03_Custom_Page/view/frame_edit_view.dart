@@ -260,7 +260,9 @@ class FrameEditorPageState extends State<FrameEditorView> {
 
                                 if (offset.dy >
                                     (MediaQuery.of(context).size.height -
-                                        200)) {
+                                        100) && offset.dx >
+                                    (MediaQuery.of(context).size.width -
+                                        100)) {
                                   widgets.removeWhere(
                                       (widget) => widget.key == key);
                                 }

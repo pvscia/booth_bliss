@@ -214,17 +214,17 @@ class ProfileViewState extends State<ProfileView> {
                     physics: NeverScrollableScrollPhysics(),
                     gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
                       maxCrossAxisExtent: 150,
-                      crossAxisSpacing: 2,
-                      mainAxisSpacing: 8,
-                      childAspectRatio: 3 / 5,
+                      crossAxisSpacing: 5,
+                      mainAxisSpacing: 5,
+                      childAspectRatio: 3/5,
                     ),
                     itemCount: images.length,
                     itemBuilder: (BuildContext context, int index) {
                       return ClipRRect(
-                        borderRadius: BorderRadius.circular(20),
+                        borderRadius: BorderRadius.circular(10),
                         child: Image.network(
                           images[index].imageUrl,
-                          fit: BoxFit.contain,
+                          fit: BoxFit.fitHeight,
                         ),
                       );
                     },

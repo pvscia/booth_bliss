@@ -82,7 +82,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   Future<void> _handleSave() async {
     ViewDialogUtil().showYesNoActionDialog(
-        'Save Frame?',
+        'Save Profile?',
         'Yes',
         'No',
         context,
@@ -97,7 +97,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
             WidgetsBinding.instance.addPostFrameCallback((_) {
               Navigator.of(context).pop();
               ViewDialogUtil().showOneButtonActionDialog(
-                  'Frame Saved',
+                  'Profile Saved',
                   'Ok',
                   'success.gif',
                   context,
