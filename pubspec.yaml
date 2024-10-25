@@ -70,7 +70,6 @@ flutter_icons:
   image_path: "lib/assets/logo.png"
 
 dev_dependencies:
-  flutter_launcher_icons : ^0.13.1
   flutter_test:
     sdk: flutter
 
