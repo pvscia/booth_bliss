@@ -21,7 +21,7 @@ class ImageModel {
       'desc': desc,
       'categories': categories,
       'user': user,
-      'date': Timestamp.now()
+      'date': date
     };
   }
 }

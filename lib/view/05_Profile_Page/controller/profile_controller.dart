@@ -34,7 +34,8 @@ class ProfileController {
           .get();
 
       // Convert the Firestore documents to ImageModel instances
-      List<ImageModel> frames = await Future.wait(querySnapshot.docs.map((doc) async {
+      List<ImageModel> frames =
+          await Future.wait(querySnapshot.docs.map((doc) async {
         Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
 
         // Create the image path based on filename
@@ -47,20 +48,22 @@ class ProfileController {
 
         UserModel? tempUser = await getUser();
         // Return the ImageModel with the correct download URL
-        if(tempUser != null){
+        if (tempUser != null) {
           return ImageModel(
-            imageUrl: url, // Use the URL instead of the image path
-            desc: data['description'],
-            categories: List<String>.from(data['categories'] ?? []),
-            user: tempUser,
-          );
-        }else{
+              imageUrl: url,
+              // Use the URL instead of the image path
+              desc: data['description'],
+              categories: List<String>.from(data['categories'] ?? []),
+              user: tempUser,
+              date:(data['timestamp'] as Timestamp).toDate());
+        } else {
           return ImageModel(
-            imageUrl: url, // Use the URL instead of the image path
-            desc: data['description'],
-            categories: List<String>.from(data['categories'] ?? []),
-            user: tempUser!,
-          );
+              imageUrl: url,
+              // Use the URL instead of the image path
+              desc: data['description'],
+              categories: List<String>.from(data['categories'] ?? []),
+              user: tempUser!,
+              date: (data['timestamp'] as Timestamp).toDate());
         }
       }).toList());
       return frames;
@@ -73,10 +76,10 @@ class ProfileController {
   Future<UserModel?> getUser() async {
     try {
       DocumentSnapshot<Map<String, dynamic>> doc =
-      await FirebaseFirestore.instance
-          .collection('users')
-          .doc(FirebaseAuth.instance.currentUser?.email) // Document ID
-          .get();
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(FirebaseAuth.instance.currentUser?.email) // Document ID
+              .get();
 
       if (doc.exists) {
         // Convert Firestore document to ModelUser
