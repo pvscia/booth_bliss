@@ -1,3 +1,15 @@
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath "com.android.tools.build:gradle:8.2.0" // Adjust version as necessary
+        classpath "com.google.gms:google-services:4.3.15" // Ensure this is the latest version
+        implementation "org.codehaus.groovy:groovy-all:3.0.9"
+    }
+}
+
 plugins {
     id "com.android.application"
     // START: FlutterFire Configuration
@@ -28,7 +40,7 @@ if (flutterVersionName == null) {
 
 android {
     namespace = "com.example.booth_bliss"
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = 34
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
@@ -42,6 +54,7 @@ android {
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
         minSdkVersion 23
+        targetSdk = 34
         // minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutterVersionCode.toInteger()
@@ -62,3 +75,6 @@ android {
 flutter {
     source = "../.."
 }
+
+
+// Other configurations...
