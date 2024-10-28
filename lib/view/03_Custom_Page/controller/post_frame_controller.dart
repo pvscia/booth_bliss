@@ -25,6 +25,7 @@ class PostFrameController{
         'categories': categories,
         'filename': fileName,
         'timestamp': FieldValue.serverTimestamp(),
+        'likedBy' : null,
       });
 
     } catch (e) {

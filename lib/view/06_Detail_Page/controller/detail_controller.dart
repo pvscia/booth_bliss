@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
 class DetailController{
@@ -11,5 +12,19 @@ class DetailController{
       print('Error fetching image URL: $e');
       return null;
     }
+  }
+
+  Future<void> likeFrame(String docID, String email) async {
+    final ref = FirebaseFirestore.instance.collection('frames').doc(docID);
+    await ref.update({
+      'likedBy' : FieldValue.arrayUnion([email])
+    });
+  }
+
+  Future<void> unlikeFrame(String docID, String email) async {
+    final ref = FirebaseFirestore.instance.collection('frames').doc(docID);
+    await ref.update({
+      'likedBy' : FieldValue.arrayRemove([email])
+    });
   }
 }
