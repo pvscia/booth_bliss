@@ -68,12 +68,13 @@ class _HomeViewState extends State<HomeView> {
                     flex: 1,
                     child: ImageGridWidget(
                       images: filteredImages,
-                      onTap: (image) {
-                        Navigator.push(
+                      onTap: (image) async {
+                        await Navigator.push(
                             context,
                             MaterialPageRoute(
                                 builder: (context) =>
                                     DetailPage(imageData: image)));
+                        _fetchFrames();
                       },
                     ),
                   )

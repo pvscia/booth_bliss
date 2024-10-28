@@ -113,7 +113,11 @@ class _HomeViewState extends State<HomeView> {
               child: ImageGridWidget(
                 images: filteredImages,
                 onTap: (image) {
-                  Get.to(DetailPage(imageData: image));
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              DetailPage(imageData: image)));
                 },
               ),
             ),

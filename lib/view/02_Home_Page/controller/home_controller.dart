@@ -33,20 +33,24 @@ class HomeController {
         // Return the ImageModel with the correct download URL
         if (tempUser != null) {
           return ImageModel(
-            imageUrl: url, // Use the URL instead of the image path
-            desc: data['description'],
-            categories: List<String>.from(data['categories'] ?? []),
-            user: tempUser,
-            date: date,
-          );
+              imageUrl: url,
+              // Use the URL instead of the image path
+              desc: data['description'],
+              categories: List<String>.from(data['categories'] ?? []),
+              user: tempUser,
+              date: date,
+              docName: doc.id,
+              likedBy: List<String>.from(data['likedBy'] ?? []));
         } else {
           return ImageModel(
-            imageUrl: url, // Use the URL instead of the image path
-            desc: data['description'],
-            categories: List<String>.from(data['categories'] ?? []),
-            user: tempUser!,
-            date: date,
-          );
+              imageUrl: url,
+              // Use the URL instead of the image path
+              desc: data['description'],
+              categories: List<String>.from(data['categories'] ?? []),
+              user: tempUser!,
+              date: date,
+              docName: doc.id,
+              likedBy: List<String>.from(data['likedBy'] ?? []));
         }
       }).toList());
       return frames;
