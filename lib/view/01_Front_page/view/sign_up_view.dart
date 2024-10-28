@@ -30,6 +30,7 @@ class _SignUpPageState extends State<SignUpPage> {
         Navigator.pop(context);
       },
       child: Scaffold(
+        resizeToAvoidBottomInset : false,
         backgroundColor: Color(0xFFF3FDE8),
         appBar: AppBar(
           centerTitle: true,

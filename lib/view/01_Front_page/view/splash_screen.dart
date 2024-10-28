@@ -1,5 +1,8 @@
 import 'package:booth_bliss/view/01_Front_page/controller/auth_check_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
+import '../../Utils/view_dialog_util.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -26,6 +29,18 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
+    bool isNotPhone = ViewDialogUtil().isNotPhone(context);
+    if(isNotPhone){
+      SystemChrome.setPreferredOrientations([
+        DeviceOrientation.landscapeRight,
+        DeviceOrientation.landscapeLeft,
+      ]);
+    }else{
+      SystemChrome.setPreferredOrientations([
+        DeviceOrientation.portraitUp,
+        DeviceOrientation.portraitDown,
+      ]);
+    }
     return Scaffold(
       backgroundColor: Color(0xFFF3FDE8),
       body: Center(

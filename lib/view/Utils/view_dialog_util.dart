@@ -167,4 +167,14 @@ class ViewDialogUtil{
       },
     );
   }
+
+  bool isNotPhone(BuildContext context){
+    final screenSize = MediaQuery.of(context).size;
+    final devicePixelRatio = MediaQuery.of(context).devicePixelRatio;
+
+    final logicalWidth = screenSize.width / devicePixelRatio;
+    final logicalHeight = screenSize.height / devicePixelRatio;
+
+    return (logicalWidth > 600 || logicalHeight > 600);
+  }
 }

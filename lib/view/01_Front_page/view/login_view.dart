@@ -13,7 +13,6 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final _formKey = GlobalKey<FormState>();
   bool _isPasswordVisible = false;
   bool _isFormFilled = false;
   String _loginError = '';
@@ -97,6 +96,7 @@ class _LoginPageState extends State<LoginPage> {
         Navigator.pop(context);
       },
       child: Scaffold(
+        resizeToAvoidBottomInset : false,
         backgroundColor: Color(0xFFF3FDE8),
         appBar: AppBar(
           centerTitle: true,
@@ -106,54 +106,27 @@ class _LoginPageState extends State<LoginPage> {
         ),
         body: Padding(
           padding: const EdgeInsets.all(16.0),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              children: <Widget>[
-                if (_loginError.isNotEmpty)
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 8.0),
-                    child: Text(
-                      _loginError,
-                      style: TextStyle(color: Colors.red),
-                    ),
+          child: Column(
+            children: <Widget>[
+              if (_loginError.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 8.0),
+                  child: Text(
+                    _loginError,
+                    style: TextStyle(color: Colors.red),
                   ),
-                SizedBox(height: 30),
-                TextFormField(
-                  controller: _emailController,
-                  decoration: InputDecoration(
-                      labelText: 'Email',
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius:
-                            BorderRadius.circular(10), // Rounded corners
-                        borderSide: BorderSide(
-                          color: Color(
-                              0xFF55CF00), // Outline color when not focused
-                          width: 2, // Outline thickness
-                        ),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius:
-                            BorderRadius.circular(10), // Rounded corners
-                        borderSide: BorderSide(
-                          color:
-                              Color(0xFF55CF00), // Outline color when focused
-                          width: 2, // Outline thickness
-                        ),
-                      )),
-                  onChanged: (value) => _checkFormFilled(),
                 ),
-                SizedBox(height: 15),
-                TextFormField(
-                  controller: _passwordController,
-                  decoration: InputDecoration(
-                    labelText: 'Password',
+              SizedBox(height: 30),
+              TextFormField(
+                controller: _emailController,
+                decoration: InputDecoration(
+                    labelText: 'Email',
                     enabledBorder: OutlineInputBorder(
                       borderRadius:
                           BorderRadius.circular(10), // Rounded corners
                       borderSide: BorderSide(
-                        color:
-                            Color(0xFF55CF00), // Outline color when not focused
+                        color: Color(
+                            0xFF55CF00), // Outline color when not focused
                         width: 2, // Outline thickness
                       ),
                     ),
@@ -161,65 +134,87 @@ class _LoginPageState extends State<LoginPage> {
                       borderRadius:
                           BorderRadius.circular(10), // Rounded corners
                       borderSide: BorderSide(
-                        color: Color(0xFF55CF00), // Outline color when focused
+                        color:
+                            Color(0xFF55CF00), // Outline color when focused
                         width: 2, // Outline thickness
                       ),
+                    )),
+                onChanged: (value) => _checkFormFilled(),
+              ),
+              SizedBox(height: 15),
+              TextFormField(
+                controller: _passwordController,
+                decoration: InputDecoration(
+                  labelText: 'Password',
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius:
+                        BorderRadius.circular(10), // Rounded corners
+                    borderSide: BorderSide(
+                      color:
+                          Color(0xFF55CF00), // Outline color when not focused
+                      width: 2, // Outline thickness
                     ),
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        _isPasswordVisible
-                            ? Icons.visibility
-                            : Icons.visibility_off,
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius:
+                        BorderRadius.circular(10), // Rounded corners
+                    borderSide: BorderSide(
+                      color: Color(0xFF55CF00), // Outline color when focused
+                      width: 2, // Outline thickness
+                    ),
+                  ),
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _isPasswordVisible
+                          ? Icons.visibility
+                          : Icons.visibility_off,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _isPasswordVisible = !_isPasswordVisible;
+                      });
+                    },
+                  ),
+                ),
+                obscureText: !_isPasswordVisible,
+                onChanged: (value) => _checkFormFilled(),
+              ),
+              Spacer(),
+              TextButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ForgetPasswordPage()),
+                  );
+                },
+                child: Text(
+                  'Forgot password?',
+                  style: TextStyle(color: Colors.pink),
+                ),
+              ),
+              !isLoading
+                  ? ElevatedButton(
+                      onPressed: _isFormFilled
+                          ? () {
+                              FocusManager.instance.primaryFocus?.unfocus();
+                                _login();
+                            }
+                          : null,
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor:
+                              _isFormFilled ? Color(0xFFFFAFCC) : Colors.grey,
+                          minimumSize: Size(300, 60),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          )),
+                      child: Text(
+                        'Login',
+                        style: TextStyle(color: Colors.black),
                       ),
-                      onPressed: () {
-                        setState(() {
-                          _isPasswordVisible = !_isPasswordVisible;
-                        });
-                      },
-                    ),
-                  ),
-                  obscureText: !_isPasswordVisible,
-                  onChanged: (value) => _checkFormFilled(),
-                ),
-                Spacer(),
-                TextButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => ForgetPasswordPage()),
-                    );
-                  },
-                  child: Text(
-                    'Forgot password?',
-                    style: TextStyle(color: Colors.pink),
-                  ),
-                ),
-                !isLoading
-                    ? ElevatedButton(
-                        onPressed: _isFormFilled
-                            ? () {
-                                FocusManager.instance.primaryFocus?.unfocus();
-                                if (_formKey.currentState!.validate()) {
-                                  _login();
-                                }
-                              }
-                            : null,
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor:
-                                _isFormFilled ? Color(0xFFFFAFCC) : Colors.grey,
-                            minimumSize: Size(300, 60),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            )),
-                        child: Text(
-                          'Login',
-                          style: TextStyle(color: Colors.black),
-                        ),
-                      )
-                    : Center(child: CircularProgressIndicator()),
-              ],
-            ),
+                    )
+                  : Center(child: CircularProgressIndicator()),
+            ],
           ),
         ),
       ),

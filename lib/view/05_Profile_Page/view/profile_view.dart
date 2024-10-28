@@ -187,7 +187,7 @@ class ProfileViewState extends State<ProfileView> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      TextButton(
+                      if(!isViewOnly)TextButton(
                         onPressed: () {
                           _fetchUserResult();
                           setState(() {
