@@ -3,6 +3,7 @@ import 'package:booth_bliss/model/user_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+// ignore: unused_import
 import '../../Utils/view_dialog_util.dart';
 
 class LoginController {
