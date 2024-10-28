@@ -1,4 +1,4 @@
-// views/home_view.dart
+// views/home_view.dart changes
 import 'package:booth_bliss/view/02_Home_Page/controller/home_controller.dart';
 import 'package:flutter/material.dart';
 import '../../../model/image_model.dart';
