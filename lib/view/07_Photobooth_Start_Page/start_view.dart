@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../Photobooth_Frame_Page/select_frame_view.dart';
+import '../08_Photobooth_Frame_Page/select_frame_view.dart';
 
 class PhotoboothStartView extends StatelessWidget {
   @override
