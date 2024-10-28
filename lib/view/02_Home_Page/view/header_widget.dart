@@ -1,6 +1,12 @@
+// views/header_widget.dart
 import 'package:flutter/material.dart';
 
 class HeaderWidget extends StatelessWidget {
+  final Function(String) onSearchChanged; // Accept a callback
+
+  // Constructor with the callback parameter
+  HeaderWidget({required this.onSearchChanged});
+
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -50,11 +56,10 @@ class HeaderWidget extends StatelessWidget {
                     Icon(Icons.search,
                         color: Colors.black,
                         size: screenHeight * 0.03), // Search Icon
-                    SizedBox(
-                        width: screenWidth *
-                            0.02), // Space between icon and text field
+                    SizedBox(width: screenWidth * 0.02), // Space between icon and text field
                     Expanded(
                       child: TextField(
+                        onChanged: onSearchChanged, // Call the function on text change
                         style: TextStyle(
                           fontSize: screenHeight * 0.02,
                           fontWeight: FontWeight.bold,
@@ -64,8 +69,7 @@ class HeaderWidget extends StatelessWidget {
                           contentPadding: EdgeInsets.only(top: 10, bottom: 3),
                           hintText: 'Search frame', // Placeholder text
                           border: InputBorder.none, // No internal border
-                          isDense:
-                              true, // Reduces the padding inside the TextField
+                          isDense: true, // Reduces the padding inside the TextField
                         ),
                       ),
                     ),

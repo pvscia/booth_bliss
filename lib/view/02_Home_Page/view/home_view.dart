@@ -1,3 +1,4 @@
+// views/home_view.dart
 import 'package:booth_bliss/view/02_Home_Page/controller/home_controller.dart';
 import 'package:flutter/material.dart';
 import '../../../model/image_model.dart';
@@ -15,6 +16,7 @@ class _HomeViewState extends State<HomeView> {
   List<ImageModel> filteredImages = [];
   List<ImageModel> images = [];
   bool isLoading = false;
+  String searchQuery = '';
 
   void onFilter(List<ImageModel> filteredImages) {
     setState(() {
@@ -37,7 +39,7 @@ class _HomeViewState extends State<HomeView> {
       var temp = await HomeController().fetchFrames();
       setState(() {
         images = temp;
-        filteredImages = images;
+        filteredImages = images; // Initially show all images
         isLoading = false;
       });
     } catch (e) {
@@ -48,8 +50,21 @@ class _HomeViewState extends State<HomeView> {
     }
   }
 
-  void _onSelectionChanged(bool isAnyButtonSelected) {
-    // You can add additional logic here if needed
+  void updateSearchQuery(String query) {
+    setState(() {
+      searchQuery = query;
+
+      // Filter images based on the search query
+      filteredImages = images.where((image) {
+        bool matchesDescription = image.desc.toLowerCase().contains(query.toLowerCase());
+        bool matchesCategory = image.categories.any((category) => 
+          category.toLowerCase().contains(query.toLowerCase()));
+        bool matchesFirstName = (image.user.firstName?.toLowerCase() ?? '').contains(query.toLowerCase());
+        bool matchesLastName = (image.user.lastName?.toLowerCase() ?? '').contains(query.toLowerCase());
+
+        return matchesDescription || matchesCategory || matchesFirstName || matchesLastName;
+      }).toList();
+    });
   }
 
   @override
@@ -58,7 +73,7 @@ class _HomeViewState extends State<HomeView> {
       child: Scaffold(
         body: Column(
           children: [
-            HeaderWidget(),
+            HeaderWidget(onSearchChanged: updateSearchQuery), // Pass the callback
             TagsAndSliderWidget(
               images: images,
               onFilter: onFilter,
@@ -67,13 +82,14 @@ class _HomeViewState extends State<HomeView> {
                 ? Expanded(
                     flex: 1,
                     child: ImageGridWidget(
-                      images: filteredImages,
+                      images: filteredImages, // Use filtered images
                       onTap: (image) {
                         Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    DetailPage(imageData: image)));
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => DetailPage(imageData: image),
+                          ),
+                        );
                       },
                     ),
                   )
