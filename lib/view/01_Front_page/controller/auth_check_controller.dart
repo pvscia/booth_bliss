@@ -1,14 +1,11 @@
 import 'package:booth_bliss/model/user_model.dart';
-import 'package:booth_bliss/view/01_Front_page/view/sign_up_view.dart';
 import 'package:booth_bliss/view/Utils/view_dialog_util.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import '../../07_Photobooth_Start_Page/start_view.dart';
 import '../../bottom_nav_bar_view.dart';
-import '../view/login_view.dart';
 
 class AuthCheck extends StatelessWidget {
   @override

@@ -2,8 +2,6 @@ import 'package:booth_bliss/model/user_model.dart';
 import 'package:booth_bliss/view/01_Front_page/controller/login_controller.dart';
 import 'package:booth_bliss/view/01_Front_page/view/forgot_password.dart';
 import 'package:flutter/material.dart';
-import 'package:booth_bliss/view/01_Front_page/controller/login_controller.dart';
-import 'package:booth_bliss/model/user_model.dart';
 
 import '../../bottom_nav_bar_view.dart';
 
