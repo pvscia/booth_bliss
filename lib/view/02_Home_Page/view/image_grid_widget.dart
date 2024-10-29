@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 import '../../../model/image_model.dart';
@@ -39,11 +40,11 @@ class ImageItem extends StatelessWidget {
         child: Container(
           width: 170, // Set a fixed width for the image
           height: 300, // Set a fixed height for the image
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              image: NetworkImage(image.imageUrl),
-              fit: BoxFit.cover,
-            ),
+          child: CachedNetworkImage(
+            imageUrl: image.imageUrl,
+            fit: BoxFit.cover,
+            placeholder: (context, url) => Center(child: CircularProgressIndicator()),
+            errorWidget: (context, url, error) => Icon(Icons.error),
           ),
         ),
       ),

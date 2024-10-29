@@ -84,7 +84,7 @@ class _DetailPageState extends State<DetailPage> {
                               widget.imageData.imageUrl,
                               width: double.infinity,
                               height: double.infinity,
-                              fit: BoxFit.cover,
+                              fit: BoxFit.fill,
                             ),
                             Positioned(
                               top: 16,
