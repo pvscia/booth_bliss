@@ -1,3 +1,4 @@
+import 'package:booth_bliss/view/08_Photobooth_Frame_Page/temp.dart';
 import 'package:flutter/material.dart';
 
 class PhotoboothFrameSelectionPage extends StatefulWidget {
@@ -101,7 +102,11 @@ class PhotoboothFrameSelectionPageState
                             SizedBox(height: 20),
                             ElevatedButton(
                               onPressed: () {
-                                // Define your select action
+                                Navigator.of(context).pushReplacement(
+                                  MaterialPageRoute(
+                                    builder: (context) => PhotoGridExample(), // The page you want to navigate to
+                                  ),
+                                );
                               },
                               style: ElevatedButton.styleFrom(
                                 foregroundColor: Colors.black,
