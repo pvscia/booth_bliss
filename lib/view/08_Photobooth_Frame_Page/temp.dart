@@ -70,22 +70,31 @@ class PhotoGridExample extends StatelessWidget {
       PhotoGridModels.circle1,
       PhotoGridModels.circle2x3,
     ];
+
+    final List<String> images = [
+      'assets/layout_1.png',
+      'assets/layout_2.png',
+      'assets/layout_3.png',
+      'assets/layout_4.png',
+      'assets/layout_5.png',
+      'assets/layout_6.png',
+    ];
     return Scaffold(
       appBar: AppBar(
         title: Text('Photo Grid Example'),
       ),
       body: Center(
         child: PhotoGrid(
-          gridModel: PhotoGridModels.square2x2,
+          gridModel: models[index],
           imageUrls: [
             'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRDoXziDkMV4_z8jPhVA9qgg_SuzSgXF07FzQ&s',
-            'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRDoXziDkMV4_z8jPhVA9qgg_SuzSgXF07FzQ&s',
-            'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRDoXziDkMV4_z8jPhVA9qgg_SuzSgXF07FzQ&s',
-            'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRDoXziDkMV4_z8jPhVA9qgg_SuzSgXF07FzQ&s',
-            'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRDoXziDkMV4_z8jPhVA9qgg_SuzSgXF07FzQ&s',
-            'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRDoXziDkMV4_z8jPhVA9qgg_SuzSgXF07FzQ&s',
+            'https://i.pinimg.com/474x/e9/98/2e/e9982e430e415b35a100882dcd326c79.jpg',
+            'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRx51lLKpGu8pnIePUDeQdvgRAguzTjDgPI3g&s',
+            'https://i.ytimg.com/vi/RIll7DTfQ54/maxresdefault.jpg',
+            'https://indie88.com/wp-content/uploads/2022/05/Screen-Shot-2022-05-27-at-2.29.06-PM.png',
+            'https://qph.cf2.quoracdn.net/main-qimg-5c76afb291efcc7c373ade687746c057-lq',
           ],
-          frameUrl: 'assets/layout_2.png',
+          frameUrl: images[index],
         ),
       ),
     );

@@ -18,9 +18,11 @@ class PhotoboothFrameSelectionPageState
     'assets/layout_6.png',
   ];
   String currImage = '';
+  int currIdx = 0;
 
   @override
   Widget build(BuildContext context) {
+    currImage = images[currIdx];
     return DefaultTabController(
       length: 2,
       child: Scaffold(
@@ -71,6 +73,7 @@ class PhotoboothFrameSelectionPageState
                             onTap: () {
                               setState(() {
                                 currImage = images[index];
+                                currIdx = index;
                               });
                             },
                             child: Image.asset(
@@ -102,9 +105,10 @@ class PhotoboothFrameSelectionPageState
                             SizedBox(height: 20),
                             ElevatedButton(
                               onPressed: () {
-                                Navigator.of(context).pushReplacement(
+                                Navigator.of(context).push(
                                   MaterialPageRoute(
-                                    builder: (context) => PhotoGridExample(), // The page you want to navigate to
+                                    builder: (context) => PhotoGridExample(index: currIdx,), // The page you want to navigate to
+                                    // builder: (context) => CustomCamera(), // The page you want to navigate to
                                   ),
                                 );
                               },
