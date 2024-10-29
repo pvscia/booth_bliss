@@ -95,16 +95,17 @@ class FrameEditorPageState extends State<FrameEditorView> {
                           builder: (context) => PostFrameView(
                             framePng: result,
                             user: widget.user,
+                            idxFrame: idxClipPath,
                           ), // The page you want to navigate to
                         ),
                       );
-                    }else{
+                    } else {
                       ViewDialogUtil().showOneButtonActionDialog(
                           'Error saving frame, try again',
                           'back',
                           'warning.gif',
                           context,
-                          (){});
+                          () {});
                     }
                   });
                 }, () {});
@@ -259,10 +260,11 @@ class FrameEditorPageState extends State<FrameEditorView> {
                                 }
 
                                 if (offset.dy >
-                                    (MediaQuery.of(context).size.height -
-                                        100) && offset.dx >
-                                    (MediaQuery.of(context).size.width -
-                                        100)) {
+                                        (MediaQuery.of(context).size.height -
+                                            100) &&
+                                    offset.dx >
+                                        (MediaQuery.of(context).size.width -
+                                            100)) {
                                   widgets.removeWhere(
                                       (widget) => widget.key == key);
                                 }
@@ -423,17 +425,17 @@ class PhotoGrid2x3Clipper extends CustomClipper<Path> {
 
     // Draw the outer rectangle
     path.addRect(Rect.fromLTWH(0, 0, size.width, size.height));
-    path.addRect(Rect.fromLTWH(gapX, gapY, width, height)); // Top left
+    path.addRect(Rect.fromLTWH(gapX, gapY, width, height));
     path.addRect(Rect.fromLTWH(
-        size.width - width - gapX, gapY, width, height)); // Top left
+        size.width - width - gapX, gapY, width, height));
     path.addRect(
-        Rect.fromLTWH(gapX, height + gapY * 2, width, height)); // Top left
+        Rect.fromLTWH(gapX, height + gapY * 2, width, height));
     path.addRect(Rect.fromLTWH(size.width - width - gapX, height + gapY * 2,
-        width, height)); // Top left
+        width, height));
     path.addRect(
-        Rect.fromLTWH(gapX, height * 2 + gapY * 3, width, height)); // Top left
+        Rect.fromLTWH(gapX, height * 2 + gapY * 3, width, height));
     path.addRect(Rect.fromLTWH(size.width - width - gapX, height * 2 + gapY * 3,
-        width, height)); // Top left
+        width, height));
 
     // Set fill type to evenOdd for transparency
     path.fillType = PathFillType.evenOdd;
@@ -456,13 +458,13 @@ class PhotoGrid2x2Clipper extends CustomClipper<Path> {
 
     // Draw the outer rectangle
     path.addRect(Rect.fromLTWH(0, 0, size.width, size.height));
-    path.addRect(Rect.fromLTWH(gapX, gapY, width, height)); // Top left
+    path.addRect(Rect.fromLTWH(gapX, gapY, width, height));
     path.addRect(Rect.fromLTWH(
-        size.width - width - gapX, gapY, width, height)); // Top left
+        size.width - width - gapX, gapY, width, height));
     path.addRect(
-        Rect.fromLTWH(gapX, height + gapY * 2, width, height)); // Top left
+        Rect.fromLTWH(gapX, height + gapY * 2, width, height));
     path.addRect(Rect.fromLTWH(size.width - width - gapX, height + gapY * 2,
-        width, height)); // Top left
+        width, height));
 
     // Set fill type to evenOdd for transparency
     path.fillType = PathFillType.evenOdd;
@@ -485,13 +487,13 @@ class PhotoGrid2x2StairClipper extends CustomClipper<Path> {
 
     // Draw the outer rectangle
     path.addRect(Rect.fromLTWH(0, 0, size.width, size.height));
-    path.addRect(Rect.fromLTWH(gapX, gapY, width, height)); // Top left
+    path.addRect(Rect.fromLTWH(gapX, gapY, width, height));
     path.addRect(Rect.fromLTWH(size.width - width - gapX, size.height * 1 / 8,
-        width, height)); // Top left
+        width, height));
     path.addRect(
-        Rect.fromLTWH(gapX, height + gapY * 2, width, height)); // Top left
+        Rect.fromLTWH(gapX, height + gapY * 2, width, height));
     path.addRect(Rect.fromLTWH(size.width - width - gapX,
-        height + gapY + size.height * 1 / 8, width, height)); // Top left
+        height + gapY + size.height * 1 / 8, width, height));
 
     // Set fill type to evenOdd for transparency
     path.fillType = PathFillType.evenOdd;
@@ -514,7 +516,7 @@ class PhotoGrid1Clipper extends CustomClipper<Path> {
 
     // Draw the outer rectangle
     path.addRect(Rect.fromLTWH(0, 0, size.width, size.height));
-    path.addRect(Rect.fromLTWH(gapX, gapY, width, height)); // Top left
+    path.addRect(Rect.fromLTWH(gapX, gapY, width, height));
     // Set fill type to evenOdd for transparency
     path.fillType = PathFillType.evenOdd;
 
@@ -538,7 +540,7 @@ class PhotoGrid1CircleClipper extends CustomClipper<Path> {
     path.addRect(Rect.fromLTWH(0, 0, size.width, size.height));
     path.addOval(Rect.fromCircle(
         center: Offset(width / 2 + gapX, width / 2 + gapY),
-        radius: width / 2)); // Top left
+        radius: width / 2));
     // Set fill type to evenOdd for transparency
     path.fillType = PathFillType.evenOdd;
 
@@ -562,24 +564,24 @@ class PhotoGrid2x3CircleClipper extends CustomClipper<Path> {
     path.addRect(Rect.fromLTWH(0, 0, size.width, size.height));
     path.addOval(Rect.fromCircle(
         center: Offset(width / 2 + gapX, width / 2 + gapY),
-        radius: width / 2)); // Top left
+        radius: width / 2));
     path.addOval(Rect.fromCircle(
         center: Offset(width / 2 + gapX * 2 + width, width / 2 + gapY),
-        radius: width / 2)); // Top left
+        radius: width / 2));
     path.addOval(Rect.fromCircle(
         center: Offset(width / 2 + gapX, width / 2 + gapY * 2 + width),
-        radius: width / 2)); // Top left
+        radius: width / 2));
     path.addOval(Rect.fromCircle(
         center:
             Offset(width / 2 + gapX * 2 + width, width / 2 + gapY * 2 + width),
-        radius: width / 2)); // Top left
+        radius: width / 2));
     path.addOval(Rect.fromCircle(
         center: Offset(width / 2 + gapX, width / 2 + gapY * 3 + width * 2),
-        radius: width / 2)); // Top left
+        radius: width / 2));
     path.addOval(Rect.fromCircle(
         center: Offset(
             width / 2 + gapX * 2 + width, width / 2 + gapY * 3 + width * 2),
-        radius: width / 2)); // Top left
+        radius: width / 2));
     // Set fill type to evenOdd for transparency
     path.fillType = PathFillType.evenOdd;
 

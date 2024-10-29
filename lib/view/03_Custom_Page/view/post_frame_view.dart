@@ -10,8 +10,9 @@ import '../controller/post_frame_controller.dart';
 class PostFrameView extends StatefulWidget {
   final File framePng;
   final UserModel user;
+  final int idxFrame;
 
-  const PostFrameView({super.key, required this.framePng, required this.user});
+  const PostFrameView({super.key, required this.framePng, required this.user, required this.idxFrame});
   @override
   _PostFrameViewState createState() => _PostFrameViewState();
 }
@@ -74,7 +75,7 @@ class _PostFrameViewState extends State<PostFrameView> {
                             return;
                           }
                           ViewDialogUtil().showLoadingDialog(context);
-                          PostFrameController().postFrame(widget.framePng, _descriptionController.text, selectedCategories, context);
+                          PostFrameController().postFrame(widget.framePng, _descriptionController.text, selectedCategories, context, widget.idxFrame);
                           Navigator.of(context).pop();
                           ViewDialogUtil().showOneButtonActionDialog(
                               'Frame Saved',

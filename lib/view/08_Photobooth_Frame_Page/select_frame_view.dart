@@ -8,6 +8,16 @@ class PhotoboothFrameSelectionPage extends StatefulWidget {
 
 class PhotoboothFrameSelectionPageState
     extends State<PhotoboothFrameSelectionPage> {
+  final List<String> images = [
+    'assets/layout_1.png',
+    'assets/layout_2.png',
+    'assets/layout_3.png',
+    'assets/layout_4.png',
+    'assets/layout_5.png',
+    'assets/layout_6.png',
+  ];
+  String currImage = '';
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -48,7 +58,7 @@ class PhotoboothFrameSelectionPageState
                       flex: 3,
                       child: GridView.builder(
                         padding: const EdgeInsets.all(8),
-                        itemCount: 6,
+                        itemCount: images.length,
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 3,
                           mainAxisSpacing: 12,
@@ -56,9 +66,16 @@ class PhotoboothFrameSelectionPageState
                           childAspectRatio: 0.75,
                         ),
                         itemBuilder: (context, index) {
-                          return Container(
-                            color: Colors.grey[300],
-                            child: Center(child: Text("Frame ${index + 1}")),
+                          return GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                currImage = images[index];
+                              });
+                            },
+                            child: Image.asset(
+                              images[index],
+                              // fit: BoxFit.cover,
+                            ),
                           );
                         },
                       ),
@@ -67,32 +84,38 @@ class PhotoboothFrameSelectionPageState
                     // Right preview section with select button
                     Expanded(
                       flex: 1,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Container(
-                            width: double.infinity,
-                            height: 200,
-                            color: Color(0xFFFFE4E1), // Light pink color
-                            child: Center(child: Text("Preview")),
-                          ),
-                          SizedBox(height: 20),
-                          ElevatedButton(
-                            onPressed: () {
-                              // Define your select action
-                            },
-                            style: ElevatedButton.styleFrom(
-                              foregroundColor: Colors.black,
-                              backgroundColor: Color(0xFFEDF9E4),
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 20, vertical: 12),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
+                      child: SingleChildScrollView(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            currImage.isEmpty
+                                ? Container(
+                                    width: double.infinity,
+                                    height: 200,
+                                    color: Color(0xFFFFE4E1), // Light pink color
+                                    child: Center(child: Text("Preview")),
+                                  )
+                                : Image.asset(
+                                    currImage,
+                                  ),
+                            SizedBox(height: 20),
+                            ElevatedButton(
+                              onPressed: () {
+                                // Define your select action
+                              },
+                              style: ElevatedButton.styleFrom(
+                                foregroundColor: Colors.black,
+                                backgroundColor: Color(0xFFFFE4E1),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 20, vertical: 12),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
                               ),
+                              child: Text("Select"),
                             ),
-                            child: Text("Select"),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   ],

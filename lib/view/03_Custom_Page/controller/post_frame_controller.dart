@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
 class PostFrameController{
-  Future<void> postFrame(File image, String desc, List<String> categories,BuildContext context) async {
+  Future<void> postFrame(File image, String desc, List<String> categories,BuildContext context,int idx) async {
     try {
       // Generate unique file name for the image
       String fileName = Uuid().v4();
@@ -25,6 +25,7 @@ class PostFrameController{
         'categories': categories,
         'filename': fileName,
         'timestamp': FieldValue.serverTimestamp(),
+        'frameIndex' : idx,
         'likedBy' : null,
       });
 
