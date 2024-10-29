@@ -1,4 +1,4 @@
-import 'package:booth_bliss/view/08_Photobooth_Frame_Page/temp.dart';
+import 'package:booth_bliss/view/08_Photobooth_Frame_Page/camera_view.dart';
 import 'package:flutter/material.dart';
 
 class PhotoboothFrameSelectionPage extends StatefulWidget {
@@ -107,8 +107,8 @@ class PhotoboothFrameSelectionPageState
                               onPressed: () {
                                 Navigator.of(context).push(
                                   MaterialPageRoute(
-                                    builder: (context) => PhotoGridExample(index: currIdx,), // The page you want to navigate to
-                                    // builder: (context) => CustomCamera(), // The page you want to navigate to
+                                    // builder: (context) => PhotoGridExample(index: currIdx,), // The page you want to navigate to
+                                    builder: (context) => CameraWithTimer(currIndex: currIdx,), // The page you want to navigate to
                                   ),
                                 );
                               },

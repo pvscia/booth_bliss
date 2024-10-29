@@ -1,16 +1,18 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 import '../../model/photo_grid_model.dart';
 
 class PhotoGrid extends StatelessWidget {
   final PhotoGridModel gridModel;
-  final List<String> imageUrls;
+  final List<String> imagePaths;
   final String frameUrl;
 
   const PhotoGrid({
     super.key,
     required this.gridModel,
-    required this.imageUrls,
+    required this.imagePaths,
     required this.frameUrl,
   });
 
@@ -30,8 +32,8 @@ class PhotoGrid extends StatelessWidget {
                   top: gridModel.coordinates[i].y,
                   width: gridModel.width,
                   height: gridModel.height,
-                  child: Image.network(
-                    imageUrls[i],
+                  child: Image.file(
+                    File(imagePaths[i]),
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -52,12 +54,14 @@ class PhotoGrid extends StatelessWidget {
   }
 }
 
-class PhotoGridExample extends StatelessWidget {
+class PhotoboothResult extends StatelessWidget {
   final int index;
+  final List<String> imagePaths;
 
-  const PhotoGridExample({
+  const PhotoboothResult({
     super.key,
     required this.index,
+    required this.imagePaths,
   });
 
   @override
@@ -86,14 +90,7 @@ class PhotoGridExample extends StatelessWidget {
       body: Center(
         child: PhotoGrid(
           gridModel: models[index],
-          imageUrls: [
-            'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRDoXziDkMV4_z8jPhVA9qgg_SuzSgXF07FzQ&s',
-            'https://i.pinimg.com/474x/e9/98/2e/e9982e430e415b35a100882dcd326c79.jpg',
-            'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRx51lLKpGu8pnIePUDeQdvgRAguzTjDgPI3g&s',
-            'https://i.ytimg.com/vi/RIll7DTfQ54/maxresdefault.jpg',
-            'https://indie88.com/wp-content/uploads/2022/05/Screen-Shot-2022-05-27-at-2.29.06-PM.png',
-            'https://qph.cf2.quoracdn.net/main-qimg-5c76afb291efcc7c373ade687746c057-lq',
-          ],
+          imagePaths: imagePaths,
           frameUrl: images[index],
         ),
       ),
