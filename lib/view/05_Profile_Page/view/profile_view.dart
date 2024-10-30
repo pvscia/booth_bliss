@@ -21,9 +21,12 @@ class ProfileViewState extends State<ProfileView> {
   late UserModel updatedUser;
   String imageUrl = '';
   int selectedIndex = 1;
-  List<ImageModel> images = [];
   bool isLoading = false;
   late bool isViewOnly;
+  String selectedSortingOption = 'Newest to Oldest';
+  String searchQuery = '';
+  List<ImageModel> filteredImages = [];
+  List<ImageModel> images = [];
 
   @override
   void initState() {
@@ -97,9 +100,50 @@ class ProfileViewState extends State<ProfileView> {
     }
   }
 
+  void _sortImages() {
+    if (selectedSortingOption == 'Newest to Oldest') {
+      images.sort((a, b) => b.date.compareTo(a.date)); // Newest first
+    } else if (selectedSortingOption == 'Oldest to Newest') {
+      images.sort((a, b) => a.date.compareTo(b.date)); // Oldest first
+    }
+  }
+
+  void _toggleSortingOrder(String newValue) {
+    setState(() {
+      selectedSortingOption = newValue; // Update sorting option
+    });
+    _sortImages(); // Reapply filtering and sorting
+  }
+
+  void updateSearchQuery(String query) {
+    setState(() {
+      searchQuery = query;
+
+      // Filter images based on the search query
+      filteredImages = images.where((image) {
+        bool matchesDescription =
+            image.desc.toLowerCase().contains(query.toLowerCase());
+        bool matchesCategory = image.categories.any(
+            (category) => category.toLowerCase().contains(query.toLowerCase()));
+        bool matchesFirstName = (image.user.firstName?.toLowerCase() ?? '')
+            .contains(query.toLowerCase());
+        bool matchesLastName = (image.user.lastName?.toLowerCase() ?? '')
+            .contains(query.toLowerCase());
+
+        return matchesDescription ||
+            matchesCategory ||
+            matchesFirstName ||
+            matchesLastName;
+      }).toList();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
+      backgroundColor: Color(0xFFF3FDE8),
       appBar: AppBar(
         leading: isViewOnly
             ? IconButton(
@@ -110,11 +154,7 @@ class ProfileViewState extends State<ProfileView> {
               )
             : null,
         automaticallyImplyLeading: false,
-        title: const Text(
-          'Profile',
-          style: TextStyle(color: Colors.black),
-        ),
-        backgroundColor: Colors.green[100],
+        backgroundColor: Color(0xFFF3FDE8),
         elevation: 0,
         actions: [
           if (!isViewOnly)
@@ -134,12 +174,28 @@ class ProfileViewState extends State<ProfileView> {
                 color: Colors.black,
               ),
             ),
+          IconButton(
+            onPressed: () async {
+              ViewDialogUtil().showYesNoActionDialog(
+                  'Are you sure you want to log out?', 'Yes', 'No', context,
+                  () async {
+                await ProfileController().logout();
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  Navigator.pushReplacementNamed(context, '/front_page');
+                });
+              }, () {});
+            },
+            icon: const Icon(
+              Icons.logout,
+              color: Colors.black,
+            ),
+          )
         ],
       ),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            SizedBox(height: 20),
+            SizedBox(height: 5),
             CircleAvatar(
               radius: 50,
               backgroundImage: imageUrl.isNotEmpty
@@ -176,7 +232,8 @@ class ProfileViewState extends State<ProfileView> {
                     await _fetchUserPhoto();
                   }
                 },
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.pink),
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: Color(0xFFFFAFCC)),
                 child: Text('Edit Profile'),
               ),
             SizedBox(height: 20),
@@ -197,9 +254,12 @@ class ProfileViewState extends State<ProfileView> {
                         child: Text(
                           'Results',
                           style: TextStyle(
-                            color:
-                                selectedIndex == 0 ? Colors.blue : Colors.black,
-                          ),
+                              color: selectedIndex == 0
+                                  ? Colors.blue
+                                  : Colors.black,
+                              decoration: selectedIndex == 0
+                                  ? TextDecoration.underline
+                                  : TextDecoration.none),
                         ),
                       ),
                       TextButton(
@@ -212,9 +272,12 @@ class ProfileViewState extends State<ProfileView> {
                         child: Text(
                           'Created',
                           style: TextStyle(
-                            color:
-                                selectedIndex == 1 ? Colors.blue : Colors.black,
-                          ),
+                              color: selectedIndex == 1
+                                  ? Colors.blue
+                                  : Colors.black,
+                              decoration: selectedIndex == 1
+                                  ? TextDecoration.underline
+                                  : TextDecoration.none),
                         ),
                       ),
                       TextButton(
@@ -227,14 +290,80 @@ class ProfileViewState extends State<ProfileView> {
                         child: Text(
                           'Liked',
                           style: TextStyle(
-                            color:
-                                selectedIndex == 2 ? Colors.blue : Colors.black,
-                          ),
+                              color: selectedIndex == 2
+                                  ? Colors.blue
+                                  : Colors.black,
+                              decoration: selectedIndex == 2
+                                  ? TextDecoration.underline
+                                  : TextDecoration.none),
                         ),
                       ),
                     ],
                   ),
-                  SizedBox(height: 20),
+                  SizedBox(height: 10),
+                  Container(
+                    height: 50,
+                    decoration: BoxDecoration(
+                      color: Color(0xffffe5e5),
+                      border: Border.all(
+                          color: Color(0xffffe5e5), width: 2), // Box border
+                      borderRadius:
+                          BorderRadius.circular(50), // Rounded corners
+                    ),
+                    padding: EdgeInsets.symmetric(
+                        horizontal: 16), // Adds padding inside the container
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.search,
+                          color: Colors.black,
+                          size: 20, // Search Icon
+                        ),
+                        SizedBox(
+                          width: screenWidth *
+                              0.02, // Space between icon and text field
+                        ),
+                        Expanded(
+                          child: TextField(
+                            onChanged: updateSearchQuery,
+                            style: TextStyle(
+                              fontSize: screenHeight * 0.02,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            textAlign: TextAlign.start,
+                            decoration: InputDecoration(
+                              contentPadding:
+                                  EdgeInsets.only(top: 10, bottom: 3),
+                              hintText: 'Search frame', // Placeholder text
+                              border: InputBorder.none, // No internal border
+                              isDense:
+                                  true, // Reduces the padding inside the TextField
+                            ),
+                          ),
+                        ),
+                        PopupMenuButton(
+                          icon: Icon(Icons.tune, size: screenHeight * 0.03),
+                          itemBuilder: (context) => [
+                            PopupMenuItem(
+                              child: Text('Newest to Oldest'),
+                              onTap: () {
+                                _toggleSortingOrder('Newest to Oldest');
+                              },
+                            ),
+                            PopupMenuItem(
+                              child: Text('Oldest to Newest'),
+                              onTap: () {
+                                _toggleSortingOrder('Oldest to Newest');
+                              },
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
                   !isLoading
                       ? GridView.builder(
                           shrinkWrap: true,
@@ -246,15 +375,21 @@ class ProfileViewState extends State<ProfileView> {
                             mainAxisSpacing: 5,
                             childAspectRatio: 3 / 5,
                           ),
-                          itemCount: images.length,
+                          itemCount: (filteredImages.isNotEmpty
+                                  ? filteredImages
+                                  : images)
+                              .length,
                           itemBuilder: (BuildContext context, int index) {
+                            final currentImages = filteredImages.isNotEmpty
+                                ? filteredImages
+                                : images;
                             return GestureDetector(
                               onTap: () async {
                                 await Navigator.push(
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) => DetailPage(
-                                            imageData: images[index])));
+                                            imageData: currentImages[index])));
                                 if (selectedIndex == 0) {
                                   _fetchUserResult();
                                 } else if (selectedIndex == 1) {
@@ -266,7 +401,7 @@ class ProfileViewState extends State<ProfileView> {
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(10),
                                 child: Image.network(
-                                  images[index].imageUrl,
+                                  currentImages[index].imageUrl,
                                   fit: BoxFit.fitHeight,
                                 ),
                               ),

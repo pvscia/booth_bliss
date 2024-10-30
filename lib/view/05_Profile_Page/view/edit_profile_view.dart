@@ -81,40 +81,30 @@ class _EditProfilePageState extends State<EditProfilePage> {
   }
 
   Future<void> _handleSave() async {
-    ViewDialogUtil().showYesNoActionDialog(
-        'Save Profile?',
-        'Yes',
-        'No',
-        context,
-            () async {
-          ViewDialogUtil().showLoadingDialog(context);
-          try {
-            var updatedProfile = await _controller.saveProfile(
-                firstName: _firstNameController.text,
-                lastName: _lastNameController.text,
-                bio: _bioController.text,
-                mUser: mUser);
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              Navigator.of(context).pop();
-              ViewDialogUtil().showOneButtonActionDialog(
-                  'Profile Saved',
-                  'Ok',
-                  'success.gif',
-                  context,
-                      (){
-                        Navigator.pop(context, updatedProfile);
-                  });
-
-            });
-          } catch (e) {
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Failed to save profile: ${e.toString()}')),
-              );
-            });
-          }
-        },
-            (){});
+    ViewDialogUtil()
+        .showYesNoActionDialog('Save Profile?', 'Yes', 'No', context, () async {
+      ViewDialogUtil().showLoadingDialog(context);
+      try {
+        var updatedProfile = await _controller.saveProfile(
+            firstName: _firstNameController.text,
+            lastName: _lastNameController.text,
+            bio: _bioController.text,
+            mUser: mUser);
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          Navigator.of(context).pop();
+          ViewDialogUtil().showOneButtonActionDialog(
+              'Profile Saved', 'Ok', 'success.gif', context, () {
+            Navigator.pop(context, updatedProfile);
+          });
+        });
+      } catch (e) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Failed to save profile: ${e.toString()}')),
+          );
+        });
+      }
+    }, () {});
   }
 
   Future<void> _removeProfile() async {
@@ -150,14 +140,14 @@ class _EditProfilePageState extends State<EditProfilePage> {
             'Changes will not be saved, are you sure to go back?',
             'Yes',
             'No',
-            context,
-                (){
-              Navigator.of(context).pop();
-            },
-                (){});
+            context, () {
+          Navigator.of(context).pop();
+        }, () {});
       },
       child: Scaffold(
+        backgroundColor: Color(0xFFF3FDE8),
         appBar: AppBar(
+          backgroundColor: Color(0xFFF3FDE8),
           title: const Text('Edit Profile'),
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
@@ -166,11 +156,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   'Changes will not be saved, are you sure to go back?',
                   'Yes',
                   'No',
-                  context,
-                      (){
-                    Navigator.of(context).pop();
-                  },
-                      (){});
+                  context, () {
+                Navigator.of(context).pop();
+              }, () {});
             },
           ),
           actions: [
