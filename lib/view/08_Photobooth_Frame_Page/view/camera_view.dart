@@ -1,17 +1,17 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:math';
-import 'package:booth_bliss/view/09_Photobooth_Frame_Result_Page/photo_result.dart';
+import 'package:booth_bliss/view/09_Photobooth_Frame_Result_Page/view/photo_filter.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 
-
 class CameraWithTimer extends StatefulWidget {
   final int currIndex;
+  final String frameUrl;
 
   const CameraWithTimer({
     super.key,
-    required this.currIndex,
+    required this.currIndex, required this.frameUrl,
   });
 
   @override
@@ -57,7 +57,7 @@ class _CameraWithTimerState extends State<CameraWithTimer> {
 
   void startTimer() {
     // Reset the timer duration to 10 seconds for each sequence
-    setState(() => myDuration = const Duration(seconds: 10));
+    setState(() => myDuration = const Duration(seconds: 2));
     countdownTimer =
         Timer.periodic(const Duration(seconds: 1), (_) => setCountDown());
   }
@@ -96,7 +96,7 @@ class _CameraWithTimerState extends State<CameraWithTimer> {
 
       // Show preview for 5 seconds, then continue to the next photo
       previewTimer?.cancel();
-      previewTimer = Timer(const Duration(seconds: 5), () {
+      previewTimer = Timer(const Duration(seconds: 1), () {
         previewAction();
       });
     }
@@ -112,9 +112,10 @@ class _CameraWithTimerState extends State<CameraWithTimer> {
     } else {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (context) => PhotoboothResult(
+          builder: (context) => PhotoFilter(
             index: widget.currIndex,
             imagePaths: imagePaths,
+            frameUrl: widget.frameUrl,
           ), // The page you want to navigate to
         ),
       );
@@ -199,7 +200,7 @@ class _CameraWithTimerState extends State<CameraWithTimer> {
                                 },
                                 icon: Icon(
                                   Icons.close,
-                                  color: Colors.white,
+                                  color: Colors.red,
                                 )))
                       ]),
                     if (!isPreviewVisible)

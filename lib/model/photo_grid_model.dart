@@ -22,6 +22,15 @@ class GridCoordinate {
 
 // Define each grid type as a static instance of PhotoGridModel
 class PhotoGridModels {
+  List<PhotoGridModel> models = [
+    PhotoGridModels.square1,
+    PhotoGridModels.square2x2,
+    PhotoGridModels.stair2x2,
+    PhotoGridModels.square2x3,
+    PhotoGridModels.circle1,
+    PhotoGridModels.circle2x3,
+  ];
+
   static final square1 = PhotoGridModel(
     width: 306.36,
     height: 392.4375,
