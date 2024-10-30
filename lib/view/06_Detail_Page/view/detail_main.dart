@@ -26,7 +26,7 @@ class _DetailPageState extends State<DetailPage> {
   void initState() {
     super.initState();
     email = FirebaseAuth.instance.currentUser?.email ?? '';
-    _isHeartPressed = widget.imageData.likedBy.where((test){
+    _isHeartPressed = widget.imageData.likedBy.where((test) {
       return test == email;
     }).isNotEmpty;
     _fetchUserPhoto(); // Corrected method name
@@ -75,32 +75,27 @@ class _DetailPageState extends State<DetailPage> {
                   child: Column(
                     children: [
                       // Image Section with icons
-                      SizedBox(
-                        height:
-                            screenHeight * 0.84, // Adjust the height as needed
-                        child: Stack(
-                          children: [
-                            Image.network(
-                              widget.imageData.imageUrl,
-                              width: double.infinity,
-                              height: double.infinity,
-                              fit: BoxFit.fill,
-                            ),
-                            Positioned(
-                              top: 16,
-                              left: 16,
-                              child: IconButton(
-                                icon: Icon(
-                                  FontAwesomeIcons.arrowLeft,
-                                  color: Colors.black,
-                                ),
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
+                      Stack(
+                        children: [
+                          Image.network(
+                            widget.imageData.imageUrl,
+                            width: double.infinity,
+                            fit: BoxFit.fitWidth,
+                          ),
+                          Positioned(
+                            top: 16,
+                            left: 16,
+                            child: IconButton(
+                              icon: Icon(
+                                FontAwesomeIcons.arrowLeft,
+                                color: Colors.black,
                               ),
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                       // Profile and Buttons Section
                       Container(
@@ -127,16 +122,17 @@ class _DetailPageState extends State<DetailPage> {
                                     GestureDetector(
                                       onTap: () {
                                         Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) => ProfileView(
-                                                      user: widget.imageData.user,
-                                                      viewOnly: true,
-                                                    )));
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => ProfileView(
+                                              user: widget.imageData.user,
+                                              viewOnly: true,
+                                            ),
+                                          ),
+                                        );
                                       },
                                       child: Text(
                                         '${widget.imageData.user.firstName} ${widget.imageData.user.lastName}',
-                                        // Use the creator's name
                                         style: TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontSize: screenWidth * 0.05,
@@ -160,8 +156,8 @@ class _DetailPageState extends State<DetailPage> {
                             Row(
                               children: [
                                 Text(
-                                  widget
-                                      .imageData.desc, // Use the image's caption
+                                  widget.imageData
+                                      .desc, // Use the image's caption
                                   style: TextStyle(
                                     fontSize: screenWidth * 0.034,
                                     color: Colors.black,
@@ -180,10 +176,14 @@ class _DetailPageState extends State<DetailPage> {
                                     _isHeartPressed
                                         ? await DetailController().unlikeFrame(
                                             widget.imageData.docName,
-                                            email)
+                                            email,
+                                          )
                                         : await DetailController().likeFrame(
                                             widget.imageData.docName,
-                                        FirebaseAuth.instance.currentUser?.email ?? '');
+                                            FirebaseAuth.instance.currentUser
+                                                    ?.email ??
+                                                '',
+                                          );
                                     WidgetsBinding.instance
                                         .addPostFrameCallback((_) {
                                       Navigator.of(context).pop();
@@ -196,8 +196,8 @@ class _DetailPageState extends State<DetailPage> {
                                     _isHeartPressed
                                         ? FontAwesomeIcons.solidHeart
                                         : FontAwesomeIcons.heart,
-                                    color:
-                                        Colors.red, // Change color based on state
+                                    color: Colors
+                                        .red, // Change color based on state
                                     size: screenWidth * 0.1,
                                   ),
                                 ),
@@ -209,17 +209,20 @@ class _DetailPageState extends State<DetailPage> {
                                           vertical: screenWidth * 0.03,
                                           horizontal: screenWidth * 0.15),
                                       shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(50),
-                                          side: BorderSide(
-                                              color: Color(0xff50c400),
-                                              width: screenWidth * 0.008)),
+                                        borderRadius: BorderRadius.circular(50),
+                                        side: BorderSide(
+                                          color: Color(0xff50c400),
+                                          width: screenWidth * 0.008,
+                                        ),
+                                      ),
                                     ),
                                     child: Text(
                                       'Use Frame',
                                       style: TextStyle(
-                                          fontSize: screenWidth * 0.045,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.black),
+                                        fontSize: screenWidth * 0.045,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black,
+                                      ),
                                     ),
                                     onPressed: () {
                                       // Add your action for the button here
