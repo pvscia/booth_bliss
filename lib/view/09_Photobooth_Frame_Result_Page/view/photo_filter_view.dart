@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:booth_bliss/view/09_Photobooth_Frame_Result_Page/view/photo_result.dart';
+import 'package:booth_bliss/view/09_Photobooth_Frame_Result_Page/view/photo_result_view.dart';
 import 'package:booth_bliss/view/Utils/view_dialog_util.dart';
 import 'package:flutter/material.dart';
 

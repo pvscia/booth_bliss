@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:math';
-import 'package:booth_bliss/view/09_Photobooth_Frame_Result_Page/view/photo_filter.dart';
+import 'package:booth_bliss/view/09_Photobooth_Frame_Result_Page/view/photo_filter_view.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 

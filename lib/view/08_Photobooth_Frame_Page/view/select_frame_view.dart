@@ -125,7 +125,7 @@ class PhotoboothFrameSelectionPageState
                                 Navigator.of(context).push(
                                   MaterialPageRoute(
                                     // builder: (context) => PhotoGridExample(index: currIdx,), // The page you want to navigate to
-                                    builder: (context) => CameraWithTimer(currIndex: currIdx, frameUrl: currImage,), // The page you want to navigate to
+                                    builder: (context) => CameraWithTimer(currIndex: images[currIdx].idx, frameUrl: currImage,), // The page you want to navigate to
                                   ),
                                 );
                               },
