@@ -10,10 +10,10 @@ class TagsAndSliderWidget extends StatefulWidget {
   TagsAndSliderWidget({required this.images, required this.onFilter});
 
   @override
-  _TagsAndSliderWidgetState createState() => _TagsAndSliderWidgetState();
+  TagsAndSliderWidgetState createState() => TagsAndSliderWidgetState();
 }
 
-class _TagsAndSliderWidgetState extends State<TagsAndSliderWidget> {
+class TagsAndSliderWidgetState extends State<TagsAndSliderWidget> {
   List<String> selectedCategories = [];
   final ConstantVar constantVar = ConstantVar();
   String selectedSortingOption =
@@ -124,10 +124,10 @@ class CategoryButton extends StatefulWidget {
       this.category, this.onSelectionChanged, this.selectedCategories);
 
   @override
-  _CategoryButtonState createState() => _CategoryButtonState();
+  CategoryButtonState createState() => CategoryButtonState();
 }
 
-class _CategoryButtonState extends State<CategoryButton> {
+class CategoryButtonState extends State<CategoryButton> {
   bool isSelected = false;
   late Color buttonColor;
 

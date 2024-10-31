@@ -13,10 +13,10 @@ class DetailPage extends StatefulWidget {
   DetailPage({required this.imageData});
 
   @override
-  _DetailPageState createState() => _DetailPageState();
+  DetailPageState createState() => DetailPageState();
 }
 
-class _DetailPageState extends State<DetailPage> {
+class DetailPageState extends State<DetailPage> {
   bool _isHeartPressed = false;
   String profileUrl = '';
   bool isLoading = true; // Start loading as true

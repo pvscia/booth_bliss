@@ -14,10 +14,10 @@ class PostFrameView extends StatefulWidget {
 
   const PostFrameView({super.key, required this.framePng, required this.user, required this.idxFrame});
   @override
-  _PostFrameViewState createState() => _PostFrameViewState();
+  PostFrameViewState createState() => PostFrameViewState();
 }
 
-class _PostFrameViewState extends State<PostFrameView> {
+class PostFrameViewState extends State<PostFrameView> {
   final TextEditingController _descriptionController = TextEditingController();
   List<String> selectedCategories = [];
   bool isLoading = false;

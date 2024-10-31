@@ -5,10 +5,10 @@ import '../../Utils/view_dialog_util.dart';
 
 class SignUpPage extends StatefulWidget {
   @override
-  _SignUpPageState createState() => _SignUpPageState();
+  SignUpPageState createState() => SignUpPageState();
 }
 
-class _SignUpPageState extends State<SignUpPage> {
+class SignUpPageState extends State<SignUpPage> {
   final SignUpController _controller = SignUpController();
   final _formKey = GlobalKey<FormState>();
   bool isLoading = false;

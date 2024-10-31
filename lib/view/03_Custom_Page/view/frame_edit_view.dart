@@ -306,7 +306,7 @@ class FrameEditorPageState extends State<FrameEditorView> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text('Select Layout'),
-          content: Container(
+          content: SizedBox(
             width: double.maxFinite, // Set width for the dialog
             height: 200, // Set height for the dialog
             child: GridView.count(
@@ -424,12 +424,12 @@ class PhotoGrid2x3Clipper extends CustomClipper<Path> {
     double gapY = ((size.height * 7 / 8) - (height * 3)) / 3;
     
     print('2x3 Square');
-    print('width : ${width}, height: ${height}');
-    print('Top left x: ${gapX} y:${gapY}');
-    print('Top right x: ${size.width - width - gapX} y:${gapY}');
-    print('Middle left x: ${gapX} y:${height + gapY * 2}');
+    print('width : $width, height: $height');
+    print('Top left x: $gapX y:$gapY');
+    print('Top right x: ${size.width - width - gapX} y:$gapY');
+    print('Middle left x: $gapX y:${height + gapY * 2}');
     print('Middle right x: ${size.width - width - gapX} y:${height + gapY * 2}');
-    print('Bottom left x: ${gapX} y:${height * 2 + gapY * 3}');
+    print('Bottom left x: $gapX y:${height * 2 + gapY * 3}');
     print('Bottom right x: ${size.width - width - gapX} y:${height * 2 + gapY * 3}');
 
 
@@ -467,10 +467,10 @@ class PhotoGrid2x2Clipper extends CustomClipper<Path> {
     double gapY = ((size.height * 7 / 8) - (height * 2)) / 2;
 
     print('2x2 Square');
-    print('width : ${width}, height: ${height}');
-    print('Top left x: ${gapX} y:${gapY}');
-    print('Top right x: ${size.width - width - gapX} y:${gapY}');
-    print('Bottom left x: ${gapX} y:${height + gapY * 2}');
+    print('width : $width, height: $height');
+    print('Top left x: $gapX y:$gapY');
+    print('Top right x: ${size.width - width - gapX} y:$gapY');
+    print('Bottom left x: $gapX y:${height + gapY * 2}');
     print('Bottom right x: ${size.width - width - gapX} y:${height + gapY * 2}');
 
 
@@ -504,10 +504,10 @@ class PhotoGrid2x2StairClipper extends CustomClipper<Path> {
     double gapY = ((size.height * 7 / 8) - (height * 2)) / 2;
 
     print('2x2 Stair Square');
-    print('width : ${width}, height: ${height}');
-    print('Top left x: ${gapX} y:${gapY}');
+    print('width : $width, height: $height');
+    print('Top left x: $gapX y:$gapY');
     print('Top right x: ${size.width - width - gapX} y:${size.height * 1 / 8}');
-    print('Bottom left x: ${gapX} y:${height + gapY * 2}');
+    print('Bottom left x: $gapX y:${height + gapY * 2}');
     print('Bottom right x: ${size.width - width - gapX} y:${height + gapY + size.height * 1 / 8}');
 
 
@@ -542,8 +542,8 @@ class PhotoGrid1Clipper extends CustomClipper<Path> {
     double gapY = (size.height * 7 / 8) - height;
 
     print('1 Square');
-    print('width : ${width}, height: ${height}');
-    print('Coordinate x: ${gapX} y:${gapY}');
+    print('width : $width, height: $height');
+    print('Coordinate x: $gapX y:$gapY');
 
     // Draw the outer rectangle
     path.addRect(Rect.fromLTWH(0, 0, size.width, size.height));
@@ -568,8 +568,8 @@ class PhotoGrid1CircleClipper extends CustomClipper<Path> {
     double gapY = (size.height * 7 / 8) - height;
 
     print('1 Circle');
-    print('width : ${width}, height: ${width}');
-    print('coordinate x: ${gapX} y:${gapY}');
+    print('width : $width, height: $width');
+    print('coordinate x: $gapX y:$gapY');
 
     // Draw the outer rectangle
     path.addRect(Rect.fromLTWH(0, 0, size.width, size.height));
@@ -596,12 +596,12 @@ class PhotoGrid2x3CircleClipper extends CustomClipper<Path> {
     double gapY = ((size.height) - (width * 3)) / 4;
 
     print('2x3 Circle');
-    print('width : ${width}, height: ${width}');
-    print('Top left x: ${gapX} y:${gapY}');
-    print('Top right x: ${gapX * 2 + width} y:${gapY}');
-    print('Middle left x: ${gapX} y:${gapY * 2 + width}');
+    print('width : $width, height: $width');
+    print('Top left x: $gapX y:$gapY');
+    print('Top right x: ${gapX * 2 + width} y:$gapY');
+    print('Middle left x: $gapX y:${gapY * 2 + width}');
     print('Middle right x: ${gapX * 2 + width} y:${gapY * 2 + width}');
-    print('Bottom left x: ${gapX} y:${gapY * 3 + width * 2}');
+    print('Bottom left x: $gapX y:${gapY * 3 + width * 2}');
     print('Bottom right x: ${gapX * 2 + width} y:${gapY * 3 + width * 2}');
 
     // Draw the outer rectangle

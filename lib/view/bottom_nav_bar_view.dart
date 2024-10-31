@@ -11,10 +11,10 @@ class BottomNavBarMain extends StatefulWidget {
   const BottomNavBarMain({super.key, required this.idx});
 
   @override
-  _BottomNavBarMainState createState() => _BottomNavBarMainState();
+  BottomNavBarMainState createState() => BottomNavBarMainState();
 }
 
-class _BottomNavBarMainState extends State<BottomNavBarMain> {
+class BottomNavBarMainState extends State<BottomNavBarMain> {
   int _selectedIndex = 0;
   UserModel? currUser;
 

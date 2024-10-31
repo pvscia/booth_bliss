@@ -8,10 +8,10 @@ import 'package:uuid/uuid.dart';
 
 class NewPostPage extends StatefulWidget {
   @override
-  _NewPostPageState createState() => _NewPostPageState();
+  NewPostPageState createState() => NewPostPageState();
 }
 
-class _NewPostPageState extends State<NewPostPage> {
+class NewPostPageState extends State<NewPostPage> {
   File? _image;
   final _picker = ImagePicker();
   final TextEditingController _descriptionController = TextEditingController();

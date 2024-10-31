@@ -174,22 +174,6 @@ class ProfileViewState extends State<ProfileView> {
                 color: Colors.black,
               ),
             ),
-          IconButton(
-            onPressed: () async {
-              ViewDialogUtil().showYesNoActionDialog(
-                  'Are you sure you want to log out?', 'Yes', 'No', context,
-                  () async {
-                await ProfileController().logout();
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  Navigator.pushReplacementNamed(context, '/front_page');
-                });
-              }, () {});
-            },
-            icon: const Icon(
-              Icons.logout,
-              color: Colors.black,
-            ),
-          )
         ],
       ),
       body: SingleChildScrollView(
@@ -244,24 +228,25 @@ class ProfileViewState extends State<ProfileView> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      if(!isViewOnly)TextButton(
-                        onPressed: () {
-                          _fetchUserResult();
-                          setState(() {
-                            selectedIndex = 0; // Update the selected index
-                          });
-                        },
-                        child: Text(
-                          'Results',
-                          style: TextStyle(
-                              color: selectedIndex == 0
-                                  ? Colors.blue
-                                  : Colors.black,
-                              decoration: selectedIndex == 0
-                                  ? TextDecoration.underline
-                                  : TextDecoration.none),
+                      if (!isViewOnly)
+                        TextButton(
+                          onPressed: () {
+                            _fetchUserResult();
+                            setState(() {
+                              selectedIndex = 0; // Update the selected index
+                            });
+                          },
+                          child: Text(
+                            'Results',
+                            style: TextStyle(
+                                color: selectedIndex == 0
+                                    ? Colors.blue
+                                    : Colors.black,
+                                decoration: selectedIndex == 0
+                                    ? TextDecoration.underline
+                                    : TextDecoration.none),
+                          ),
                         ),
-                      ),
                       TextButton(
                         onPressed: () {
                           _fetchUserCreated();

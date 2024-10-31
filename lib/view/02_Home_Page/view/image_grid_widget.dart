@@ -37,7 +37,7 @@ class ImageItem extends StatelessWidget {
       },
       child: ClipRRect(
         borderRadius: BorderRadius.circular(16),
-        child: Container(
+        child: SizedBox(
           width: 170, // Set a fixed width for the image
           height: 300, // Set a fixed height for the image
           child: CachedNetworkImage(

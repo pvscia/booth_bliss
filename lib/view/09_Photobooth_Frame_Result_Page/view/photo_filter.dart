@@ -98,7 +98,7 @@ class PhotoFilterState extends State<PhotoFilter> {
                                 top: 0,
                                 width: 148 * 2.3,
                                 height: 210 * 2.3,
-                                child: Image.asset(
+                                child: Image.network(
                                   widget.frameUrl,
                                   fit: BoxFit.cover,
                                 )),

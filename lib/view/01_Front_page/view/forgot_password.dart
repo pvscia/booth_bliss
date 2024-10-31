@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 
 class ForgetPasswordPage extends StatefulWidget {
   @override
-  _ForgetPasswordPageState createState() => _ForgetPasswordPageState();
+  ForgetPasswordPageState createState() => ForgetPasswordPageState();
 }
 
-class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
+class ForgetPasswordPageState extends State<ForgetPasswordPage> {
   final ForgetPasswordController _controller = ForgetPasswordController();
   bool isLoading = false;
   String statusMessage = '';

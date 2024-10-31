@@ -1,6 +1,9 @@
 import 'package:booth_bliss/view/08_Photobooth_Frame_Page/view/camera_view.dart';
 import 'package:flutter/material.dart';
 
+import '../../../model/frame_model.dart';
+import '../controller/select_frame_controller.dart';
+
 class PhotoboothFrameSelectionPage extends StatefulWidget {
   @override
   PhotoboothFrameSelectionPageState createState() =>
@@ -9,20 +12,34 @@ class PhotoboothFrameSelectionPage extends StatefulWidget {
 
 class PhotoboothFrameSelectionPageState
     extends State<PhotoboothFrameSelectionPage> {
-  final List<String> images = [
-    'assets/layout_1.png',
-    'assets/layout_2.png',
-    'assets/layout_3.png',
-    'assets/layout_4.png',
-    'assets/layout_5.png',
-    'assets/layout_6.png',
-  ];
+  List<FrameModel> images = [];
   String currImage = '';
   int currIdx = 0;
 
   @override
+  void initState() {
+    super.initState();
+    loadImages();
+    if(images.isNotEmpty) currImage = images[currIdx].frameURl;
+  }
+
+  Future<void> loadImages() async {
+    try {
+      var temp = await PhotoboothFrameSelectionController().fetchFrames();
+      setState(() {
+        images = temp;
+        // isLoading = false;
+      });
+    } catch (e) {
+      print('Error fetching frames: $e');
+      // setState(() {
+        // isLoading = false;
+      // });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    currImage = images[currIdx];
     return DefaultTabController(
       length: 2,
       child: Scaffold(
@@ -51,7 +68,7 @@ class PhotoboothFrameSelectionPageState
           child: TabBarView(
             children: [
               // Default Frames Tab
-              Padding(
+              images.isNotEmpty ? Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -72,12 +89,12 @@ class PhotoboothFrameSelectionPageState
                           return GestureDetector(
                             onTap: () {
                               setState(() {
-                                currImage = images[index];
+                                currImage = images[index].frameURl;
                                 currIdx = index;
                               });
                             },
-                            child: Image.asset(
-                              images[index],
+                            child: Image.network(
+                              images[index].frameURl,
                               // fit: BoxFit.cover,
                             ),
                           );
@@ -99,7 +116,7 @@ class PhotoboothFrameSelectionPageState
                                     color: Color(0xFFFFE4E1), // Light pink color
                                     child: Center(child: Text("Preview")),
                                   )
-                                : Image.asset(
+                                : Image.network(
                                     currImage,
                                   ),
                             SizedBox(height: 20),
@@ -129,7 +146,7 @@ class PhotoboothFrameSelectionPageState
                     ),
                   ],
                 ),
-              ),
+              ) : Center(child: CircularProgressIndicator(),),
               // Get From App Tab
               Center(
                 child: Column(

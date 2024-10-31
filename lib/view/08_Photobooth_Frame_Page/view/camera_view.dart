@@ -15,10 +15,10 @@ class CameraWithTimer extends StatefulWidget {
   });
 
   @override
-  _CameraWithTimerState createState() => _CameraWithTimerState();
+  CameraWithTimerState createState() => CameraWithTimerState();
 }
 
-class _CameraWithTimerState extends State<CameraWithTimer> {
+class CameraWithTimerState extends State<CameraWithTimer> {
   late CameraController _cameraController;
   late Future<void> _initializeControllerFuture;
   Timer? countdownTimer;
@@ -57,7 +57,7 @@ class _CameraWithTimerState extends State<CameraWithTimer> {
 
   void startTimer() {
     // Reset the timer duration to 10 seconds for each sequence
-    setState(() => myDuration = const Duration(seconds: 2));
+    setState(() => myDuration = const Duration(seconds: 10));
     countdownTimer =
         Timer.periodic(const Duration(seconds: 1), (_) => setCountDown());
   }
@@ -96,7 +96,7 @@ class _CameraWithTimerState extends State<CameraWithTimer> {
 
       // Show preview for 5 seconds, then continue to the next photo
       previewTimer?.cancel();
-      previewTimer = Timer(const Duration(seconds: 1), () {
+      previewTimer = Timer(const Duration(seconds: 5), () {
         previewAction();
       });
     }

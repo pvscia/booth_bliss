@@ -7,10 +7,10 @@ import '../../bottom_nav_bar_view.dart';
 
 class LoginPage extends StatefulWidget {
   @override
-  _LoginPageState createState() => _LoginPageState();
+  LoginPageState createState() => LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class LoginPageState extends State<LoginPage> {
   bool _isPasswordVisible = false;
   bool _isFormFilled = false;
   String _loginError = '';

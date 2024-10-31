@@ -9,10 +9,10 @@ import 'image_grid_widget.dart';
 
 class HomeView extends StatefulWidget {
   @override
-  _HomeViewState createState() => _HomeViewState();
+  HomeViewState createState() => HomeViewState();
 }
 
-class _HomeViewState extends State<HomeView> {
+class HomeViewState extends State<HomeView> {
   List<ImageModel> filteredImages = [];
   List<ImageModel> images = [];
   bool isLoading = false;
