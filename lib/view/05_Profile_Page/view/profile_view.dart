@@ -158,6 +158,14 @@ class ProfileViewState extends State<ProfileView> {
           updatedUser = temp;
         });
       }
+
+      if (selectedIndex == 0) {
+        _fetchUserResult();
+      } else if (selectedIndex == 1) {
+        _fetchUserCreated();
+      } else if (selectedIndex == 2) {
+        _fetchUserLiked();
+      }
     });
   }
 

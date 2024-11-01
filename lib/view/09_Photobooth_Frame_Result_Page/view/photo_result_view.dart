@@ -5,6 +5,7 @@ import 'package:booth_bliss/view/07_Photobooth_Start_Page/start_view.dart';
 import 'package:booth_bliss/view/09_Photobooth_Frame_Result_Page/controller/photo_result_controller.dart';
 import 'package:booth_bliss/view/Utils/view_dialog_util.dart';
 import 'package:flutter/material.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 
 class PhotoResult extends StatefulWidget {
   final File framePng;
@@ -20,6 +21,7 @@ class PhotoResult extends StatefulWidget {
 class PhotoResultState extends State<PhotoResult> {
   Timer? _idleTimer;
   TextEditingController emailController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
@@ -29,7 +31,7 @@ class PhotoResultState extends State<PhotoResult> {
   void _resetIdleTimer() {
     setState(() {
       _idleTimer?.cancel();
-      // Create a new timer that navigates after 1 minute (60 seconds)
+      // Create a new timer that navigates after 2 minute (60 seconds)
       _idleTimer = Timer(Duration(minutes: 2), _navigateToOtherPage);
     });
     // Cancel the existing timer if any
@@ -39,12 +41,13 @@ class PhotoResultState extends State<PhotoResult> {
     // Navigate to another page when idle
     Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute(
-        builder: (context) => PhotoboothStartView(), // The page you want to navigate to
+        builder: (context) =>
+            PhotoboothStartView(), // The page you want to navigate to
       ),
-          (Route<dynamic> route) => false, // This removes all the previous routes
+      (Route<dynamic> route) => false, // This removes all the previous routes
     );
   }
-  
+
   @override
   void dispose() {
     _idleTimer?.cancel(); // Cancel the timer when the page is disposed
@@ -73,6 +76,7 @@ class PhotoResultState extends State<PhotoResult> {
                     iconSize: 100,
                     icon: Icon(Icons.email),
                     onPressed: () {
+                      _resetIdleTimer();
                       showDialog(
                         context: context,
                         builder: (context) => AlertDialog(
@@ -126,11 +130,21 @@ class PhotoResultState extends State<PhotoResult> {
                     iconSize: 100,
                     icon: Icon(Icons.qr_code),
                     onPressed: () {
+                      _resetIdleTimer();
                       showDialog(
                         context: context,
                         builder: (context) => AlertDialog(
                           title: Text('QR Code'),
-                          content: Image.asset('assets/img.png'),
+                          content: Center(
+                            child: SizedBox(
+                              width: 200.0, // Define the desired width
+                              height: 200.0,
+                              child: QrImageView(
+                                data: widget.filename,
+                                version: QrVersions.auto,
+                              ),
+                            ),
+                          ),
                           actions: [
                             TextButton(
                               onPressed: () {

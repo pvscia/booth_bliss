@@ -1,6 +1,7 @@
 import 'package:booth_bliss/model/image_model.dart';
 import 'package:booth_bliss/view/05_Profile_Page/view/profile_view.dart';
 import 'package:booth_bliss/view/06_Detail_Page/controller/detail_controller.dart';
+import 'package:booth_bliss/view/06_Detail_Page/view/use_frame_view.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
@@ -236,7 +237,16 @@ class DetailPageState extends State<DetailPage> {
                                             ),
                                           ),
                                           onPressed: () {
-                                            // Add your action for the button here
+                                            print(widget.imageData.docName);
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    UseFrameView(
+                                                      filename: widget.imageData.filename,
+                                                    ),
+                                              ),
+                                            );
                                           },
                                         ),
                                       ),

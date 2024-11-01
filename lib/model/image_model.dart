@@ -2,6 +2,7 @@ import 'package:booth_bliss/model/user_model.dart';
 
 class ImageModel {
   String imageUrl;
+  String filename;
   String docName;
   String desc;
   List<String> categories;
@@ -12,6 +13,7 @@ class ImageModel {
   ImageModel(
       {required this.imageUrl,
       required this.docName,
+      required this.filename,
       required this.desc,
       required this.categories,
       required this.user,
@@ -22,6 +24,7 @@ class ImageModel {
     return {
       'imageUrl': imageUrl,
       'docName': docName,
+      'filename': filename,
       'desc': desc,
       'categories': categories,
       'user': user,

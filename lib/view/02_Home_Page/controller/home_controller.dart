@@ -40,7 +40,8 @@ class HomeController {
               user: tempUser,
               date: date,
               docName: doc.id,
-              likedBy: List<String>.from(data['likedBy'] ?? []));
+              likedBy: List<String>.from(data['likedBy'] ?? []),
+              filename: data['filename']);
         } else {
           return ImageModel(
               imageUrl: url,
@@ -50,7 +51,8 @@ class HomeController {
               user: tempUser!,
               date: date,
               docName: doc.id,
-              likedBy: List<String>.from(data['likedBy'] ?? []));
+              likedBy: List<String>.from(data['likedBy'] ?? []),
+              filename: data['filename']);
         }
       }).toList());
       return frames;
