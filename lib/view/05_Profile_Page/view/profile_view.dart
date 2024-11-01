@@ -1,4 +1,3 @@
-import 'package:booth_bliss/model/image_model.dart';
 import 'package:flutter/material.dart';
 import 'package:booth_bliss/model/user_model.dart';
 
@@ -25,8 +24,8 @@ class ProfileViewState extends State<ProfileView> {
   late bool isViewOnly;
   String selectedSortingOption = 'Newest to Oldest';
   String searchQuery = '';
-  List<ImageModel> filteredImages = [];
-  List<ImageModel> images = [];
+  List<dynamic> filteredImages = [];
+  List<dynamic> images = [];
 
   @override
   void initState() {
@@ -59,8 +58,20 @@ class ProfileViewState extends State<ProfileView> {
 
   Future<void> _fetchUserResult() async {
     setState(() {
-      images = [];
+      isLoading = true;
     });
+    try {
+      var temp = await ProfileController().fetchResult(updatedUser.email ?? '');
+      setState(() {
+        images = temp;
+        isLoading = false;
+      });
+    } catch (e) {
+      print('Error fetching photo: $e');
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 
   Future<void> _fetchUserLiked() async {
@@ -138,6 +149,18 @@ class ProfileViewState extends State<ProfileView> {
     });
   }
 
+  Future<void> refreshPage()async {
+    await Future.delayed(const Duration(seconds: 2), () async {
+      UserModel? temp = await ProfileController().getUser();
+      if (temp != null) {
+        if (!mounted) return;
+        setState(() {
+          updatedUser = temp;
+        });
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -176,228 +199,231 @@ class ProfileViewState extends State<ProfileView> {
             ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            SizedBox(height: 5),
-            CircleAvatar(
-              radius: 50,
-              backgroundImage: imageUrl.isNotEmpty
-                  ? NetworkImage(imageUrl.toString())
-                  : AssetImage('assets/default-user.png') as ImageProvider,
-            ),
-            SizedBox(height: 10),
-            Text(
-              '${updatedUser.firstName} ${updatedUser.lastName}',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 5),
-            Text(
-              updatedUser.bio ?? 'No Bio',
-              style: TextStyle(fontSize: 16, color: Colors.grey),
-            ),
-            SizedBox(height: 10),
-            if (!isViewOnly)
-              ElevatedButton(
-                onPressed: () async {
-                  final result = await Navigator.push<UserModel>(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => EditProfilePage(
-                        user: updatedUser,
-                      ),
-                    ),
-                  );
-
-                  if (result != null) {
-                    setState(() {
-                      updatedUser = result; // Update the user data directly
-                    });
-                    await _fetchUserPhoto();
-                  }
-                },
-                style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xFFFFAFCC)),
-                child: Text('Edit Profile'),
+      body: RefreshIndicator(
+        onRefresh: refreshPage,
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              SizedBox(height: 5),
+              CircleAvatar(
+                radius: 50,
+                backgroundImage: imageUrl.isNotEmpty
+                    ? NetworkImage(imageUrl.toString())
+                    : AssetImage('assets/default-user.png') as ImageProvider,
               ),
-            SizedBox(height: 20),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      if (!isViewOnly)
+              SizedBox(height: 10),
+              Text(
+                '${updatedUser.firstName} ${updatedUser.lastName}',
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 5),
+              Text(
+                updatedUser.bio ?? 'No Bio',
+                style: TextStyle(fontSize: 16, color: Colors.grey),
+              ),
+              SizedBox(height: 10),
+              if (!isViewOnly)
+                ElevatedButton(
+                  onPressed: () async {
+                    final result = await Navigator.push<UserModel>(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => EditProfilePage(
+                          user: updatedUser,
+                        ),
+                      ),
+                    );
+
+                    if (result != null) {
+                      setState(() {
+                        updatedUser = result; // Update the user data directly
+                      });
+                      await _fetchUserPhoto();
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: Color(0xFFFFAFCC)),
+                  child: Text('Edit Profile'),
+                ),
+              SizedBox(height: 20),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        if (!isViewOnly)
+                          TextButton(
+                            onPressed: () {
+                              _fetchUserResult();
+                              setState(() {
+                                selectedIndex = 0; // Update the selected index
+                              });
+                            },
+                            child: Text(
+                              'Results',
+                              style: TextStyle(
+                                  color: selectedIndex == 0
+                                      ? Colors.blue
+                                      : Colors.black,
+                                  decoration: selectedIndex == 0
+                                      ? TextDecoration.underline
+                                      : TextDecoration.none),
+                            ),
+                          ),
                         TextButton(
                           onPressed: () {
-                            _fetchUserResult();
+                            _fetchUserCreated();
                             setState(() {
-                              selectedIndex = 0; // Update the selected index
+                              selectedIndex = 1; // Update the selected index
                             });
                           },
                           child: Text(
-                            'Results',
+                            'Created',
                             style: TextStyle(
-                                color: selectedIndex == 0
+                                color: selectedIndex == 1
                                     ? Colors.blue
                                     : Colors.black,
-                                decoration: selectedIndex == 0
+                                decoration: selectedIndex == 1
                                     ? TextDecoration.underline
                                     : TextDecoration.none),
                           ),
                         ),
-                      TextButton(
-                        onPressed: () {
-                          _fetchUserCreated();
-                          setState(() {
-                            selectedIndex = 1; // Update the selected index
-                          });
-                        },
-                        child: Text(
-                          'Created',
-                          style: TextStyle(
-                              color: selectedIndex == 1
-                                  ? Colors.blue
-                                  : Colors.black,
-                              decoration: selectedIndex == 1
-                                  ? TextDecoration.underline
-                                  : TextDecoration.none),
-                        ),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          _fetchUserLiked();
-                          setState(() {
-                            selectedIndex = 2; // Update the selected index
-                          });
-                        },
-                        child: Text(
-                          'Liked',
-                          style: TextStyle(
-                              color: selectedIndex == 2
-                                  ? Colors.blue
-                                  : Colors.black,
-                              decoration: selectedIndex == 2
-                                  ? TextDecoration.underline
-                                  : TextDecoration.none),
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 10),
-                  Container(
-                    height: 50,
-                    decoration: BoxDecoration(
-                      color: Color(0xffffe5e5),
-                      border: Border.all(
-                          color: Color(0xffffe5e5), width: 2), // Box border
-                      borderRadius:
-                          BorderRadius.circular(50), // Rounded corners
-                    ),
-                    padding: EdgeInsets.symmetric(
-                        horizontal: 16), // Adds padding inside the container
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.search,
-                          color: Colors.black,
-                          size: 20, // Search Icon
-                        ),
-                        SizedBox(
-                          width: screenWidth *
-                              0.02, // Space between icon and text field
-                        ),
-                        Expanded(
-                          child: TextField(
-                            onChanged: updateSearchQuery,
+                        TextButton(
+                          onPressed: () {
+                            _fetchUserLiked();
+                            setState(() {
+                              selectedIndex = 2; // Update the selected index
+                            });
+                          },
+                          child: Text(
+                            'Liked',
                             style: TextStyle(
-                              fontSize: screenHeight * 0.02,
-                              fontWeight: FontWeight.bold,
-                            ),
-                            textAlign: TextAlign.start,
-                            decoration: InputDecoration(
-                              contentPadding:
-                                  EdgeInsets.only(top: 10, bottom: 3),
-                              hintText: 'Search frame', // Placeholder text
-                              border: InputBorder.none, // No internal border
-                              isDense:
-                                  true, // Reduces the padding inside the TextField
-                            ),
+                                color: selectedIndex == 2
+                                    ? Colors.blue
+                                    : Colors.black,
+                                decoration: selectedIndex == 2
+                                    ? TextDecoration.underline
+                                    : TextDecoration.none),
                           ),
-                        ),
-                        PopupMenuButton(
-                          icon: Icon(Icons.tune, size: screenHeight * 0.03),
-                          itemBuilder: (context) => [
-                            PopupMenuItem(
-                              child: Text('Newest to Oldest'),
-                              onTap: () {
-                                _toggleSortingOrder('Newest to Oldest');
-                              },
-                            ),
-                            PopupMenuItem(
-                              child: Text('Oldest to Newest'),
-                              onTap: () {
-                                _toggleSortingOrder('Oldest to Newest');
-                              },
-                            ),
-                          ],
                         ),
                       ],
                     ),
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  !isLoading
-                      ? GridView.builder(
-                          shrinkWrap: true,
-                          physics: NeverScrollableScrollPhysics(),
-                          gridDelegate:
-                              SliverGridDelegateWithMaxCrossAxisExtent(
-                            maxCrossAxisExtent: 150,
-                            crossAxisSpacing: 5,
-                            mainAxisSpacing: 5,
-                            childAspectRatio: 3 / 5,
+                    SizedBox(height: 10),
+                    Container(
+                      height: 50,
+                      decoration: BoxDecoration(
+                        color: Color(0xffffe5e5),
+                        border: Border.all(
+                            color: Color(0xffffe5e5), width: 2), // Box border
+                        borderRadius:
+                            BorderRadius.circular(50), // Rounded corners
+                      ),
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 16), // Adds padding inside the container
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.search,
+                            color: Colors.black,
+                            size: 20, // Search Icon
                           ),
-                          itemCount: (filteredImages.isNotEmpty
-                                  ? filteredImages
-                                  : images)
-                              .length,
-                          itemBuilder: (BuildContext context, int index) {
-                            final currentImages = filteredImages.isNotEmpty
-                                ? filteredImages
-                                : images;
-                            return GestureDetector(
-                              onTap: () async {
-                                await Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => DetailPage(
-                                            imageData: currentImages[index])));
-                                if (selectedIndex == 0) {
-                                  _fetchUserResult();
-                                } else if (selectedIndex == 1) {
-                                  _fetchUserCreated();
-                                } else if (selectedIndex == 2) {
-                                  _fetchUserLiked();
-                                }
-                              },
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(10),
-                                child: Image.network(
-                                  currentImages[index].imageUrl,
-                                  fit: BoxFit.fitHeight,
-                                ),
+                          SizedBox(
+                            width: screenWidth *
+                                0.02, // Space between icon and text field
+                          ),
+                          Expanded(
+                            child: TextField(
+                              onChanged: updateSearchQuery,
+                              style: TextStyle(
+                                fontSize: screenHeight * 0.02,
+                                fontWeight: FontWeight.bold,
                               ),
-                            );
-                          },
-                        )
-                      : Center(child: CircularProgressIndicator()),
-                ],
+                              textAlign: TextAlign.start,
+                              decoration: InputDecoration(
+                                contentPadding:
+                                    EdgeInsets.only(top: 10, bottom: 3),
+                                hintText: 'Search frame', // Placeholder text
+                                border: InputBorder.none, // No internal border
+                                isDense:
+                                    true, // Reduces the padding inside the TextField
+                              ),
+                            ),
+                          ),
+                          PopupMenuButton(
+                            icon: Icon(Icons.tune, size: screenHeight * 0.03),
+                            itemBuilder: (context) => [
+                              PopupMenuItem(
+                                child: Text('Newest to Oldest'),
+                                onTap: () {
+                                  _toggleSortingOrder('Newest to Oldest');
+                                },
+                              ),
+                              PopupMenuItem(
+                                child: Text('Oldest to Newest'),
+                                onTap: () {
+                                  _toggleSortingOrder('Oldest to Newest');
+                                },
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    !isLoading
+                        ? GridView.builder(
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
+                            gridDelegate:
+                                SliverGridDelegateWithMaxCrossAxisExtent(
+                              maxCrossAxisExtent: 150,
+                              crossAxisSpacing: 5,
+                              mainAxisSpacing: 5,
+                              childAspectRatio: 3 / 5,
+                            ),
+                            itemCount: (filteredImages.isNotEmpty
+                                    ? filteredImages
+                                    : images)
+                                .length,
+                            itemBuilder: (BuildContext context, int index) {
+                              final currentImages = filteredImages.isNotEmpty
+                                  ? filteredImages
+                                  : images;
+                              return GestureDetector(
+                                onTap: () async {
+                                  await Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => DetailPage(
+                                              imageData: currentImages[index])));
+                                  if (selectedIndex == 0) {
+                                    _fetchUserResult();
+                                  } else if (selectedIndex == 1) {
+                                    _fetchUserCreated();
+                                  } else if (selectedIndex == 2) {
+                                    _fetchUserLiked();
+                                  }
+                                },
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(10),
+                                  child: Image.network(
+                                    currentImages[index].imageUrl,
+                                    fit: BoxFit.fitHeight,
+                                  ),
+                                ),
+                              );
+                            },
+                          )
+                        : Center(child: CircularProgressIndicator()),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

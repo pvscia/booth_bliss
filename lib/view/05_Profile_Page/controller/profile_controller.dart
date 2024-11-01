@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
 import '../../../model/image_model.dart';
+import '../../../model/photo_model.dart';
 import '../../../model/user_model.dart';
 
 class ProfileController {
@@ -123,6 +124,55 @@ class ProfileController {
               date: (data['timestamp'] as Timestamp).toDate(),
               docName: doc.id,
               likedBy: List<String>.from(data['likedBy'] ?? []));
+        }
+      }).toList());
+      return frames;
+    } catch (e) {
+      print('Error fetching frames: $e');
+      return [];
+    }
+  }
+
+  Future<List<PhotoModel>> fetchResult(String email) async {
+    try {
+      // Reference to the Firestore instance
+      final FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+      // Query Firestore collection 'frames' where the 'email' field matches the user's email
+      QuerySnapshot querySnapshot = await firestore
+          .collection('photos')
+          .where('userEmail', isEqualTo: email)
+          .get();
+
+      // Convert the Firestore documents to ImageModel instances
+      List<PhotoModel> frames =
+          await Future.wait(querySnapshot.docs.map((doc) async {
+        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+
+        // Create the image path based on filename
+        String imagePath = 'photos/${data['filename']}.png';
+        // Reference the image in Firebase Storage
+        final ref = FirebaseStorage.instance.ref().child(imagePath);
+
+        // Fetch the download URL asynchronously
+        String url = await ref.getDownloadURL();
+
+        UserModel? tempUser = await getUser();
+        // Return the ImageModel with the correct download URL
+        if (tempUser != null) {
+          return PhotoModel(
+            imageUrl: url,
+            // Use the URL instead of the image path
+            email: email,
+            filename: data['filename'],
+          );
+        } else {
+          return PhotoModel(
+            imageUrl: url,
+            // Use the URL instead of the image path
+            email: email,
+            filename: data['filename'],
+          );
         }
       }).toList());
       return frames;

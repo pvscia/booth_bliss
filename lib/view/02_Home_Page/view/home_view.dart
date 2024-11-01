@@ -16,6 +16,7 @@ class HomeViewState extends State<HomeView> {
   List<ImageModel> filteredImages = [];
   List<ImageModel> images = [];
   bool isLoading = false;
+  bool isRefresh = false;
   String searchQuery = '';
 
   void onFilter(List<ImageModel> filteredImages) {
@@ -56,14 +57,35 @@ class HomeViewState extends State<HomeView> {
 
       // Filter images based on the search query
       filteredImages = images.where((image) {
-        bool matchesDescription = image.desc.toLowerCase().contains(query.toLowerCase());
-        bool matchesCategory = image.categories.any((category) => 
-          category.toLowerCase().contains(query.toLowerCase()));
-        bool matchesFirstName = (image.user.firstName?.toLowerCase() ?? '').contains(query.toLowerCase());
-        bool matchesLastName = (image.user.lastName?.toLowerCase() ?? '').contains(query.toLowerCase());
+        bool matchesDescription =
+            image.desc.toLowerCase().contains(query.toLowerCase());
+        bool matchesCategory = image.categories.any(
+            (category) => category.toLowerCase().contains(query.toLowerCase()));
+        bool matchesFirstName = (image.user.firstName?.toLowerCase() ?? '')
+            .contains(query.toLowerCase());
+        bool matchesLastName = (image.user.lastName?.toLowerCase() ?? '')
+            .contains(query.toLowerCase());
 
-        return matchesDescription || matchesCategory || matchesFirstName || matchesLastName;
+        return matchesDescription ||
+            matchesCategory ||
+            matchesFirstName ||
+            matchesLastName;
       }).toList();
+    });
+  }
+
+  Future<void> refreshPage() async {
+    setState(() {
+      isRefresh = true;
+    });
+    List<ImageModel> temp = await HomeController().fetchFrames();
+    if (temp.isNotEmpty) {
+      setState(() {
+        filteredImages = temp;
+      });
+    }
+    setState(() {
+      isRefresh = false;
     });
   }
 
@@ -71,30 +93,38 @@ class HomeViewState extends State<HomeView> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        body: Column(
-          children: [
-            HeaderWidget(onSearchChanged: updateSearchQuery), // Pass the callback
-            TagsAndSliderWidget(
-              images: images,
-              onFilter: onFilter,
-            ),
-            !isLoading
-                ? Expanded(
-                    flex: 1,
-                    child: ImageGridWidget(
-                      images: filteredImages, // Use filtered images
-                      onTap: (image) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => DetailPage(imageData: image),
-                          ),
-                        );
-                      },
-                    ),
-                  )
-                : Center(child: CircularProgressIndicator()),
-          ],
+        body: RefreshIndicator(
+          onRefresh: refreshPage,
+          child: Column(
+            children: [
+              HeaderWidget(onSearchChanged: updateSearchQuery),
+              // Pass the callback
+              TagsAndSliderWidget(
+                images: images,
+                onFilter: onFilter,
+              ),
+              !isLoading
+                  ? Expanded(
+                      flex: 1,
+                      child: ImageGridWidget(
+                        images: filteredImages, // Use filtered images
+                        onTap: (image) async {
+                          if(!isRefresh){
+                            await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    DetailPage(imageData: image),
+                              ),
+                            );
+                            refreshPage();
+                          }
+                        },
+                      ),
+                    )
+                  : Center(child: CircularProgressIndicator()),
+            ],
+          ),
         ),
       ),
     );

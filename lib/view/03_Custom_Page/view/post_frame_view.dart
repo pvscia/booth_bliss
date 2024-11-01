@@ -12,7 +12,12 @@ class PostFrameView extends StatefulWidget {
   final UserModel user;
   final int idxFrame;
 
-  const PostFrameView({super.key, required this.framePng, required this.user, required this.idxFrame});
+  const PostFrameView(
+      {super.key,
+      required this.framePng,
+      required this.user,
+      required this.idxFrame});
+
   @override
   PostFrameViewState createState() => PostFrameViewState();
 }
@@ -21,7 +26,6 @@ class PostFrameViewState extends State<PostFrameView> {
   final TextEditingController _descriptionController = TextEditingController();
   List<String> selectedCategories = [];
   bool isLoading = false;
-
 
   @override
   Widget build(BuildContext context) {
@@ -35,11 +39,9 @@ class PostFrameViewState extends State<PostFrameView> {
             'Changes will not be saved, are you sure to go back?',
             'Yes',
             'No',
-            context,
-                (){
-              Navigator.of(context).pop();
-            },
-                (){});
+            context, () {
+          Navigator.of(context).pop();
+        }, () {});
       },
       child: Scaffold(
         appBar: AppBar(
@@ -47,51 +49,50 @@ class PostFrameViewState extends State<PostFrameView> {
           centerTitle: true,
           leading: IconButton(
             icon: Icon(Icons.arrow_back, color: Colors.black),
-            onPressed: (){
+            onPressed: () {
               ViewDialogUtil().showYesNoActionDialog(
                   'Changes will not be saved, are you sure to go back?',
                   'Yes',
                   'No',
-                  context,
-                      (){
-                    Navigator.of(context).pop();
-                  },
-                      (){});
+                  context, () {
+                Navigator.of(context).pop();
+              }, () {});
             },
           ),
           actions: [
             TextButton(
               onPressed: () {
                 ViewDialogUtil().showYesNoActionDialog(
-                    'Save Frame?',
-                    'Yes',
-                    'No',
-                    context,
-                        () async {
-                          if (_descriptionController.text.isEmpty || selectedCategories.isEmpty) {
-                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                              content: Text('Please complete all fields'),
-                            ));
-                            return;
-                          }
-                          ViewDialogUtil().showLoadingDialog(context);
-                          PostFrameController().postFrame(widget.framePng, _descriptionController.text, selectedCategories, context, widget.idxFrame);
-                          Navigator.of(context).pop();
-                          ViewDialogUtil().showOneButtonActionDialog(
-                              'Frame Saved',
-                              'Ok',
-                              'success.gif',
-                              context,
-                                  (){
-                                    Navigator.of(context).pushAndRemoveUntil(
-                                      MaterialPageRoute(
-                                        builder: (context) => BottomNavBarMain(idx: 1), // The page you want to navigate to
-                                      ),
-                                          (Route<dynamic> route) => false, // This removes all the previous routes
-                                    );
-                                  });
-                    },
-                        (){});
+                    'Save Frame?', 'Yes', 'No', context, () async {
+                  if (_descriptionController.text.isEmpty ||
+                      selectedCategories.isEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text('Please complete all fields'),
+                    ));
+                    return;
+                  }
+                  ViewDialogUtil().showLoadingDialog(context);
+                  await PostFrameController().postFrame(
+                      widget.framePng,
+                      _descriptionController.text,
+                      selectedCategories,
+                      context,
+                      widget.idxFrame);
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    Navigator.of(context).pop();
+                    ViewDialogUtil().showOneButtonActionDialog(
+                        'Frame Saved', 'Ok', 'success.gif', context, () {
+                      Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(
+                          builder: (context) => BottomNavBarMain(
+                              idx: 1), // The page you want to navigate to
+                        ),
+                        (Route<dynamic> route) =>
+                            false, // This removes all the previous routes
+                      );
+                    });
+                  });
+                }, () {});
               },
               child: Text('Save'),
             ),
@@ -103,7 +104,7 @@ class PostFrameViewState extends State<PostFrameView> {
             child: Column(
               children: [
                 GestureDetector(
-                  onTap: null,//_pickImage,
+                  onTap: null, //_pickImage,
                   child: Image.file(widget.framePng),
                 ),
                 SizedBox(height: 16),
@@ -119,12 +120,17 @@ class PostFrameViewState extends State<PostFrameView> {
                 Text('Add Category:', style: TextStyle(fontSize: 16)),
                 GridView.builder(
                   shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(), // Prevents grid from scrolling
+                  physics: NeverScrollableScrollPhysics(),
+                  // Prevents grid from scrolling
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 3, // 3 items per row
-                    crossAxisSpacing: 8, // Adjust spacing between boxes horizontally
-                    mainAxisSpacing: 8, // Adjust spacing between boxes vertically
-                    childAspectRatio: 3, // Adjusts height to width ratio for smaller boxes
+                    crossAxisCount: 3,
+                    // 3 items per row
+                    crossAxisSpacing: 8,
+                    // Adjust spacing between boxes horizontally
+                    mainAxisSpacing: 8,
+                    // Adjust spacing between boxes vertically
+                    childAspectRatio:
+                        3, // Adjusts height to width ratio for smaller boxes
                   ),
                   itemCount: ConstantVar().categories.length,
                   itemBuilder: (context, index) {
@@ -141,7 +147,8 @@ class PostFrameViewState extends State<PostFrameView> {
                         });
                       },
                       child: Container(
-                        padding: EdgeInsets.symmetric(vertical: 8, horizontal: 4), // Smaller padding
+                        padding: EdgeInsets.symmetric(
+                            vertical: 8, horizontal: 4), // Smaller padding
                         decoration: BoxDecoration(
                           color: isSelected ? Colors.green : Colors.grey[200],
                           borderRadius: BorderRadius.circular(10),

@@ -56,7 +56,7 @@ class EditProfileController {
         // Save the new image to the file (this replaces the old image)
         profileImage = await File(filePath).writeAsBytes(response.bodyBytes);
 
-        print('Image saved to: ${profileImage!.path}');
+        print('Image saved to: ${profileImage?.path ?? ''}');
       } else {
         print('Failed to download image: ${response.statusCode}');
       }
@@ -92,7 +92,7 @@ class EditProfileController {
     UserModel updatedUser = UserModel(
       firstName: firstName,
       lastName: lastName,
-      email: user.email!,
+      email: user.email ?? '',
       bio: bio,
       uid: mUser.uid,
       createdAt: mUser.createdAt, // Keep the original createdAt

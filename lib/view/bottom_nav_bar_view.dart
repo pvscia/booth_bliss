@@ -17,12 +17,12 @@ class BottomNavBarMain extends StatefulWidget {
 class BottomNavBarMainState extends State<BottomNavBarMain> {
   int _selectedIndex = 0;
   UserModel? currUser;
+  List<Widget>? _pages;
 
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
-    getUser();
   }
 
   @override
@@ -37,28 +37,14 @@ class BottomNavBarMainState extends State<BottomNavBarMain> {
     if (temp != null) {
       setState(() {
         currUser = temp;
+        _pages = [
+          HomeView(),
+          CustomView(user: currUser!),
+          ScanQR(),
+          ProfileView(user: currUser!),
+        ];
       });
     }
-  }
-
-
-  // Instead of storing widgets in a list, dynamically create them in build method
-  Widget _getSelectedPage(int index) {
-    if (currUser != null) {
-      switch (index) {
-        case 0:
-          return HomeView();
-        case 1:
-          return CustomView(user: currUser!);
-        case 2:
-          return ScanQR();
-        case 3:
-          return ProfileView(user: currUser!);
-        default:
-          return HomeView();
-      }
-    }
-    return HomeView();
   }
 
   @override
@@ -67,9 +53,14 @@ class BottomNavBarMainState extends State<BottomNavBarMain> {
     final screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      body: _getSelectedPage(_selectedIndex), // Dynamically get selected page
+      body: _pages == null
+          ? Center(child: CircularProgressIndicator())
+          : IndexedStack(
+        index: _selectedIndex,
+        children: _pages!,
+      ),
       bottomNavigationBar: SizedBox(
-        height: screenHeight * 0.08, // Adjust the height
+        height: screenHeight * 0.08,
         child: BottomNavigationBar(
           type: BottomNavigationBarType.fixed,
           backgroundColor: const Color(0xffffe5e5),
@@ -80,44 +71,40 @@ class BottomNavBarMainState extends State<BottomNavBarMain> {
           items: [
             BottomNavigationBarItem(
               icon: SizedBox(
-                width: screenWidth * 0.08, // Adjust the width
-                height: screenWidth * 0.08, // Adjust the height
-                child: Icon(Icons.home,
-                    size: screenWidth * 0.08), // Larger home icon
+                width: screenWidth * 0.08,
+                height: screenWidth * 0.08,
+                child: Icon(Icons.home, size: screenWidth * 0.08),
               ),
               label: 'Home',
             ),
             BottomNavigationBarItem(
               icon: SizedBox(
-                width: screenWidth * 0.08, // Adjust the width
-                height: screenWidth * 0.08, // Adjust the height
-                child: Icon(Icons.add_box,
-                    size: screenWidth * 0.08), // Larger custom icon
+                width: screenWidth * 0.08,
+                height: screenWidth * 0.08,
+                child: Icon(Icons.add_box, size: screenWidth * 0.08),
               ),
               label: 'Custom',
             ),
             BottomNavigationBarItem(
               icon: SizedBox(
-                width: screenWidth * 0.08, // Adjust the width
-                height: screenWidth * 0.08, // Adjust the height
-                child: Icon(Icons.qr_code,
-                    size: screenWidth * 0.08), // Larger scan icon
+                width: screenWidth * 0.08,
+                height: screenWidth * 0.08,
+                child: Icon(Icons.qr_code, size: screenWidth * 0.08),
               ),
               label: 'Scan',
             ),
             BottomNavigationBarItem(
               icon: SizedBox(
-                width: screenWidth * 0.08, // Adjust the width
-                height: screenWidth * 0.08, // Adjust the height
-                child: Icon(Icons.person,
-                    size: screenWidth * 0.08), // Larger profile icon
+                width: screenWidth * 0.08,
+                height: screenWidth * 0.08,
+                child: Icon(Icons.person, size: screenWidth * 0.08),
               ),
               label: 'Profile',
             ),
           ],
           currentIndex: _selectedIndex,
-          selectedItemColor: const Color(0xff595959),
-          unselectedItemColor: Colors.black,
+          selectedItemColor: Colors.black,
+          unselectedItemColor: const Color(0xff808080),
           onTap: _onItemTapped,
         ),
       ),
