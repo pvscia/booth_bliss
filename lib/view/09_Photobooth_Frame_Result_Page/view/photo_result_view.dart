@@ -30,7 +30,7 @@ class PhotoResultState extends State<PhotoResult> {
     setState(() {
       _idleTimer?.cancel();
       // Create a new timer that navigates after 1 minute (60 seconds)
-      _idleTimer = Timer(Duration(minutes: 1), _navigateToOtherPage);
+      _idleTimer = Timer(Duration(minutes: 2), _navigateToOtherPage);
     });
     // Cancel the existing timer if any
   }
