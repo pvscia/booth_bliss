@@ -8,11 +8,9 @@ import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 class PhotoResult extends StatefulWidget {
-  final File framePng;
   final String filename;
 
-  const PhotoResult(
-      {super.key, required this.framePng, required this.filename});
+  const PhotoResult({super.key, required this.filename});
 
   @override
   PhotoResultState createState() => PhotoResultState();
@@ -21,6 +19,7 @@ class PhotoResult extends StatefulWidget {
 class PhotoResultState extends State<PhotoResult> {
   Timer? _idleTimer;
   TextEditingController emailController = TextEditingController();
+  String photoUrl = '';
 
   @override
   void initState() {
@@ -28,8 +27,10 @@ class PhotoResultState extends State<PhotoResult> {
     _resetIdleTimer();
   }
 
-  void _resetIdleTimer() {
+  Future<void> _resetIdleTimer() async {
+    var temp = await PhotoResultController().fetchPhotoURl(widget.filename);
     setState(() {
+      photoUrl = temp ?? '';
       _idleTimer?.cancel();
       // Create a new timer that navigates after 2 minute (60 seconds)
       _idleTimer = Timer(Duration(minutes: 2), _navigateToOtherPage);
@@ -67,7 +68,8 @@ class PhotoResultState extends State<PhotoResult> {
         body: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            Image.file(widget.framePng),
+            photoUrl.isNotEmpty?
+            Image.network(photoUrl):CircularProgressIndicator(),
             Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,

@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:booth_bliss/view/09_Photobooth_Frame_Result_Page/view/photo_result_view.dart';
 import 'package:booth_bliss/view/Utils/view_dialog_util.dart';
@@ -11,7 +12,7 @@ import '../controller/photo_filter_controller.dart';
 class PhotoFilter extends StatefulWidget {
   final int index;
   final String frameUrl;
-  final List<String> imagePaths;
+  final List<Uint8List> imagePaths;
 
   const PhotoFilter({
     super.key,
@@ -53,7 +54,7 @@ class PhotoFilterState extends State<PhotoFilter> {
               Navigator.of(context).pop();
               Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (context) => PhotoResult(framePng: result, filename: filename ?? '',)
+                  builder: (context) => PhotoResult(filename: filename ?? '',)
                 ),
               );
                         });
@@ -87,8 +88,8 @@ class PhotoFilterState extends State<PhotoFilter> {
                                 height: gridModel.height,
                                 child: ColorFiltered(
                                   colorFilter: currColor,
-                                  child: Image.file(
-                                    File(widget.imagePaths[i]),
+                                  child: Image.memory(
+                                    widget.imagePaths[i],
                                     fit: BoxFit.cover,
                                   ),
                                 ),

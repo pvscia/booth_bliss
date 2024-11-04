@@ -1,6 +1,6 @@
 import 'dart:async';
-import 'dart:io';
 import 'dart:math';
+import 'dart:typed_data';
 import 'package:booth_bliss/view/09_Photobooth_Frame_Result_Page/view/photo_filter_view.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
@@ -25,8 +25,8 @@ class CameraWithTimerState extends State<CameraWithTimer> {
   Timer? previewTimer;
   Duration myDuration = const Duration(seconds: 10);
   bool isPreviewVisible = false;
-  String? lastImagePath;
-  List<String> imagePaths = [];
+  Uint8List lastImagePath = Uint8List(0); // Empty Uint8List
+  List<Uint8List> imagePaths = [];
   int maxTake = 1;
 
   @override
@@ -53,6 +53,20 @@ class CameraWithTimerState extends State<CameraWithTimer> {
       _initializeControllerFuture = _cameraController.initialize();
       setState(() {}); // Trigger rebuild with initialized future
     });
+    // availableCameras().then((cameras) {
+    //   if (cameras.isNotEmpty) {
+    //     // Use the first available camera
+    //     _cameraController = CameraController(cameras.first, ResolutionPreset.max);
+    //
+    //     // Initialize the camera controller future
+    //     _initializeControllerFuture = _cameraController.initialize();
+    //     setState(() {}); // Trigger rebuild with initialized future
+    //   } else {
+    //     print("No cameras found");
+    //   }
+    // }).catchError((e) {
+    //   print("Error initializing camera: $e");
+    // });
   }
 
   void startTimer() {
@@ -88,9 +102,10 @@ class CameraWithTimerState extends State<CameraWithTimer> {
   Future<void> capturePhoto() async {
     if (_cameraController.value.isInitialized) {
       final image = await _cameraController.takePicture();
+      final lastPath = await image.readAsBytes();
       setState(() {
-        lastImagePath = image.path;
-        imagePaths.add(image.path);
+        lastImagePath = lastPath;
+        imagePaths.add(lastPath);
         isPreviewVisible = true;
       });
 
@@ -147,7 +162,8 @@ class CameraWithTimerState extends State<CameraWithTimer> {
                   alignment: Alignment.center,
                   children: [
                     Transform.rotate(
-                      angle: pi / 2,
+                      angle: pi/2,
+                      // angle: pi *3/2,
                       child: AspectRatio(
                         aspectRatio: aspectRatio,
                         child: FittedBox(
@@ -185,8 +201,8 @@ class CameraWithTimerState extends State<CameraWithTimer> {
                     if (isPreviewVisible && lastImagePath != null)
                       Stack(children: [
                         Positioned.fill(
-                          child: Image.file(
-                            File(lastImagePath!),
+                          child: Image.memory(
+                            lastImagePath,
                             fit: BoxFit.fitHeight,
                           ),
                         ),
