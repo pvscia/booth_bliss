@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:booth_bliss/view/07_Photobooth_Start_Page/start_view.dart';
 import 'package:booth_bliss/view/09_Photobooth_Frame_Result_Page/controller/photo_result_controller.dart';
@@ -24,13 +23,19 @@ class PhotoResultState extends State<PhotoResult> {
   @override
   void initState() {
     super.initState();
+    initPhoto();
     _resetIdleTimer();
   }
 
-  Future<void> _resetIdleTimer() async {
+  Future<void> initPhoto() async {
     var temp = await PhotoResultController().fetchPhotoURl(widget.filename);
     setState(() {
       photoUrl = temp ?? '';
+    });
+  }
+
+  Future<void> _resetIdleTimer() async {
+    setState(() {
       _idleTimer?.cancel();
       // Create a new timer that navigates after 2 minute (60 seconds)
       _idleTimer = Timer(Duration(minutes: 2), _navigateToOtherPage);
@@ -68,8 +73,9 @@ class PhotoResultState extends State<PhotoResult> {
         body: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            photoUrl.isNotEmpty?
-            Image.network(photoUrl):CircularProgressIndicator(),
+            photoUrl.isNotEmpty
+                ? Image.network(photoUrl)
+                : CircularProgressIndicator(),
             Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,

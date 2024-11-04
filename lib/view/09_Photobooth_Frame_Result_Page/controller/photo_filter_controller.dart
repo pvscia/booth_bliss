@@ -1,5 +1,3 @@
-import 'dart:io';
-import 'dart:math';
 import 'dart:typed_data';
 import 'dart:ui';
 
@@ -8,24 +6,18 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:path/path.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:uuid/uuid.dart';
 
 class PhotoFilterController{
-  Future<File?> capturePng(GlobalKey globalKey) async {
+  Future<Uint8List?> capturePng(GlobalKey globalKey) async {
     try {
-      var filename = 'captured_widget${Random().nextInt(10000)}.png';
       RenderRepaintBoundary boundary = globalKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
       var image = await boundary.toImage(pixelRatio: 9);
       ByteData? byteData = await image.toByteData(format: ImageByteFormat.png);
       if (byteData != null) {
         final pngBytes = byteData.buffer.asUint8List();
-        final file = await getTemporaryDirectory();
-        final filePath = join(file.path, filename);
-        final fileResult = await File(filePath).writeAsBytes(pngBytes);
         // final result = await ImageGallerySaver.saveFile(fileResult.path,name :filename);
-        return fileResult;
+        return pngBytes;
         // Save to the gallery using ImageGallerySaver
         // print("Image saved to gallery: $result");
       }
@@ -35,15 +27,20 @@ class PhotoFilterController{
     return null;
   }
 
-  Future<String?> postPhoto(File image) async {
+  Future<String?> postPhoto(Uint8List pngBytes) async {
     try {
       // Generate unique file name for the image
       String fileName = Uuid().v4();
+      // final file = await getTemporaryDirectory();
+      // final filePath = join(file.path, fileName);
+      // final image = await File(fileName).writeAsBytes(pngBytes);
+      // final image = await File(fileName).writeAsBytes(pngBytes);
+      final metadata = SettableMetadata(contentType: 'image/png');
 
       // Upload the image to Firebase Storage
       Reference storageReference =
       FirebaseStorage.instance.ref().child('photos/$fileName.png');
-      await storageReference.putFile(image);
+      await storageReference.putData(pngBytes,metadata);
 
       // Save post details in Firestore
       await FirebaseFirestore.instance.collection('photos').add({
