@@ -1,6 +1,6 @@
 import 'dart:async';
-import 'dart:math';
 import 'dart:typed_data';
+
 import 'package:booth_bliss/view/09_Photobooth_Frame_Result_Page/view/photo_filter_view.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +11,8 @@ class CameraWithTimer extends StatefulWidget {
 
   const CameraWithTimer({
     super.key,
-    required this.currIndex, required this.frameUrl,
+    required this.currIndex,
+    required this.frameUrl,
   });
 
   @override
@@ -38,40 +39,41 @@ class CameraWithTimerState extends State<CameraWithTimer> {
       maxTake = 6;
     }
     _initializeCamera();
-    startTimer(); // Start the timer immediately
   }
 
-  void _initializeCamera() {
-    availableCameras().then((cameras) {
-      final frontCamera = cameras.firstWhere(
-        (camera) => camera.lensDirection == CameraLensDirection.front,
-      );
-
-      _cameraController = CameraController(frontCamera, ResolutionPreset.max);
-
-      // Initialize the camera controller future
-      _initializeControllerFuture = _cameraController.initialize();
-      setState(() {}); // Trigger rebuild with initialized future
-    });
+  Future<void> _initializeCamera() async {
     // availableCameras().then((cameras) {
-    //   if (cameras.isNotEmpty) {
-    //     // Use the first available camera
-    //     _cameraController = CameraController(cameras.first, ResolutionPreset.max);
+    //   final frontCamera = cameras.firstWhere(
+    //     (camera) => camera.lensDirection == CameraLensDirection.front,
+    //   );
     //
-    //     // Initialize the camera controller future
-    //     _initializeControllerFuture = _cameraController.initialize();
-    //     setState(() {}); // Trigger rebuild with initialized future
-    //   } else {
-    //     print("No cameras found");
-    //   }
-    // }).catchError((e) {
-    //   print("Error initializing camera: $e");
+    //   _cameraController = CameraController(frontCamera, ResolutionPreset.max);
+    //
+    //   // Initialize the camera controller future
+    //   _initializeControllerFuture = _cameraController.initialize();
+    //   setState(() {}); // Trigger rebuild with initialized future
     // });
+    await availableCameras().then((cameras) {
+      if (cameras.isNotEmpty) {
+        // Use the first available camera
+        _cameraController =
+            CameraController(cameras.first, ResolutionPreset.max);
+
+        // Initialize the camera controller future
+        _initializeControllerFuture = _cameraController.initialize();
+        setState(() {}); // Trigger rebuild with initialized future
+        startTimer(); // Start the timer immediately
+      } else {
+        print("No cameras found");
+      }
+    }).catchError((e) {
+      print("Error initializing camera: $e");
+    });
   }
 
   void startTimer() {
     // Reset the timer duration to 10 seconds for each sequence
-    setState(() => myDuration = const Duration(seconds: 10));
+    setState(() => myDuration = const Duration(seconds: 5));
     countdownTimer =
         Timer.periodic(const Duration(seconds: 1), (_) => setCountDown());
   }
@@ -111,7 +113,7 @@ class CameraWithTimerState extends State<CameraWithTimer> {
 
       // Show preview for 5 seconds, then continue to the next photo
       previewTimer?.cancel();
-      previewTimer = Timer(const Duration(seconds: 5), () {
+      previewTimer = Timer(const Duration(seconds: 3), () {
         previewAction();
       });
     }
@@ -153,52 +155,29 @@ class CameraWithTimerState extends State<CameraWithTimer> {
           future: _initializeControllerFuture,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.done) {
-              final aspectRatio = _cameraController.value.aspectRatio;
               String strDigits(int n) => n.toString();
               final seconds = strDigits(myDuration.inSeconds.remainder(60));
-
               return Center(
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
-                    Transform.rotate(
-                      angle: pi/2,
-                      // angle: pi *3/2,
-                      child: AspectRatio(
-                        aspectRatio: aspectRatio,
-                        child: FittedBox(
-                          fit: BoxFit.fitHeight,
-                          child: SizedBox(
-                            width: _cameraController.value.previewSize!.height,
-                            height: _cameraController.value.previewSize!.width,
-                            child: CameraPreview(_cameraController),
-                          ),
-                        ),
-                      ),
+                    AspectRatio(
+                      aspectRatio: 16/9,
+                      child: CameraPreview(_cameraController),
                     ),
                     if (widget.currIndex != 3)
-                      Transform.rotate(
-                        angle: pi / 2,
-                        child: AspectRatio(
-                          aspectRatio: aspectRatio,
-                          child: FittedBox(
-                            fit: BoxFit.fitHeight,
-                            child: ClipPath(
-                              clipper: HoleClipper(),
-                              // Custom clipper for the cut-out
-                              child: Container(
-                                width:
-                                    _cameraController.value.previewSize!.height,
-                                height:
-                                    _cameraController.value.previewSize!.width,
-                                color: Colors.black
-                                    .withOpacity(0.7), // Dark overlay color
-                              ),
-                            ),
+                      AspectRatio(
+                        aspectRatio: 16/9,
+                        child: ClipPath(
+                          clipper: HoleClipper(),
+                          // Custom clipper for the cut-out
+                          child: Container(
+                            color: Colors.black
+                                .withOpacity(0.7), // Dark overlay color
                           ),
                         ),
                       ),
-                    if (isPreviewVisible && lastImagePath != null)
+                    if (isPreviewVisible)
                       Stack(children: [
                         Positioned.fill(
                           child: Image.memory(
@@ -244,11 +223,11 @@ class HoleClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
     Path path = Path();
-    double width = 148 * size.height / 210;
+    double width = (148 * size.height / 210) + 100;
     path.addRect(
         Rect.fromLTWH(0, 0, size.width, size.height)); // Full container
     path.addRect(Rect.fromLTWH(
-        0, (size.height - width) / 2, size.width, width)); // Full container
+        (size.width - width) / 2,0, width, size.height)); // Full container
 
     path.fillType = PathFillType.evenOdd; // This creates the "cut-out" effect
     return path;
