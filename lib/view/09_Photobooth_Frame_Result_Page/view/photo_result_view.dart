@@ -110,7 +110,7 @@ class PhotoResultState extends State<PhotoResult> {
                                 TextButton(
                                   onPressed: () {
                                     Navigator.of(context).pop();
-                                    emailController.dispose();
+                                    emailController.text ='';
                                   },
                                   child: Text('Close'),
                                 ),
@@ -123,7 +123,7 @@ class PhotoResultState extends State<PhotoResult> {
                                         .addPostFrameCallback((_) {
                                       Navigator.of(context).pop();
                                       Navigator.of(context).pop();
-                                      emailController.dispose();
+                                      emailController.text ='';
                                     });
                                   },
                                   child: Text('Send'),

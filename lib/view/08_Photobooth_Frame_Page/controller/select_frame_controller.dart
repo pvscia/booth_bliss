@@ -27,7 +27,7 @@ class PhotoboothFrameSelectionController {
         String url = await ref.getDownloadURL();
 
         // Return the FrameModel with the correct download URL
-        return FrameModel(frameURl: url, idx: data['frameIndex']);
+        return FrameModel(frameUrl: url, idx: data['frameIndex']);
       }).toList());
       return frames;
     } catch (e) {
@@ -36,16 +36,38 @@ class PhotoboothFrameSelectionController {
     }
   }
 
-  Future<String?> fetchFramesURl(String? filename) async {
+
+  Future<FrameModel?> fetchFramesURL(String? filename) async {
     String imagePath = 'frames/$filename.png';
     try {
-      final ref = FirebaseStorage.instance.ref().child(imagePath);
-      String? url = await ref.getDownloadURL();
-      return url;
+      // Reference to the Firestore instance
+      final FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+      // Query Firestore collection 'frames' where the 'filename' field matches the input filename
+      QuerySnapshot<Map<String, dynamic>> doc =
+      await firestore.collection('frames').where('filename', isEqualTo: filename).get();
+
+      // Check if we have a matching document
+      if (doc.docs.isNotEmpty) {
+        // Access the first document
+        Map<String, dynamic> data = doc.docs.first.data();
+
+        // Reference to Firebase Storage
+        final ref = FirebaseStorage.instance.ref().child(imagePath);
+        String url = await ref.getDownloadURL();
+
+        // Ensure URL is fetched successfully
+        if (url.isNotEmpty) {
+          // Return the FrameModel with URL and frameIndex from Firestore
+          return FrameModel(frameUrl: url, idx: data['frameIndex']);
+        }
+      }
+      return null;
     } catch (e) {
       print('Error fetching image URL: $e');
       return null;
     }
   }
+
 
 }

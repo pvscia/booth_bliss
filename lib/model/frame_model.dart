@@ -1,14 +1,14 @@
 class FrameModel{
-  String frameURl;
+  String frameUrl;
   int idx;
 
   FrameModel(
-      {required this.frameURl,
+      {required this.frameUrl,
         required this.idx});
 
   Map<String, dynamic> toJson() {
     return {
-      'frameURl': frameURl,
+      'frameURl': frameUrl,
       'idx': idx,
     };
   }

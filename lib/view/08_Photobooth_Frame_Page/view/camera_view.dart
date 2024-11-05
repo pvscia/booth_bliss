@@ -21,7 +21,6 @@ class CameraWithTimer extends StatefulWidget {
 
 class CameraWithTimerState extends State<CameraWithTimer> {
   late CameraController _cameraController;
-  late Future<void> _initializeControllerFuture;
   Timer? countdownTimer;
   Timer? previewTimer;
   Duration myDuration = const Duration(seconds: 10);
@@ -42,7 +41,7 @@ class CameraWithTimerState extends State<CameraWithTimer> {
     _initializeCamera();
   }
 
-  Future<void> _initializeCamera() async{
+  Future<void> _initializeCamera() async {
     // availableCameras().then((cameras) {
     //   final frontCamera = cameras.firstWhere(
     //     (camera) => camera.lensDirection == CameraLensDirection.front,
@@ -62,29 +61,25 @@ class CameraWithTimerState extends State<CameraWithTimer> {
     try {
       final cameras = await availableCameras();
       if (cameras.isNotEmpty) {
-        // Use the first available camera
-        _cameraController = CameraController(cameras.first, ResolutionPreset.max);
+        _cameraController =
+            CameraController(cameras.first, ResolutionPreset.max);
+        await _cameraController.initialize(); // Ensure initialization completes
 
-        // Initialize the camera controller future and await it directly
-        _initializeControllerFuture = _cameraController.initialize();
-        await _initializeControllerFuture; // Ensure initialization completes
-
-        startTimer(); // Start the timer only after initialization
         setState(() {
-          isCameraInitialized = true;
-        }); // Trigger rebuild with initialized future
+          isCameraInitialized = true; // Mark the camera as initialized
+          startTimer(); // Start the timer only after initialization
+        });
       } else {
         print("No cameras found");
       }
     } catch (e) {
       print("Error initializing camera: $e");
-      // Optionally, show an error message in the UI or handle it as needed
     }
   }
 
   void startTimer() {
     // Reset the timer duration to 10 seconds for each sequence
-    setState(() => myDuration = const Duration(seconds: 10));
+    setState(() => myDuration = const Duration(seconds: 1));
     countdownTimer =
         Timer.periodic(const Duration(seconds: 1), (_) => setCountDown());
   }
@@ -124,7 +119,7 @@ class CameraWithTimerState extends State<CameraWithTimer> {
 
       // Show preview for 5 seconds, then continue to the next photo
       previewTimer?.cancel();
-      previewTimer = Timer(const Duration(seconds: 5), () {
+      previewTimer = Timer(const Duration(seconds: 1), () {
         previewAction();
       });
     }
@@ -162,68 +157,60 @@ class CameraWithTimerState extends State<CameraWithTimer> {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        body: FutureBuilder<void>(
-          future: _initializeControllerFuture,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.done) {
-              String strDigits(int n) => n.toString();
-              final seconds = strDigits(myDuration.inSeconds.remainder(60));
-              return Center(
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    AspectRatio(
-                      aspectRatio: 16/9,
-                      child: CameraPreview(_cameraController),
+        body: Center(
+          child: isCameraInitialized
+              ? Stack(
+            alignment: Alignment.center,
+            children: [
+              AspectRatio(
+                aspectRatio: 16 / 9,
+                child: CameraPreview(_cameraController),
+              ),
+              if (widget.currIndex != 3)
+                AspectRatio(
+                  aspectRatio: 16 / 9,
+                  child: ClipPath(
+                    clipper: HoleClipper(),
+                    child: Container(
+                      color: Colors.black.withOpacity(0.7),
                     ),
-                    if (widget.currIndex != 3)
-                      AspectRatio(
-                        aspectRatio: 16/9,
-                        child: ClipPath(
-                          clipper: HoleClipper(),
-                          // Custom clipper for the cut-out
-                          child: Container(
-                            color: Colors.black
-                                .withOpacity(0.7), // Dark overlay color
-                          ),
-                        ),
-                      ),
-                    if (isPreviewVisible)
-                      Stack(children: [
-                        Positioned.fill(
-                          child: Image.memory(
-                            lastImagePath,
-                            fit: BoxFit.fitHeight,
-                          ),
-                        ),
-                        Positioned(
-                            left: 30,
-                            top: 30,
-                            child: IconButton(
-                                onPressed: () {
-                                  imagePaths.removeLast();
-                                  cancelPreview();
-                                },
-                                icon: Icon(
-                                  Icons.close,
-                                  color: Colors.red,
-                                )))
-                      ]),
-                    if (!isPreviewVisible)
-                      Text(
-                        seconds,
-                        style: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 150),
-                      ),
-                  ],
+                  ),
                 ),
-              );
-            } else {
-              return const Center(child: CircularProgressIndicator());
-            }
-          },
+              if (isPreviewVisible && lastImagePath.isNotEmpty)
+                Stack(children: [
+                  Positioned.fill(
+                    child: Image.memory(
+                      lastImagePath,
+                      fit: BoxFit.fitHeight,
+                    ),
+                  ),
+                  Positioned(
+                    left: 30,
+                    top: 30,
+                    child: IconButton(
+                      onPressed: () {
+                        imagePaths.removeLast();
+                        cancelPreview();
+                      },
+                      icon: Icon(
+                        Icons.close,
+                        color: Colors.red,
+                      ),
+                    ),
+                  ),
+                ]),
+              if (!isPreviewVisible)
+                Text(
+                  myDuration.inSeconds.toString(),
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 150,
+                  ),
+                ),
+            ],
+          )
+              : const CircularProgressIndicator(),
         ),
       ),
     );
@@ -238,7 +225,7 @@ class HoleClipper extends CustomClipper<Path> {
     path.addRect(
         Rect.fromLTWH(0, 0, size.width, size.height)); // Full container
     path.addRect(Rect.fromLTWH(
-        (size.width - width) / 2,0, width, size.height)); // Full container
+        (size.width - width) / 2, 0, width, size.height)); // Full container
 
     path.fillType = PathFillType.evenOdd; // This creates the "cut-out" effect
     return path;

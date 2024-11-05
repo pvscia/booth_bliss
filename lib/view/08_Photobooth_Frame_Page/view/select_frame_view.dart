@@ -1,7 +1,8 @@
 import 'package:booth_bliss/view/08_Photobooth_Frame_Page/view/camera_view.dart';
 import 'package:booth_bliss/view/Utils/view_dialog_util.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
-import 'package:flutter_web_qrcode_scanner/flutter_web_qrcode_scanner.dart';
+import 'package:mobile_scanner/mobile_scanner.dart';
 
 import '../../../model/frame_model.dart';
 import '../controller/select_frame_controller.dart';
@@ -17,12 +18,12 @@ class PhotoboothFrameSelectionPageState
   List<FrameModel> images = [];
   String currImage = '';
   int currIdx = 0;
+  int indexCustom = 0;
 
   @override
   void initState() {
     super.initState();
     loadImages();
-    if (images.isNotEmpty) currImage = images[currIdx].frameURl;
   }
 
   Future<void> loadImages() async {
@@ -93,12 +94,12 @@ class PhotoboothFrameSelectionPageState
                                 return GestureDetector(
                                   onTap: () {
                                     setState(() {
-                                      currImage = images[index].frameURl;
+                                      currImage = images[index].frameUrl;
                                       currIdx = index;
                                     });
                                   },
                                   child: Image.network(
-                                    images[index].frameURl,
+                                    images[index].frameUrl,
                                     // fit: BoxFit.cover,
                                   ),
                                 );
@@ -126,17 +127,21 @@ class PhotoboothFrameSelectionPageState
                                         ),
                                   SizedBox(height: 20),
                                   ElevatedButton(
-                                    onPressed: () {
-                                      Navigator.of(context).pushReplacement(
-                                        MaterialPageRoute(
-                                          // builder: (context) => PhotoGridExample(index: currIdx,), // The page you want to navigate to
-                                          builder: (context) => CameraWithTimer(
-                                            currIndex: images[currIdx].idx,
-                                            frameUrl: currImage,
-                                          ), // The page you want to navigate to
-                                        ),
-                                      );
-                                    },
+                                    onPressed: currImage.isEmpty
+                                        ? null
+                                        : () {
+                                            Navigator.of(context)
+                                                .pushReplacement(
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    CameraWithTimer(
+                                                  currIndex:
+                                                      images[currIdx].idx,
+                                                  frameUrl: currImage,
+                                                ), // The page you want to navigate to
+                                              ),
+                                            );
+                                          },
                                     style: ElevatedButton.styleFrom(
                                       foregroundColor: Colors.black,
                                       backgroundColor: Color(0xFFFFE4E1),
@@ -170,21 +175,33 @@ class PhotoboothFrameSelectionPageState
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Center(
-                                child: FlutterWebQrcodeScanner(
-                                    height: 300,
-                                    width: 300,
-                                    onGetResult: (result) async{
-                                      ViewDialogUtil().showLoadingDialog(context);
-                                      String? temp = await PhotoboothFrameSelectionController().fetchFramesURl(result);
-                                      setState(() {
-                                        currImage = temp ?? currImage;
-                                      });
-                                      WidgetsBinding.instance.addPostFrameCallback((_){
-                                        Navigator.of(context).pop();
-                                      });
+                                child: kIsWeb
+                                    ? SizedBox(
+                                        width: 500,
+                                        height: 500,
+                                        child: MobileScanner(
+                                            allowDuplicates: false,
+                                            onDetect: (barcode, args) async {
+                                              ViewDialogUtil()
+                                                  .showLoadingDialog(context);
+                                              FrameModel? temp =
+                                                  await PhotoboothFrameSelectionController()
+                                                      .fetchFramesURL(
+                                                          barcode.rawValue);
+                                              setState(() {
+                                                currImage =
+                                                    temp?.frameUrl ?? currImage;
+                                                indexCustom = temp?.idx ?? 0;
+                                              });
+                                              WidgetsBinding.instance
+                                                  .addPostFrameCallback((_) {
+                                                Navigator.of(context).pop();
+                                              });
 
-                                      print(result);
-                                    })),
+                                              print(barcode.rawValue);
+                                            }),
+                                      )
+                                    : SizedBox.shrink()),
                             SizedBox(height: 20),
                             Text(
                               "Show the code to the camera\nand align it with the scanner",
@@ -213,17 +230,19 @@ class PhotoboothFrameSelectionPageState
                                 ),
                           SizedBox(height: 20),
                           ElevatedButton(
-                            onPressed: () {
-                              Navigator.of(context).pushReplacement(
-                                MaterialPageRoute(
-                                  // builder: (context) => PhotoGridExample(index: currIdx,), // The page you want to navigate to
-                                  builder: (context) => CameraWithTimer(
-                                    currIndex: images[currIdx].idx,
-                                    frameUrl: currImage,
-                                  ), // The page you want to navigate to
-                                ),
-                              );
-                            },
+                            onPressed: currImage.isEmpty
+                                ? null
+                                : () {
+                                    Navigator.of(context).pushReplacement(
+                                      MaterialPageRoute(
+                                        // builder: (context) => PhotoGridExample(index: currIdx,), // The page you want to navigate to
+                                        builder: (context) => CameraWithTimer(
+                                          currIndex: indexCustom,
+                                          frameUrl: currImage,
+                                        ), // The page you want to navigate to
+                                      ),
+                                    );
+                                  },
                             style: ElevatedButton.styleFrom(
                               foregroundColor: Colors.black,
                               backgroundColor: Color(0xFFFFE4E1),
