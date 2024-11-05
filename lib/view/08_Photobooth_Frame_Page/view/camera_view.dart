@@ -25,6 +25,7 @@ class CameraWithTimerState extends State<CameraWithTimer> {
   Timer? previewTimer;
   Duration myDuration = const Duration(seconds: 10);
   bool isPreviewVisible = false;
+  bool isCameraInitialized = false;
   Uint8List lastImagePath = Uint8List(0); // Empty Uint8List
   List<Uint8List> imagePaths = [];
   int maxTake = 1;
@@ -38,35 +39,41 @@ class CameraWithTimerState extends State<CameraWithTimer> {
       maxTake = 6;
     }
     _initializeCamera();
-    startTimer(); // Start the timer immediately
   }
 
-  void _initializeCamera() {
-    availableCameras().then((cameras) {
-      final frontCamera = cameras.firstWhere(
-        (camera) => camera.lensDirection == CameraLensDirection.front,
-      );
-
-      _cameraController = CameraController(frontCamera, ResolutionPreset.max);
-
-      // Initialize the camera controller future
-      _initializeControllerFuture = _cameraController.initialize();
-      setState(() {}); // Trigger rebuild with initialized future
-    });
+  Future<void> _initializeCamera() async{
     // availableCameras().then((cameras) {
-    //   if (cameras.isNotEmpty) {
-    //     // Use the first available camera
-    //     _cameraController = CameraController(cameras.first, ResolutionPreset.max);
+    //   final frontCamera = cameras.firstWhere(
+    //     (camera) => camera.lensDirection == CameraLensDirection.front,
+    //   );
     //
-    //     // Initialize the camera controller future
-    //     _initializeControllerFuture = _cameraController.initialize();
-    //     setState(() {}); // Trigger rebuild with initialized future
-    //   } else {
-    //     print("No cameras found");
-    //   }
-    // }).catchError((e) {
-    //   print("Error initializing camera: $e");
+    //   _cameraController = CameraController(frontCamera, ResolutionPreset.max);
+    //
+    //   // Initialize the camera controller future
+    //   _initializeControllerFuture = _cameraController.initialize();
+    //   setState(() {}); // Trigger rebuild with initialized future
     // });
+    try {
+      final cameras = await availableCameras();
+      if (cameras.isNotEmpty) {
+        // Use the first available camera
+        _cameraController = CameraController(cameras.first, ResolutionPreset.max);
+
+        // Initialize the camera controller future and await it directly
+        _initializeControllerFuture = _cameraController.initialize();
+        await _initializeControllerFuture; // Ensure initialization completes
+
+        startTimer(); // Start the timer only after initialization
+        setState(() {
+          isCameraInitialized = true;
+        }); // Trigger rebuild with initialized future
+      } else {
+        print("No cameras found");
+      }
+    } catch (e) {
+      print("Error initializing camera: $e");
+      // Optionally, show an error message in the UI or handle it as needed
+    }
   }
 
   void startTimer() {
