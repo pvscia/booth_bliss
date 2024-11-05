@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:booth_bliss/view/09_Photobooth_Frame_Result_Page/view/photo_result_view.dart';
@@ -48,7 +47,7 @@ class PhotoFilterState extends State<PhotoFilter> {
         actions: [
           TextButton(onPressed: () async {
             ViewDialogUtil().showLoadingDialog(context);
-            File? result = await PhotoFilterController().capturePng(_globalKey);
+            Uint8List? result = await PhotoFilterController().capturePng(_globalKey);
             String? filename = await  PhotoFilterController().postPhoto(result!);
             WidgetsBinding.instance.addPostFrameCallback((_) {
               Navigator.of(context).pop();
@@ -68,7 +67,8 @@ class PhotoFilterState extends State<PhotoFilter> {
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: SingleChildScrollView(
+                child: FittedBox(
+                  fit: BoxFit.fitHeight,
                   child: Center(
                     child: RepaintBoundary(
                       key: _globalKey,

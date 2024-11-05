@@ -23,13 +23,19 @@ class PhotoResultState extends State<PhotoResult> {
   @override
   void initState() {
     super.initState();
+    initPhoto();
     _resetIdleTimer();
   }
 
-  Future<void> _resetIdleTimer() async {
+  Future<void> initPhoto() async {
     var temp = await PhotoResultController().fetchPhotoURl(widget.filename);
     setState(() {
       photoUrl = temp ?? '';
+    });
+  }
+
+  Future<void> _resetIdleTimer() async {
+    setState(() {
       _idleTimer?.cancel();
       // Create a new timer that navigates after 2 minute (60 seconds)
       _idleTimer = Timer(Duration(minutes: 2), _navigateToOtherPage);
@@ -67,8 +73,9 @@ class PhotoResultState extends State<PhotoResult> {
         body: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            photoUrl.isNotEmpty?
-            Image.network(photoUrl):CircularProgressIndicator(),
+            photoUrl.isNotEmpty
+                ? Image.network(photoUrl)
+                : CircularProgressIndicator(),
             Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -103,6 +110,7 @@ class PhotoResultState extends State<PhotoResult> {
                                 TextButton(
                                   onPressed: () {
                                     Navigator.of(context).pop();
+                                    emailController.dispose();
                                   },
                                   child: Text('Close'),
                                 ),
@@ -115,6 +123,7 @@ class PhotoResultState extends State<PhotoResult> {
                                         .addPostFrameCallback((_) {
                                       Navigator.of(context).pop();
                                       Navigator.of(context).pop();
+                                      emailController.dispose();
                                     });
                                   },
                                   child: Text('Send'),
