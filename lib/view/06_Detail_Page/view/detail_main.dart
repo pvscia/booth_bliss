@@ -102,13 +102,13 @@ class DetailPageState extends State<DetailPage> {
                       ),
                       // Profile and Buttons Section
                       Container(
-                        height: screenHeight * 0.28,
                         padding: EdgeInsets.only(
                             top: 20, bottom: 15, left: 20, right: 20),
                         color: Color(0xffffe5e5),
                         child: widget.imageData is ImageModel
                             ? Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Row(
                                     children: [
@@ -121,59 +121,63 @@ class DetailPageState extends State<DetailPage> {
                                                 as ImageProvider,
                                       ),
                                       SizedBox(width: screenWidth * 0.03),
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          GestureDetector(
-                                            onTap: () {
-                                              Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      ProfileView(
-                                                    user: widget.imageData.user,
-                                                    viewOnly: true,
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            GestureDetector(
+                                              onTap: () {
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        ProfileView(
+                                                      user:
+                                                          widget.imageData.user,
+                                                      viewOnly: true,
+                                                    ),
                                                   ),
+                                                );
+                                              },
+                                              child: Text(
+                                                '${widget.imageData.user.firstName} ${widget.imageData.user.lastName}',
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: screenWidth * 0.05,
                                                 ),
-                                              );
-                                            },
-                                            child: Text(
-                                              '${widget.imageData.user.firstName} ${widget.imageData.user.lastName}',
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: screenWidth * 0.05,
+                                                overflow: TextOverflow.ellipsis,
                                               ),
                                             ),
-                                          ),
-                                          SizedBox(height: 1),
-                                          Text(
-                                            getCategoriesString(
-                                                widget.imageData.categories),
-                                            style: TextStyle(
-                                              color: Colors.blue,
-                                              fontSize: screenWidth * 0.04,
+                                            SizedBox(height: 1),
+                                            SingleChildScrollView(
+                                              scrollDirection: Axis.horizontal,
+                                              child: Text(
+                                                getCategoriesString(
+                                                    widget.imageData.categories),
+                                                style: TextStyle(
+                                                  color: Colors.blue,
+                                                  fontSize: screenWidth * 0.04,
+                                                ),
+                                                // overflow: TextOverflow.ellipsis,
+                                              ),
                                             ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                  SizedBox(height: screenWidth * 0.025),
-                                  Row(
-                                    children: [
-                                      Text(
-                                        widget.imageData
-                                            .desc, // Use the image's caption
-                                        style: TextStyle(
-                                          fontSize: screenWidth * 0.034,
-                                          color: Colors.black,
+                                          ],
                                         ),
                                       ),
                                     ],
                                   ),
-                                  Spacer(),
-                                  // Icons Row
+                                  SizedBox(height: screenWidth * 0.025),
+                                  Text(
+                                    widget.imageData.desc,
+                                    style: TextStyle(
+                                      fontSize: screenWidth * 0.034,
+                                      color: Colors.black,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 2,
+                                  ),
+                                  SizedBox(height: screenWidth * 0.025),
                                   Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
@@ -207,9 +211,9 @@ class DetailPageState extends State<DetailPage> {
                                           _isHeartPressed
                                               ? FontAwesomeIcons.solidHeart
                                               : FontAwesomeIcons.heart,
-                                          color: Colors
-                                              .red, // Change color based on state
-                                          size: screenWidth * 0.1,
+                                          color: Colors.red,
+                                          size: screenWidth *
+                                              0.08, // Reduce icon size
                                         ),
                                       ),
                                       Center(
@@ -218,7 +222,8 @@ class DetailPageState extends State<DetailPage> {
                                             backgroundColor: Color(0xffb7ed9e),
                                             padding: EdgeInsets.symmetric(
                                                 vertical: screenWidth * 0.03,
-                                                horizontal: screenWidth * 0.15),
+                                                horizontal: screenWidth * 0.1),
+                                            // Adjust padding
                                             shape: RoundedRectangleBorder(
                                               borderRadius:
                                                   BorderRadius.circular(50),
@@ -228,23 +233,25 @@ class DetailPageState extends State<DetailPage> {
                                               ),
                                             ),
                                           ),
-                                          child: Text(
-                                            'Use Frame',
-                                            style: TextStyle(
-                                              fontSize: screenWidth * 0.045,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.black,
+                                          child: FittedBox(
+                                            child: Text(
+                                              'Use Frame',
+                                              style: TextStyle(
+                                                fontSize: screenWidth * 0.045,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.black,
+                                              ),
                                             ),
                                           ),
                                           onPressed: () {
-                                            print(widget.imageData.docName);
                                             Navigator.push(
                                               context,
                                               MaterialPageRoute(
                                                 builder: (context) =>
                                                     UseFrameView(
-                                                      filename: widget.imageData.filename,
-                                                    ),
+                                                  filename:
+                                                      widget.imageData.filename,
+                                                ),
                                               ),
                                             );
                                           },
@@ -253,7 +260,8 @@ class DetailPageState extends State<DetailPage> {
                                       Icon(
                                         FontAwesomeIcons.shareFromSquare,
                                         color: Colors.black,
-                                        size: screenWidth * 0.1,
+                                        size: screenWidth *
+                                            0.08, // Reduce icon size
                                       ),
                                     ],
                                   ),
@@ -295,7 +303,7 @@ class DetailPageState extends State<DetailPage> {
                                   },
                                 ),
                               ),
-                      ),
+                      )
                     ],
                   ),
                 ),
