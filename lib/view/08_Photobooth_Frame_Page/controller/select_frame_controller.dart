@@ -1,4 +1,5 @@
 import 'package:booth_bliss/model/frame_model.dart';
+import 'package:camera/camera.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
@@ -34,4 +35,17 @@ class PhotoboothFrameSelectionController {
       return [];
     }
   }
+
+  Future<String?> fetchFramesURl(String? filename) async {
+    String imagePath = 'frames/$filename.png';
+    try {
+      final ref = FirebaseStorage.instance.ref().child(imagePath);
+      String? url = await ref.getDownloadURL();
+      return url;
+    } catch (e) {
+      print('Error fetching image URL: $e');
+      return null;
+    }
+  }
+
 }
