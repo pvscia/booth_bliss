@@ -1,5 +1,7 @@
 import 'dart:io';
+import 'package:booth_bliss/view/04_QR_Page/controller/qr_controller.dart';
 import 'package:booth_bliss/view/04_QR_Page/view/scan_result.dart';
+import 'package:booth_bliss/view/Utils/view_dialog_util.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
@@ -7,6 +9,7 @@ import 'package:google_mlkit_barcode_scanning/google_mlkit_barcode_scanning.dart
 
 class ScanQR extends StatefulWidget {
   const ScanQR({super.key});
+
   @override
   State<ScanQR> createState() => _ScanQRState();
 }
@@ -66,21 +69,39 @@ class _ScanQRState extends State<ScanQR> {
             ),
             Expanded(
               flex: 4,
-              child: MobileScanner(
-                allowDuplicates: false,
-                onDetect: (barcode, args) {
-                  if (!isScanCompleted) {
-                    String code = barcode.rawValue ?? '---';
+              child: SizedBox(
+                child: MobileScanner(
+                  allowDuplicates: false,
+                  onDetect: (barcode, args) async {
+                    // if (!isScanCompleted) {
+                    print(barcode.rawValue);
+                      String code = barcode.rawValue ?? '---';
+                      ViewDialogUtil().showLoadingDialog(context);
+                      bool isSuccess =
+                          await QRController().addPhotoToAccount(code);
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        Navigator.of(context).pop();
+                        if (isSuccess) {
+                          ViewDialogUtil().showOneButtonActionDialog(
+                              'Sucessfully save photo to your account',
+                              'Ok',
+                              'success.gif',
+                              context,
+                              () {});
+                        }
+                      });
 
-                    isScanCompleted = true;
-
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => ScanResult(
-                                closeScreen: closeScreen, code: code)));
-                  }
-                },
+                      // Navigator.push(
+                      //     context,
+                      //     MaterialPageRoute(
+                      //         builder: (context) => ScanResult(
+                      //             closeScreen: closeScreen, code: code)));
+                      // setState(() {
+                      //   isScanCompleted = true;
+                      // });
+                    }
+                  // },
+                ),
               ),
             ),
             Expanded(
@@ -88,15 +109,12 @@ class _ScanQRState extends State<ScanQR> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    SizedBox(
-                      width: 200,
-                      child: ElevatedButton(
-                        onPressed: pickImageFromGallery,
-                        child: Row(children: [
-                          Icon(Icons.do_not_disturb_on_total_silence_sharp),
-                          Text('Take From Library')
-                        ]),
-                      ),
+                    ElevatedButton(
+                      onPressed: pickImageFromGallery,
+                      child: Row(children: [
+                        Icon(Icons.do_not_disturb_on_total_silence_sharp),
+                        Text('Take From Library')
+                      ]),
                     ),
                     selectedImage != null
                         ? Image.file(selectedImage!)

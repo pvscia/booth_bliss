@@ -145,7 +145,7 @@ class ProfileController {
       // Query Firestore collection 'frames' where the 'email' field matches the user's email
       QuerySnapshot querySnapshot = await firestore
           .collection('photos')
-          .where('userEmail', isEqualTo: email)
+          .where('userEmail', arrayContains: email)
           .get();
 
       // Convert the Firestore documents to ImageModel instances
