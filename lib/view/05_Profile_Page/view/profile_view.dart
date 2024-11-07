@@ -1,3 +1,4 @@
+import 'package:booth_bliss/model/image_model.dart';
 import 'package:flutter/material.dart';
 import 'package:booth_bliss/model/user_model.dart';
 
@@ -26,6 +27,8 @@ class ProfileViewState extends State<ProfileView> {
   String searchQuery = '';
   List<dynamic> filteredImages = [];
   List<dynamic> images = [];
+  ScrollController _scrollController = ScrollController();
+  List<int> _data = List.generate(3, (index) => index);
 
   @override
   void initState() {
@@ -34,6 +37,7 @@ class ProfileViewState extends State<ProfileView> {
     isViewOnly = widget.viewOnly ?? false;
     _fetchUserPhoto();
     _fetchUserCreated();
+    _scrollController.addListener(_loadMoreData);
   }
 
   Future<void> _fetchUserPhoto() async {
@@ -149,7 +153,7 @@ class ProfileViewState extends State<ProfileView> {
     });
   }
 
-  Future<void> refreshPage()async {
+  Future<void> refreshPage() async {
     await Future.delayed(const Duration(seconds: 2), () async {
       UserModel? temp = await ProfileController().getUser();
       if (temp != null) {
@@ -167,6 +171,21 @@ class ProfileViewState extends State<ProfileView> {
         _fetchUserLiked();
       }
     });
+  }
+
+  void _loadMoreData() {
+    if (_scrollController.position.pixels ==
+        _scrollController.position.maxScrollExtent) {
+      setState(() {
+        _data.addAll(List.generate(10, (index) => _data.length + index));
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -210,6 +229,7 @@ class ProfileViewState extends State<ProfileView> {
       body: RefreshIndicator(
         onRefresh: refreshPage,
         child: SingleChildScrollView(
+          controller: _scrollController,
           child: Column(
             children: [
               SizedBox(height: 5),
@@ -393,10 +413,13 @@ class ProfileViewState extends State<ProfileView> {
                               mainAxisSpacing: 5,
                               childAspectRatio: 3 / 5,
                             ),
-                            itemCount: (filteredImages.isNotEmpty
-                                    ? filteredImages
-                                    : images)
-                                .length,
+                            itemCount: (_data.length <
+                                    (filteredImages.isNotEmpty
+                                            ? filteredImages
+                                            : images)
+                                        .length)
+                                ? _data.length
+                                : images.length,
                             itemBuilder: (BuildContext context, int index) {
                               final currentImages = filteredImages.isNotEmpty
                                   ? filteredImages
@@ -407,7 +430,8 @@ class ProfileViewState extends State<ProfileView> {
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) => DetailPage(
-                                              imageData: currentImages[index])));
+                                              imageData:
+                                                  currentImages[index])));
                                   if (selectedIndex == 0) {
                                     _fetchUserResult();
                                   } else if (selectedIndex == 1) {
