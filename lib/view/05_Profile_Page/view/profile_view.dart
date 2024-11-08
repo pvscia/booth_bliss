@@ -28,7 +28,7 @@ class ProfileViewState extends State<ProfileView> {
   List<dynamic> filteredImages = [];
   List<dynamic> images = [];
   ScrollController _scrollController = ScrollController();
-  List<int> _data = List.generate(3, (index) => index);
+  List<dynamic> _data = [];
 
   @override
   void initState() {
@@ -68,6 +68,9 @@ class ProfileViewState extends State<ProfileView> {
       var temp = await ProfileController().fetchResult(updatedUser.email ?? '');
       setState(() {
         images = temp;
+        filteredImages = List.from(images);
+        _data = filteredImages.take(10).toList();
+        isLoading = false;
         isLoading = false;
       });
     } catch (e) {
@@ -86,6 +89,9 @@ class ProfileViewState extends State<ProfileView> {
       var temp = await ProfileController().fetchLiked(updatedUser.email ?? '');
       setState(() {
         images = temp;
+        filteredImages = List.from(images);
+        _data = filteredImages.take(10).toList();
+        isLoading = false;
         isLoading = false;
       });
     } catch (e) {
@@ -105,6 +111,8 @@ class ProfileViewState extends State<ProfileView> {
           await ProfileController().fetchCreated(updatedUser.email ?? '');
       setState(() {
         images = temp;
+        filteredImages = List.from(images);
+        _data = filteredImages.take(10).toList();
         isLoading = false;
       });
     } catch (e) {
@@ -121,6 +129,8 @@ class ProfileViewState extends State<ProfileView> {
     } else if (selectedSortingOption == 'Oldest to Newest') {
       images.sort((a, b) => a.date.compareTo(b.date)); // Oldest first
     }
+    filteredImages = List.from(images);
+    _data = filteredImages.take(10).toList();
   }
 
   void _toggleSortingOrder(String newValue) {
@@ -131,25 +141,30 @@ class ProfileViewState extends State<ProfileView> {
   }
 
   void updateSearchQuery(String query) {
+    _data.clear;
     setState(() {
       searchQuery = query;
 
       // Filter images based on the search query
       filteredImages = images.where((image) {
-        bool matchesDescription =
-            image.desc.toLowerCase().contains(query.toLowerCase());
-        bool matchesCategory = image.categories.any(
-            (category) => category.toLowerCase().contains(query.toLowerCase()));
-        bool matchesFirstName = (image.user.firstName?.toLowerCase() ?? '')
-            .contains(query.toLowerCase());
-        bool matchesLastName = (image.user.lastName?.toLowerCase() ?? '')
-            .contains(query.toLowerCase());
+        if (image is ImageModel) {
+          bool matchesDescription =
+              image.desc.toLowerCase().contains(query.toLowerCase());
+          bool matchesCategory = image.categories.any((category) =>
+              category.toLowerCase().contains(query.toLowerCase()));
+          bool matchesFirstName = (image.user.firstName?.toLowerCase() ?? '')
+              .contains(query.toLowerCase());
+          bool matchesLastName = (image.user.lastName?.toLowerCase() ?? '')
+              .contains(query.toLowerCase());
 
-        return matchesDescription ||
-            matchesCategory ||
-            matchesFirstName ||
-            matchesLastName;
+          return matchesDescription ||
+              matchesCategory ||
+              matchesFirstName ||
+              matchesLastName;
+        }
+        return false;
       }).toList();
+      _data = filteredImages.take(10).toList();
     });
   }
 
@@ -176,8 +191,10 @@ class ProfileViewState extends State<ProfileView> {
   void _loadMoreData() {
     if (_scrollController.position.pixels ==
         _scrollController.position.maxScrollExtent) {
+      int counter = _data.length;
+      final remainingItems = filteredImages.skip(counter).take(10).toList();
       setState(() {
-        _data.addAll(List.generate(10, (index) => _data.length + index));
+        _data.addAll(remainingItems);
       });
     }
   }
@@ -413,25 +430,15 @@ class ProfileViewState extends State<ProfileView> {
                               mainAxisSpacing: 5,
                               childAspectRatio: 3 / 5,
                             ),
-                            itemCount: (_data.length <
-                                    (filteredImages.isNotEmpty
-                                            ? filteredImages
-                                            : images)
-                                        .length)
-                                ? _data.length
-                                : images.length,
+                            itemCount: _data.length,
                             itemBuilder: (BuildContext context, int index) {
-                              final currentImages = filteredImages.isNotEmpty
-                                  ? filteredImages
-                                  : images;
                               return GestureDetector(
                                 onTap: () async {
                                   await Navigator.push(
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) => DetailPage(
-                                              imageData:
-                                                  currentImages[index])));
+                                              imageData: _data[index])));
                                   if (selectedIndex == 0) {
                                     _fetchUserResult();
                                   } else if (selectedIndex == 1) {
@@ -443,7 +450,7 @@ class ProfileViewState extends State<ProfileView> {
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(10),
                                   child: Image.network(
-                                    currentImages[index].imageUrl,
+                                    _data[index].imageUrl,
                                     fit: BoxFit.fitHeight,
                                   ),
                                 ),
