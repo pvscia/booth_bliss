@@ -68,7 +68,11 @@ class DetailPageState extends State<DetailPage> {
         if (didPop) {
           return;
         }
-        Navigator.of(context).pop();
+        if(widget.imageData is ImageModel){
+          Navigator.pop(context,widget.imageData);
+        }else{
+          Navigator.of(context).pop();
+        }
       },
       child: SafeArea(
         child: !isLoading
@@ -205,6 +209,11 @@ class DetailPageState extends State<DetailPage> {
                                           });
                                           setState(() {
                                             _isHeartPressed = !_isHeartPressed;
+                                            if(_isHeartPressed){
+                                              widget.imageData.likedBy.add(email);
+                                            }else{
+                                              widget.imageData.likedBy.remove(email);
+                                            }
                                           });
                                         },
                                         child: Icon(

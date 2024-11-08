@@ -110,14 +110,19 @@ class HomeViewState extends State<HomeView> {
                         images: filteredImages, // Use filtered images
                         onTap: (image) async {
                           if(!isRefresh){
-                            await Navigator.push(
+                            var result = await Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder: (context) =>
                                     DetailPage(imageData: image),
                               ),
                             );
-                            refreshPage();
+                            int idx = filteredImages.indexWhere((img){
+                              return img == image;
+                            });
+                            setState(() {
+                              filteredImages[idx] = result;
+                            });
                           }
                         },
                       ),
