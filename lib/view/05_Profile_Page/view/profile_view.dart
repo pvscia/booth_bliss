@@ -426,19 +426,22 @@ class ProfileViewState extends State<ProfileView> {
                                   : images;
                               return GestureDetector(
                                 onTap: () async {
-                                  await Navigator.push(
+                                  final result = await Navigator.push(
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) => DetailPage(
-                                              imageData:
-                                                  currentImages[index])));
-                                  if (selectedIndex == 0) {
-                                    _fetchUserResult();
-                                  } else if (selectedIndex == 1) {
-                                    _fetchUserCreated();
-                                  } else if (selectedIndex == 2) {
-                                    _fetchUserLiked();
+                                              imageData: currentImages[index])));
+                                  if(result!=null){
+                                    setState(() {
+                                      currentImages[index]=result;
+                                      if(filteredImages.isNotEmpty){
+                                        filteredImages = currentImages;
+                                      }else{
+                                        images = currentImages;
+                                      }
+                                    });
                                   }
+
                                 },
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(10),
