@@ -8,6 +8,80 @@ import 'package:flutter/material.dart';
 
 import '../../Utils/view_dialog_util.dart';
 
+class ExpandableText extends StatefulWidget {
+  final String text;
+  final int maxLines;
+
+  ExpandableText({required this.text, this.maxLines = 2});
+
+  @override
+  _ExpandableTextState createState() => _ExpandableTextState();
+}
+
+class _ExpandableTextState extends State<ExpandableText> {
+  bool _isExpanded = false;
+
+  @override
+  Widget build(BuildContext context) {
+    // Split the text into words for hashtags
+    List<String> words = widget.text.split(' ');
+
+    // Display the text based on the expanded state
+    String displayedText = _isExpanded
+        ? widget.text
+        : words.take(4).join(' ') + '...'; // Show first 4 hashtags and "more"
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Display the text
+        Text(
+          displayedText,
+          style: TextStyle(
+            fontSize: MediaQuery.of(context).size.width * 0.034,
+            color: Colors.black,
+          ),
+        ),
+        // Show "more" if not expanded
+        if (!_isExpanded && words.length > 4)
+          GestureDetector(
+            onTap: () {
+              setState(() {
+                _isExpanded = true; // Set to expanded
+              });
+            },
+            child: Text(
+              '... more',
+              style: TextStyle(
+                color: Colors.grey,
+                fontSize: MediaQuery.of(context).size.width * 0.034,
+              ),
+            ),
+          ),
+        // Show "less" if expanded
+        if (_isExpanded)
+          GestureDetector(
+            onTap: () {
+              setState(() {
+                _isExpanded = false; // Set to collapsed
+              });
+            },
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: Text(
+                'less',
+                style: TextStyle(
+                  color: Colors.grey,
+                  fontSize: MediaQuery.of(context).size.width * 0.034,
+                ),
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+}
+
 class DetailPage extends StatefulWidget {
   final dynamic imageData;
 
@@ -26,7 +100,7 @@ class DetailPageState extends State<DetailPage> {
   @override
   void initState() {
     super.initState();
-    email = FirebaseAuth.instance.currentUser?.email ?? '';
+    email = FirebaseAuth.instance.currentUser ?.email ?? '';
     if (widget.imageData is ImageModel) {
       _isHeartPressed = widget.imageData.likedBy.where((test) {
         return test == email;
@@ -36,7 +110,6 @@ class DetailPageState extends State<DetailPage> {
   }
 
   Future<void> _fetchUserPhoto() async {
-    // Corrected method name
     try {
       String? fetchedUrl =
           await DetailController().fetchProfilePhoto(widget.imageData.user.uid);
@@ -56,7 +129,6 @@ class DetailPageState extends State<DetailPage> {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
 
     String getCategoriesString(List<String> categories) {
       return categories.map((category) => '#$category').join(' ');
@@ -77,41 +149,45 @@ class DetailPageState extends State<DetailPage> {
       child: SafeArea(
         child: !isLoading
             ? Scaffold(
-                backgroundColor: Colors.grey[100],
-                body: Column(
-                  children: [
-                    // Image Section with icons
-                    Stack(
-                      children: [
-                        Image.network(
-                          widget.imageData.imageUrl,
-                          width: double.infinity,
-                          fit: BoxFit.fitWidth,
-                        ),
-                        Positioned(
-                          top: 16,
-                          left: 16,
-                          child: IconButton(
-                            icon: Icon(
-                              FontAwesomeIcons.arrowLeft,
-                              color: Colors.black,
-                            ),
-                            onPressed: () {
-                              if (widget.imageData is ImageModel) {
-                                Navigator.pop(context, widget.imageData);
-                              } else {
-                                Navigator.of(context).pop();
-                              }
-                            },
+                backgroundColor: Color(0xffffe5e5),
+                body: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min, // Ensure Column takes only needed space
+                    children: [
+                      // Image Section with icons
+                      Stack(
+                        children: [
+                          Image.network(
+                            widget.imageData.imageUrl,
+                            width: double.infinity,
+                            fit: BoxFit.fitWidth,
                           ),
+                          Positioned(
+                            top: 16,
+                            left: 16,
+                            child: IconButton(
+                              icon: Icon(
+                                FontAwesomeIcons.arrowLeft,
+                                color: Colors.black,
+                              ),
+                              onPressed: () {
+                                if (widget.imageData is ImageModel) {
+                                  Navigator.pop(context, widget.imageData);
+                                } else {
+                                  Navigator.of(context).pop();
+                                }
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                      // Profile and Buttons Section
+                      Container(
+                        // height: screenWidth ,
+                        padding: EdgeInsets.symmetric(
+                          vertical: 20, // Adjust vertical padding as needed
+                          horizontal: 20,
                         ),
-                      ],
-                    ),
-                    // Profile and Buttons Section
-                    Expanded(
-                      child: Container(
-                        padding: EdgeInsets.only(
-                            top: 20, bottom: 15, left: 20, right: 20),
                         color: Color(0xffffe5e5),
                         child: Center(
                           child: widget.imageData is ImageModel
@@ -161,19 +237,9 @@ class DetailPageState extends State<DetailPage> {
                                                 ),
                                               ),
                                               SizedBox(height: 1),
-                                              SingleChildScrollView(
-                                                scrollDirection:
-                                                    Axis.horizontal,
-                                                child: Text(
-                                                  getCategoriesString(widget
-                                                      .imageData.categories),
-                                                  style: TextStyle(
-                                                    color: Colors.blue,
-                                                    fontSize:
-                                                        screenWidth * 0.04,
-                                                  ),
-                                                  // overflow: TextOverflow.ellipsis,
-                                                ),
+                                              ExpandableText(
+                                                text: getCategoriesString(widget.imageData.categories),
+                                                maxLines: 1, // Show 1 line initially for categories
                                               ),
                                             ],
                                           ),
@@ -181,14 +247,9 @@ class DetailPageState extends State<DetailPage> {
                                       ],
                                     ),
                                     SizedBox(height: screenWidth * 0.025),
-                                    Text(
-                                      widget.imageData.desc,
-                                      style: TextStyle(
-                                        fontSize: screenWidth * 0.034,
-                                        color: Colors.black,
-                                      ),
-                                      overflow: TextOverflow.ellipsis,
-                                      maxLines: 2,
+                                    ExpandableText(
+                                      text: widget.imageData.desc,
+                                      maxLines: 2, // Show 2 lines initially
                                     ),
                                     SizedBox(height: screenWidth * 0.025),
                                     Row(
@@ -293,53 +354,58 @@ class DetailPageState extends State<DetailPage> {
                                   ],
                                 )
                               : Center(
-                                  child: ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: Color(0xffb7ed9e),
-                                      padding: EdgeInsets.symmetric(
-                                          vertical: screenWidth * 0.03,
-                                          horizontal: screenWidth * 0.15),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(50),
-                                        side: BorderSide(
-                                          color: Color(0xff50c400),
-                                          width: screenWidth * 0.008,
+                                  child: Column(
+                                    children: [
+                                    SizedBox(height: screenWidth * 0.15),
+                                    ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Color(0xffb7ed9e),
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: screenWidth * 0.05,
+                                            horizontal: screenWidth * 0.15),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(50),
+                                          side: BorderSide(
+                                            color: Color(0xff50c400),
+                                            width: screenWidth * 0.008,
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                    child: Text(
-                                      'Save to Library',
-                                      style: TextStyle(
-                                        fontSize: screenWidth * 0.045,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.black,
+                                      child: Text(
+                                        'Save to Library',
+                                        style: TextStyle(
+                                          fontSize: screenWidth * 0.045,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black,
+                                        ),
                                       ),
-                                    ),
-                                    onPressed: () async {
-                                      ViewDialogUtil()
-                                          .showLoadingDialog(context);
-                                      await DetailController()
-                                          .downloadAndSaveImage(
-                                              widget.imageData.imageUrl,
-                                              widget.imageData.filename);
-                                      WidgetsBinding.instance
-                                          .addPostFrameCallback((_) {
-                                        Navigator.of(context).pop();
+                                      onPressed: () async {
                                         ViewDialogUtil()
-                                            .showOneButtonActionDialog(
-                                                'Photo Saved',
-                                                'Ok',
-                                                'success.gif',
-                                                context,
-                                                () {});
-                                      });
-                                    },
-                                  ),
+                                            .showLoadingDialog(context);
+                                        await DetailController()
+                                            .downloadAndSaveImage(
+                                                widget.imageData.imageUrl,
+                                                widget.imageData.filename);
+                                        WidgetsBinding.instance
+                                            .addPostFrameCallback((_) {
+                                          Navigator.of(context).pop();
+                                          ViewDialogUtil()
+                                              .showOneButtonActionDialog(
+                                                  'Photo Saved',
+                                                  'Ok',
+                                                  'success.gif',
+                                                  context,
+                                                  () {});
+                                        });
+                                      },
+                                    ),
+                                  ],
+                                  )
                                 ),
                         ),
                       ),
-                    )
                   ],
+                  ),
                 ),
               )
             : Center(
