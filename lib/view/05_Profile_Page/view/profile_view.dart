@@ -31,6 +31,7 @@ class ProfileViewState extends State<ProfileView> {
   ScrollController _scrollController = ScrollController();
   List<dynamic> _data = [];
   bool isLoadingMore = false;
+  TextEditingController etSearch = TextEditingController();
 
   @override
   void initState() {
@@ -72,7 +73,7 @@ class ProfileViewState extends State<ProfileView> {
         images = temp;
         filteredImages = List.from(images);
         _data = filteredImages.take(9).toList();
-        isLoading = false;
+        _toggleSortingOrder('Newest to Oldest');
         isLoading = false;
       });
     } catch (e) {
@@ -81,6 +82,9 @@ class ProfileViewState extends State<ProfileView> {
         isLoading = false;
       });
     }
+    setState(() {
+      etSearch.text = '';
+    });
   }
 
   Future<void> _fetchUserLiked() async {
@@ -131,8 +135,10 @@ class ProfileViewState extends State<ProfileView> {
     } else if (selectedSortingOption == 'Oldest to Newest') {
       images.sort((a, b) => a.date.compareTo(b.date)); // Oldest first
     }
-    filteredImages = List.from(images);
-    _data = filteredImages.take(9).toList();
+    setState(() {
+      filteredImages = List.from(images);
+      _data = filteredImages.take(9).toList();
+    });
   }
 
   void _toggleSortingOrder(String newValue) {
@@ -187,6 +193,9 @@ class ProfileViewState extends State<ProfileView> {
       } else if (selectedIndex == 2) {
         _fetchUserLiked();
       }
+      setState(() {
+        etSearch.text = '';
+      });
     });
   }
 
@@ -366,7 +375,7 @@ class ProfileViewState extends State<ProfileView> {
                       ],
                     ),
                     SizedBox(height: 10),
-                    Container(
+                    if(selectedIndex!=0)Container(
                       height: 50,
                       decoration: BoxDecoration(
                         color: Color(0xffffe5e5),
@@ -391,6 +400,7 @@ class ProfileViewState extends State<ProfileView> {
                           Expanded(
                             child: TextField(
                               onChanged: updateSearchQuery,
+                              controller: etSearch,
                               style: TextStyle(
                                 fontSize: screenHeight * 0.02,
                                 fontWeight: FontWeight.bold,
@@ -426,7 +436,7 @@ class ProfileViewState extends State<ProfileView> {
                         ],
                       ),
                     ),
-                    SizedBox(
+                    if(selectedIndex!=0) SizedBox(
                       height: 20,
                     ),
                     !isLoading

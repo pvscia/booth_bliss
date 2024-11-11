@@ -35,6 +35,7 @@ class ProfileController {
           .get();
 
       // Convert the Firestore documents to ImageModel instances
+      UserModel? tempUser = await getUser();
       List<ImageModel> frames =
           await Future.wait(querySnapshot.docs.map((doc) async {
         Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
@@ -47,7 +48,6 @@ class ProfileController {
         // Fetch the download URL asynchronously
         String url = await ref.getDownloadURL();
 
-        UserModel? tempUser = await getUser();
         // Return the ImageModel with the correct download URL
         if (tempUser != null) {
           return ImageModel(
@@ -104,7 +104,7 @@ class ProfileController {
         // Fetch the download URL asynchronously
         String url = await ref.getDownloadURL();
 
-        UserModel? tempUser = await getUser();
+        UserModel? tempUser = await getUserWithEmail(data['userEmail']);
         // Return the ImageModel with the correct download URL
         if (tempUser != null) {
           return ImageModel(
@@ -165,24 +165,44 @@ class ProfileController {
         // Return the ImageModel with the correct download URL
         if (tempUser != null) {
           return PhotoModel(
-            imageUrl: url,
-            // Use the URL instead of the image path
-            email: email,
-            filename: data['filename'],
-          );
+              imageUrl: url,
+              // Use the URL instead of the image path
+              email: email,
+              filename: data['filename'],
+              date: (data['timestamp'] as Timestamp).toDate());
         } else {
           return PhotoModel(
-            imageUrl: url,
-            // Use the URL instead of the image path
-            email: email,
-            filename: data['filename'],
-          );
+              imageUrl: url,
+              // Use the URL instead of the image path
+              email: email,
+              filename: data['filename'],
+              date: (data['timestamp'] as Timestamp).toDate());
         }
       }).toList());
       return frames;
     } catch (e) {
       print('Error fetching frames: $e');
       return [];
+    }
+  }
+
+  Future<UserModel?> getUserWithEmail(String email) async {
+    try {
+      DocumentSnapshot<Map<String, dynamic>> doc =
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(email) // Document ID
+              .get();
+
+      if (doc.exists) {
+        // Convert Firestore document to ModelUser
+        UserModel currUser = UserModel.fromJson(doc.data()!);
+        return currUser;
+      } else {
+        return null; // Invalid login
+      }
+    } catch (e) {
+      return null;
     }
   }
 

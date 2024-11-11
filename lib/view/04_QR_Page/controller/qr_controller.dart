@@ -22,7 +22,7 @@ class QRController {
           // Update the userEmail and timestamp fields for the matched document
           await firestore.collection('photos').doc(doc.id).update({
             'userEmail': FieldValue.arrayUnion([userEmail]),
-            'timestamp': FieldValue.serverTimestamp(),
+            // 'timestamp': FieldValue.serverTimestamp(),
           });
         }
         print('User email updated successfully for filename: $filename');
