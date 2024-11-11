@@ -29,9 +29,9 @@ class _ExpandableTextState extends State<ExpandableText> {
     // Display the text based on the expanded state
     String displayedText = _isExpanded
         ? widget.text
-        : words.take(4).join(' ') + '...'; // Show first 4 hashtags and "more"
+        : words.take(3).join(' '); // Show first 4 hashtags and "more"
 
-    return Column(
+    return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Display the text
@@ -43,7 +43,7 @@ class _ExpandableTextState extends State<ExpandableText> {
           ),
         ),
         // Show "more" if not expanded
-        if (!_isExpanded && words.length > 4)
+        if (!_isExpanded && words.length > 3)
           GestureDetector(
             onTap: () {
               setState(() {
