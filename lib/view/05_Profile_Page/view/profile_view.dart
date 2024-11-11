@@ -25,7 +25,6 @@ class ProfileViewState extends State<ProfileView> {
   bool isLoading = false;
   late bool isViewOnly;
   String selectedSortingOption = 'Newest to Oldest';
-  String searchQuery = '';
   List<dynamic> filteredImages = [];
   List<dynamic> images = [];
   ScrollController _scrollController = ScrollController();
@@ -156,8 +155,6 @@ class ProfileViewState extends State<ProfileView> {
   void updateSearchQuery(String query) {
     _data.clear;
     setState(() {
-      searchQuery = query;
-
       // Filter images based on the search query
       filteredImages = images.where((image) {
         if (image is ImageModel) {
