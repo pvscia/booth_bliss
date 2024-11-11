@@ -35,11 +35,14 @@ class _ExpandableTextState extends State<ExpandableText> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Display the text
-        Text(
-          displayedText,
-          style: TextStyle(
-            fontSize: MediaQuery.of(context).size.width * 0.034,
-            color: Colors.black,
+        Flexible(
+          child: Text(
+            displayedText,
+            style: TextStyle(
+              fontSize: MediaQuery.of(context).size.width * 0.034,
+              color: Colors.black,
+            ),
+            // overflow: TextOverflow.visible,
           ),
         ),
         // Show "more" if not expanded
