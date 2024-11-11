@@ -90,6 +90,7 @@ class ProfileViewState extends State<ProfileView> {
   Future<void> _fetchUserLiked() async {
     setState(() {
       isLoading = true;
+      etSearch.text = '';
     });
     try {
       var temp = await ProfileController().fetchLiked(updatedUser.email ?? '');
@@ -106,11 +107,15 @@ class ProfileViewState extends State<ProfileView> {
         isLoading = false;
       });
     }
+    setState(() {
+      etSearch.text = '';
+    });
   }
 
   Future<void> _fetchUserCreated() async {
     setState(() {
       isLoading = true;
+      etSearch.text = '';
     });
     try {
       var temp =
@@ -193,9 +198,6 @@ class ProfileViewState extends State<ProfileView> {
       } else if (selectedIndex == 2) {
         _fetchUserLiked();
       }
-      setState(() {
-        etSearch.text = '';
-      });
     });
   }
 
