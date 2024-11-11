@@ -1,4 +1,3 @@
-import 'package:booth_bliss/model/image_model.dart';
 import 'package:flutter/material.dart';
 import 'package:booth_bliss/model/user_model.dart';
 
@@ -434,7 +433,7 @@ class ProfileViewState extends State<ProfileView> {
                             itemBuilder: (BuildContext context, int index) {
                               return GestureDetector(
                                 onTap: () async {
-                                  await Navigator.push(
+                                  final result = await Navigator.push(
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) => DetailPage(
@@ -446,6 +445,7 @@ class ProfileViewState extends State<ProfileView> {
                                   } else if (selectedIndex == 2) {
                                     _fetchUserLiked();
                                   }
+
                                 },
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(10),
