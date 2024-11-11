@@ -1,8 +1,8 @@
 import 'package:booth_bliss/model/user_model.dart';
-import 'package:booth_bliss/view/Utils/view_dialog_util.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 import '../../07_Photobooth_Start_Page/start_view.dart';
 import '../../bottom_nav_bar_view.dart';
@@ -10,8 +10,7 @@ import '../../bottom_nav_bar_view.dart';
 class AuthCheck extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    bool isNotPhone = ViewDialogUtil().isNotPhone(context);
-    return !isNotPhone ? StreamBuilder<User?>(
+    return !kIsWeb ? StreamBuilder<User?>(
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
