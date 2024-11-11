@@ -81,7 +81,7 @@ class HomeViewState extends State<HomeView> {
     List<ImageModel> temp = await HomeController().fetchFrames();
     if (temp.isNotEmpty) {
       setState(() {
-        filteredImages = temp;
+        images = temp;
       });
     }
     setState(() {
