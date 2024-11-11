@@ -1,3 +1,4 @@
+import 'package:booth_bliss/model/image_model.dart';
 import 'package:flutter/material.dart';
 import 'package:booth_bliss/model/user_model.dart';
 
@@ -445,7 +446,6 @@ class ProfileViewState extends State<ProfileView> {
                                   } else if (selectedIndex == 2) {
                                     _fetchUserLiked();
                                   }
-
                                 },
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(10),
