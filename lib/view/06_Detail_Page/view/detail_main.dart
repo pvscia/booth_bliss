@@ -69,7 +69,7 @@ class _ExpandableTextState extends State<ExpandableText> {
             child: Align(
               alignment: Alignment.centerRight,
               child: Text(
-                'less',
+                ' less',
                 style: TextStyle(
                   color: Colors.grey,
                   fontSize: MediaQuery.of(context).size.width * 0.034,
