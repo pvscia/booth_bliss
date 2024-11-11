@@ -1,4 +1,5 @@
 import 'package:booth_bliss/model/image_model.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:booth_bliss/model/user_model.dart';
 
@@ -29,6 +30,7 @@ class ProfileViewState extends State<ProfileView> {
   List<dynamic> images = [];
   ScrollController _scrollController = ScrollController();
   List<dynamic> _data = [];
+  bool isLoadingMore = false;
 
   @override
   void initState() {
@@ -69,7 +71,7 @@ class ProfileViewState extends State<ProfileView> {
       setState(() {
         images = temp;
         filteredImages = List.from(images);
-        _data = filteredImages.take(10).toList();
+        _data = filteredImages.take(9).toList();
         isLoading = false;
         isLoading = false;
       });
@@ -90,7 +92,7 @@ class ProfileViewState extends State<ProfileView> {
       setState(() {
         images = temp;
         filteredImages = List.from(images);
-        _data = filteredImages.take(10).toList();
+        _data = filteredImages.take(9).toList();
         isLoading = false;
         isLoading = false;
       });
@@ -112,7 +114,7 @@ class ProfileViewState extends State<ProfileView> {
       setState(() {
         images = temp;
         filteredImages = List.from(images);
-        _data = filteredImages.take(10).toList();
+        _data = filteredImages.take(9).toList();
         isLoading = false;
       });
     } catch (e) {
@@ -130,7 +132,7 @@ class ProfileViewState extends State<ProfileView> {
       images.sort((a, b) => a.date.compareTo(b.date)); // Oldest first
     }
     filteredImages = List.from(images);
-    _data = filteredImages.take(10).toList();
+    _data = filteredImages.take(9).toList();
   }
 
   void _toggleSortingOrder(String newValue) {
@@ -164,7 +166,7 @@ class ProfileViewState extends State<ProfileView> {
         }
         return false;
       }).toList();
-      _data = filteredImages.take(10).toList();
+      _data = filteredImages.take(9).toList();
     });
   }
 
@@ -189,13 +191,21 @@ class ProfileViewState extends State<ProfileView> {
   }
 
   void _loadMoreData() {
-    if (_scrollController.position.pixels ==
-        _scrollController.position.maxScrollExtent) {
-      int counter = _data.length;
-      final remainingItems = filteredImages.skip(counter).take(10).toList();
-      setState(() {
-        _data.addAll(remainingItems);
-      });
+    if(_data.length < filteredImages.length) {
+      if (_scrollController.position.pixels ==
+          _scrollController.position.maxScrollExtent) {
+        setState(() {
+          isLoadingMore = true;
+        });
+        Future.delayed(Duration(seconds: 3), () {
+          int counter = _data.length;
+          final remainingItems = filteredImages.skip(counter).take(9).toList();
+          setState(() {
+            _data.addAll(remainingItems);
+            isLoadingMore = false;
+          });
+        });
+      }
     }
   }
 
@@ -439,19 +449,20 @@ class ProfileViewState extends State<ProfileView> {
                                       MaterialPageRoute(
                                           builder: (context) => DetailPage(
                                               imageData: _data[index])));
-                                  if (selectedIndex == 0) {
-                                    _fetchUserResult();
-                                  } else if (selectedIndex == 1) {
-                                    _fetchUserCreated();
-                                  } else if (selectedIndex == 2) {
-                                    _fetchUserLiked();
+                                  if(result!=null){
+                                    setState(() {
+                                      _data[index]=result;
+                                    });
                                   }
                                 },
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(10),
-                                  child: Image.network(
-                                    _data[index].imageUrl,
+                                  child: CachedNetworkImage(
+                                    imageUrl: _data[index].imageUrl,
                                     fit: BoxFit.fitHeight,
+                                    placeholder: (context, url) =>
+                                        Center(child: CircularProgressIndicator()),
+                                    errorWidget: (context, url, error) => Icon(Icons.error),
                                   ),
                                 ),
                               );
@@ -460,6 +471,10 @@ class ProfileViewState extends State<ProfileView> {
                         : Center(child: CircularProgressIndicator()),
                   ],
                 ),
+              ),
+              if(isLoadingMore) Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: CircularProgressIndicator(),
               ),
             ],
           ),
