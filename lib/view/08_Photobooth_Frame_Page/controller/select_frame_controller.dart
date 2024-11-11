@@ -1,5 +1,4 @@
 import 'package:booth_bliss/model/frame_model.dart';
-import 'package:camera/camera.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
