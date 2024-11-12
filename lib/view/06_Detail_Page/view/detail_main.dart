@@ -170,7 +170,7 @@ class DetailPageState extends State<DetailPage> {
                             left: 16,
                             child: IconButton(
                               icon: Icon(
-                                FontAwesomeIcons.arrowLeft,
+                                FontAwesomeIcons.chevronLeft,
                                 color: Colors.black,
                               ),
                               onPressed: () {
