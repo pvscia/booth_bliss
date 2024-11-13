@@ -126,7 +126,7 @@ class _ScanQRState extends State<ScanQR> {
                                     'Take From Library',
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
-                                      fontSize: screenWidth * 0.034 // Make the text bold
+                                      fontSize: screenWidth * 0.03 // Make the text bold
                                     ),
                                   ),
                                 ],
@@ -161,8 +161,8 @@ class _ScanQRState extends State<ScanQR> {
             Container(
               width: double.infinity,
               color: Color(0xffffe5e5), // Set the background color to green
-              padding: EdgeInsets.all(16),
-              margin: EdgeInsets.symmetric(vertical: 10),
+              padding: EdgeInsets.all(screenWidth * 0.05),
+              margin: EdgeInsets.symmetric(vertical: screenWidth * 0.03),
               child: Column(
                 children: [
                   Text(
@@ -244,32 +244,60 @@ class LShapePainter extends CustomPainter {
       ..strokeWidth = 5;
 
     // Define the size and position of the "L" shapes
-    double cornerSize = 40.0;
+    double cornerSize = size.width * 0.1;
+    double cornerSizeSmall = size.width * 0.05;
+    double lineThickness = 5;
 
+    if (size.width < 400) {
+      // Top left corner
+      //horizontal
+      canvas.drawRect(Rect.fromLTWH(cornerSizeSmall * 3, cornerSizeSmall * 2, cornerSizeSmall * 1.5, lineThickness), paint);
+      //vertical
+      canvas.drawRect(Rect.fromLTWH(cornerSizeSmall * 3, cornerSizeSmall * 2.2, lineThickness, cornerSizeSmall * 1.5), paint);
+    
+      // Top right corner
+      //horizontal
+      canvas.drawRect(Rect.fromLTWH(size.width - (cornerSizeSmall * 4.5), cornerSizeSmall * 2, cornerSizeSmall * 1.5, lineThickness), paint);
+      //vertical
+      canvas.drawRect(Rect.fromLTWH(size.width - (cornerSizeSmall * 3.3), cornerSizeSmall * 2.2, lineThickness, cornerSizeSmall * 1.5), paint);
+
+      // Bottom left corner
+      //horizontal
+      canvas.drawRect(Rect.fromLTWH(cornerSizeSmall * 3, cornerSizeSmall * 15, cornerSizeSmall * 1.5, lineThickness), paint);
+      //vertical
+      canvas.drawRect(Rect.fromLTWH(cornerSizeSmall * 3, cornerSizeSmall * 13.8, lineThickness, cornerSizeSmall * 1.5), paint);
+
+      // Bottom right corner
+      //horizontal
+      canvas.drawRect(Rect.fromLTWH(cornerSizeSmall * 15.5, cornerSizeSmall * 15, cornerSizeSmall * 1.5, lineThickness), paint);
+      //vertical
+      canvas.drawRect(Rect.fromLTWH(cornerSizeSmall * 16.7, cornerSizeSmall * 13.8, lineThickness, cornerSizeSmall * 1.5), paint);
+    }
+    else {
     // Top left corner
-    // canvas.drawRect(Rect.fromLTWH(0, 0, 0, 0), paint);
     //horizontal
-    canvas.drawRect(Rect.fromLTWH(cornerSize, cornerSize *2, cornerSize * 1.5, 5), paint);
+    canvas.drawRect(Rect.fromLTWH(cornerSize, cornerSize *2, cornerSize * 1.5, lineThickness), paint);
     //vertical
-    canvas.drawRect(Rect.fromLTWH(cornerSize, cornerSize * 2.2, 5, cornerSize * 1.5), paint);
+    canvas.drawRect(Rect.fromLTWH(cornerSize, cornerSize * 2.2, lineThickness, cornerSize * 1.5), paint);
 
     // Top right corner
     //horizontal
-    canvas.drawRect(Rect.fromLTWH(size.width - (cornerSize * 2.49), cornerSize * 2, cornerSize * 1.5, 5), paint);
+    canvas.drawRect(Rect.fromLTWH(size.width - (cornerSize * 2.49), cornerSize * 2, cornerSize * 1.5, lineThickness), paint);
     //vertical
-    canvas.drawRect(Rect.fromLTWH(size.width - (cornerSize * 1.1), cornerSize * 2.2, 5, cornerSize * 1.5), paint);
+    canvas.drawRect(Rect.fromLTWH(size.width - (cornerSize * 1.1), cornerSize * 2.2, lineThickness, cornerSize * 1.5), paint);
 
     // Bottom left corner
     //horizontal
-    canvas.drawRect(Rect.fromLTWH(cornerSize, cornerSize * 10.5, cornerSize * 1.5, 5), paint);
+    canvas.drawRect(Rect.fromLTWH(cornerSize, cornerSize * 10, cornerSize * 1.5, lineThickness), paint);
     //vertical
-    canvas.drawRect(Rect.fromLTWH(cornerSize, cornerSize * 9, 5, cornerSize * 1.5), paint);
+    canvas.drawRect(Rect.fromLTWH(cornerSize, cornerSize * 8.5, lineThickness, cornerSize * 1.5), paint);
 
     // Bottom right corner
     //horizontal
-    canvas.drawRect(Rect.fromLTWH(cornerSize * 7.83, cornerSize * 10.5, cornerSize * 1.5, 5), paint);
+    canvas.drawRect(Rect.fromLTWH(cornerSize * 7.5, cornerSize * 10, cornerSize * 1.5, lineThickness), paint);
     //vertical
-    canvas.drawRect(Rect.fromLTWH(cornerSize * 9.2, cornerSize * 9, 5, cornerSize * 1.5), paint);
+    canvas.drawRect(Rect.fromLTWH(cornerSize * 8.9, cornerSize * 8.5, lineThickness, cornerSize * 1.5), paint);
+    }
   }
 
   @override
