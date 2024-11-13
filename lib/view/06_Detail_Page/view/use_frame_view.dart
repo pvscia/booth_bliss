@@ -56,6 +56,7 @@ class UseFrameView extends StatelessWidget {
                 color: Colors.black,
                 fontWeight: FontWeight.bold,
                 fontSize: screenWidth * 0.055,
+                fontFamily: 'MontserratSemiBold'
               ),
             ),
         ),
@@ -90,6 +91,7 @@ class UseFrameView extends StatelessWidget {
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: screenWidth * 0.05,
+                      fontFamily: 'MontserratSemiBold',
                       color: Colors.black, // White text color
                     ),
                     textAlign: TextAlign.center,
