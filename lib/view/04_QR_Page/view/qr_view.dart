@@ -49,6 +49,7 @@ class _ScanQRState extends State<ScanQR> {
                             color: Colors.black,
                             fontWeight: FontWeight.bold,
                             fontSize: 20,
+                            fontFamily: 'MontserratSemiBold'
                           ),
                         ),
                       ),
@@ -169,6 +170,7 @@ class _ScanQRState extends State<ScanQR> {
                     "Scan QR Code to save image",
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
+                      fontFamily: 'MontserratSemiBold',
                       fontSize: 18,
                       color: Colors.black, // White text color
                     ),
