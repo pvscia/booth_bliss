@@ -303,55 +303,57 @@ class DetailPageState extends State<DetailPage> {
                                                 0.08, // Reduce icon size
                                           ),
                                         ),
-                                        Center(
-                                          child: ElevatedButton(
-                                            style: ElevatedButton.styleFrom(
-                                              backgroundColor:
-                                                  Color(0xffb7ed9e),
-                                              padding: EdgeInsets.symmetric(
-                                                  vertical: screenWidth * 0.03,
-                                                  horizontal:
-                                                      screenWidth * 0.1),
-                                              // Adjust padding
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(50),
-                                                side: BorderSide(
-                                                  color: Color(0xff50c400),
-                                                  width: screenWidth * 0.008,
-                                                ),
-                                              ),
-                                            ),
-                                            child: FittedBox(
-                                              child: Text(
-                                                'Use Frame',
-                                                style: TextStyle(
-                                                  fontSize: screenWidth * 0.045,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.black,
-                                                ),
-                                              ),
-                                            ),
-                                            onPressed: () {
-                                              Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      UseFrameView(
-                                                    filename: widget
-                                                        .imageData.filename,
+                                        Expanded(
+                                          child: Center(
+                                            child: ElevatedButton(
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor:
+                                                    Color(0xffb7ed9e),
+                                                padding: EdgeInsets.symmetric(
+                                                    vertical: screenWidth * 0.03,
+                                                    horizontal:
+                                                        screenWidth * 0.1),
+                                                // Adjust padding
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(50),
+                                                  side: BorderSide(
+                                                    color: Color(0xff50c400),
+                                                    width: screenWidth * 0.008,
                                                   ),
                                                 ),
-                                              );
-                                            },
+                                              ),
+                                              child: FittedBox(
+                                                child: Text(
+                                                  'Use Frame',
+                                                  style: TextStyle(
+                                                    fontSize: screenWidth * 0.045,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.black,
+                                                  ),
+                                                ),
+                                              ),
+                                              onPressed: () {
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        UseFrameView(
+                                                      filename: widget
+                                                          .imageData.filename,
+                                                    ),
+                                                  ),
+                                                );
+                                              },
+                                            ),
                                           ),
                                         ),
-                                        Icon(
-                                          FontAwesomeIcons.shareFromSquare,
-                                          color: Colors.black,
-                                          size: screenWidth *
-                                              0.08, // Reduce icon size
-                                        ),
+                                        // Icon(
+                                        //   FontAwesomeIcons.shareFromSquare,
+                                        //   color: Colors.black,
+                                        //   size: screenWidth *
+                                        //       0.08, // Reduce icon size
+                                        // ),
                                       ],
                                     ),
                                   ],
