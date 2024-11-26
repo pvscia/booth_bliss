@@ -47,13 +47,15 @@ class PhotoboothFrameSelectionPageState
       length: 2,
       child: Scaffold(
         appBar: AppBar(
-          title: Text("Choose A Frame", style: TextStyle(color: Colors.black)),
-          backgroundColor: Color(0xFFEDF9E4), // Light green background
+          title: Center(
+              child: Text("Choose A Frame",
+                  style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold))),
+          backgroundColor: Color(0xFFFFE4E1), // Light green background
           elevation: 0,
           bottom: PreferredSize(
             preferredSize: Size.fromHeight(50),
             child: Container(
-              color: Color(0xFFFFF0F5), // Light pink tab background
+              color: Color(0xFFFFE4E1), // Light pink tab background
               child: TabBar(
                 tabs: [
                   Tab(text: "Default Frames"),
@@ -62,6 +64,8 @@ class PhotoboothFrameSelectionPageState
                 labelColor: Colors.black,
                 unselectedLabelColor: Colors.grey,
                 indicatorColor: Colors.green,
+                labelStyle: TextStyle(fontWeight: FontWeight.bold), // Bold for selected label
+                unselectedLabelStyle: TextStyle(fontWeight: FontWeight.normal),
               ),
             ),
           ),
@@ -110,23 +114,25 @@ class PhotoboothFrameSelectionPageState
                           // Right preview section with select button
                           Expanded(
                             flex: 1,
-                            child: SingleChildScrollView(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  currImage.isEmpty
-                                      ? Container(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                currImage.isEmpty
+                                    ? Expanded(
+                                        child: Container(
                                           width: double.infinity,
-                                          height: 200,
                                           color: Color(
                                               0xFFFFE4E1), // Light pink color
                                           child: Center(child: Text("Preview")),
-                                        )
-                                      : Image.network(
-                                          currImage,
                                         ),
-                                  SizedBox(height: 20),
-                                  ElevatedButton(
+                                      )
+                                    : Image.network(
+                                        currImage,
+                                      ),
+                                SizedBox(height: 20),
+                                SizedBox(
+                                  width: double.infinity,
+                                  child: ElevatedButton(
                                     onPressed: currImage.isEmpty
                                         ? null
                                         : () {
@@ -151,10 +157,15 @@ class PhotoboothFrameSelectionPageState
                                         borderRadius: BorderRadius.circular(8),
                                       ),
                                     ),
-                                    child: Text("Select"),
+                                    child: Text(
+                                      "Select",
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
                           ),
                         ],
@@ -165,8 +176,9 @@ class PhotoboothFrameSelectionPageState
                     ),
               // Get From App Tab
               Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.all(16.0),
                 child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Expanded(
                       flex: 3,
@@ -219,40 +231,50 @@ class PhotoboothFrameSelectionPageState
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           currImage.isEmpty
-                              ? Container(
-                                  width: double.infinity,
-                                  height: 200,
-                                  color: Color(0xFFFFE4E1), // Light pink color
-                                  child: Center(child: Text("Preview")),
+                              ? Expanded(
+                                  child: Container(
+                                    width: double.infinity,
+                                    // height: 500,
+                                    color:
+                                        Color(0xFFFFE4E1), // Light pink color
+                                    child: Center(child: Text("Preview")),
+                                  ),
                                 )
                               : Image.network(
                                   currImage,
                                 ),
                           SizedBox(height: 20),
-                          ElevatedButton(
-                            onPressed: currImage.isEmpty
-                                ? null
-                                : () {
-                                    Navigator.of(context).pushReplacement(
-                                      MaterialPageRoute(
-                                        // builder: (context) => PhotoGridExample(index: currIdx,), // The page you want to navigate to
-                                        builder: (context) => CameraWithTimer(
-                                          currIndex: indexCustom,
-                                          frameUrl: currImage,
-                                        ), // The page you want to navigate to
-                                      ),
-                                    );
-                                  },
-                            style: ElevatedButton.styleFrom(
-                              foregroundColor: Colors.black,
-                              backgroundColor: Color(0xFFFFE4E1),
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 20, vertical: 12),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
+                          SizedBox(
+                            width: double.infinity,
+                            child: ElevatedButton(
+                              onPressed: currImage.isEmpty
+                                  ? null
+                                  : () {
+                                      Navigator.of(context).pushReplacement(
+                                        MaterialPageRoute(
+                                          builder: (context) => CameraWithTimer(
+                                            currIndex: images[currIdx].idx,
+                                            frameUrl: currImage,
+                                          ), // The page you want to navigate to
+                                        ),
+                                      );
+                                    },
+                              style: ElevatedButton.styleFrom(
+                                foregroundColor: Colors.black,
+                                backgroundColor: Color(0xFFFFE4E1),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 20, vertical: 12),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                              child: Text(
+                                "Select",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
-                            child: Text("Select"),
                           ),
                         ],
                       ),
