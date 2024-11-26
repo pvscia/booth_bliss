@@ -5,6 +5,7 @@ import 'package:booth_bliss/model/user_model.dart';
 
 import '../../06_Detail_Page/view/detail_main.dart';
 import '../../Utils/view_dialog_util.dart';
+import '../../bottom_nav_bar_view.dart';
 import '../controller/profile_controller.dart';
 import 'edit_profile_view.dart';
 
@@ -242,7 +243,23 @@ class ProfileViewState extends State<ProfileView> {
         backgroundColor: Color(0xFFF3FDE8),
         elevation: 0,
         actions: [
-          if (!isViewOnly)
+          isViewOnly?
+          IconButton(
+            onPressed: () async {
+              Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(
+                  builder: (context) => BottomNavBarMain(
+                      idx: 0), // The page you want to navigate to
+                ),
+                    (Route<dynamic> route) =>
+                false, // This removes all the previous routes
+              );
+            },
+            icon: const Icon(
+              Icons.home,
+              color: Colors.black,
+            ),
+          ):
             IconButton(
               onPressed: () async {
                 ViewDialogUtil().showYesNoActionDialog(
