@@ -43,11 +43,18 @@ class PhotoboothFrameSelectionPageState
 
   @override
   Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
     return DefaultTabController(
       length: 2,
       child: Scaffold(
         appBar: AppBar(
-          title: Text("Choose A Frame", style: TextStyle(color: Colors.black)),
+          centerTitle: true,
+          title: Text(
+            "Choose A Frame",
+            style: TextStyle(
+                color: Colors.black, fontSize: 24, fontWeight: FontWeight.bold),
+          ),
+
           backgroundColor: Color(0xFFEDF9E4), // Light green background
           elevation: 0,
           bottom: PreferredSize(
@@ -67,6 +74,7 @@ class PhotoboothFrameSelectionPageState
           ),
         ),
         body: Container(
+          padding: EdgeInsets.symmetric(horizontal: 20),
           color: Color(0xFFEDF9E4), // Light green background for the body
           child: TabBarView(
             children: [
@@ -80,80 +88,94 @@ class PhotoboothFrameSelectionPageState
                           // Left grid section
                           Expanded(
                             flex: 3,
-                            child: GridView.builder(
-                              padding: const EdgeInsets.all(8),
-                              itemCount: images.length,
-                              gridDelegate:
-                                  SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 3,
-                                mainAxisSpacing: 12,
-                                crossAxisSpacing: 12,
-                                childAspectRatio: 0.75,
+                            child: Container(
+                              height: screenHeight * 0.85,
+                              padding: const EdgeInsets.only(
+                                  top: 30, bottom: 15, left: 20, right: 20),
+                              decoration: BoxDecoration(
+                                  color: Color(0xFFFFF0F5),
+                                  borderRadius: BorderRadius.circular(10)),
+                              child: GridView.builder(
+                                scrollDirection: Axis.horizontal,
+                                padding: const EdgeInsets.all(8),
+                                itemCount: images.length,
+                                gridDelegate:
+                                    SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 2,
+                                  mainAxisSpacing: 0,
+                                  crossAxisSpacing: 12,
+                                  childAspectRatio: 0.75,
+                                ),
+                                shrinkWrap: true,
+                                itemBuilder: (context, index) {
+                                  return GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        currImage = images[index].frameUrl;
+                                        currIdx = index;
+                                      });
+                                    },
+                                    child: Image.network(
+                                      images[index].frameUrl,
+                                      // fit: BoxFit.cover,
+                                    ),
+                                  );
+                                },
                               ),
-                              itemBuilder: (context, index) {
-                                return GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      currImage = images[index].frameUrl;
-                                      currIdx = index;
-                                    });
-                                  },
-                                  child: Image.network(
-                                    images[index].frameUrl,
-                                    // fit: BoxFit.cover,
-                                  ),
-                                );
-                              },
                             ),
                           ),
                           SizedBox(width: 16),
                           // Right preview section with select button
                           Expanded(
                             flex: 1,
-                            child: SingleChildScrollView(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  currImage.isEmpty
-                                      ? Container(
-                                          width: double.infinity,
-                                          height: 200,
-                                          color: Color(
-                                              0xFFFFE4E1), // Light pink color
-                                          child: Center(child: Text("Preview")),
-                                        )
-                                      : Image.network(
-                                          currImage,
-                                        ),
-                                  SizedBox(height: 20),
-                                  ElevatedButton(
-                                    onPressed: currImage.isEmpty
-                                        ? null
-                                        : () {
-                                            Navigator.of(context)
-                                                .pushReplacement(
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    CameraWithTimer(
-                                                  currIndex:
-                                                      images[currIdx].idx,
-                                                  frameUrl: currImage,
-                                                ), // The page you want to navigate to
-                                              ),
-                                            );
-                                          },
-                                    style: ElevatedButton.styleFrom(
-                                      foregroundColor: Colors.black,
-                                      backgroundColor: Color(0xFFFFE4E1),
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 20, vertical: 12),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
+                            child: Center(
+                              child: SingleChildScrollView(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Container(
+                                      padding: EdgeInsets.all(20),
+                                      decoration: BoxDecoration(
+                                          color: Color(0xFFFFF0F5),
+                                          borderRadius:
+                                              BorderRadius.circular(10)),
+                                      child: currImage.isEmpty
+                                          ? Image.network(currImage = images[0].frameUrl)
+                                          : Image.network( 
+                                              currImage,
+                                            ),
                                     ),
-                                    child: Text("Select"),
-                                  ),
-                                ],
+                                    SizedBox(height: 20),
+                                    ElevatedButton(
+                                      onPressed: currImage.isEmpty
+                                          ? null
+                                          : () {
+                                              Navigator.of(context)
+                                                  .pushReplacement(
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      CameraWithTimer(
+                                                    currIndex:
+                                                        images[currIdx].idx,
+                                                    frameUrl: currImage,
+                                                  ), // The page you want to navigate to
+                                                ),
+                                              );
+                                            },
+                                      style: ElevatedButton.styleFrom(
+                                        foregroundColor: Colors.black,
+                                        backgroundColor: Color(0xFFFFE4E1),
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 20, vertical: 12),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                        ),
+                                      ),
+                                      child: Text("Select"),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ),

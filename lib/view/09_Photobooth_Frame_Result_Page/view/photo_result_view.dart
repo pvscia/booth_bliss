@@ -38,7 +38,7 @@ class PhotoResultState extends State<PhotoResult> {
     setState(() {
       _idleTimer?.cancel();
       // Create a new timer that navigates after 2 minute (60 seconds)
-      _idleTimer = Timer(Duration(minutes: 2), _navigateToOtherPage);
+      _idleTimer = Timer(Duration(minutes: 5), _navigateToOtherPage);
     });
     // Cancel the existing timer if any
   }
@@ -67,110 +67,105 @@ class PhotoResultState extends State<PhotoResult> {
       onPanUpdate: (_) => _resetIdleTimer(),
       child: Scaffold(
         appBar: AppBar(
+          backgroundColor: Color(0xFFF3FDE8),
           automaticallyImplyLeading: false,
-          title: Center(child: Text('Photo Result')),
+          title: Center(child: Text('Save Photo')),
         ),
-        body: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            photoUrl.isNotEmpty
-                ? Image.network(photoUrl)
-                : CircularProgressIndicator(),
-            Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  IconButton(
-                    iconSize: 100,
-                    icon: Icon(Icons.email),
-                    onPressed: () {
-                      _resetIdleTimer();
-                      showDialog(
-                        context: context,
-                        builder: (context) => AlertDialog(
-                          title: Text('Send Email'),
-                          content: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text('Enter your email:'),
-                              SizedBox(height: 10),
-                              TextField(
-                                controller: emailController,
-                                decoration: InputDecoration(
-                                  labelText: 'Email',
-                                  border: OutlineInputBorder(),
-                                ),
-                              ),
-                            ],
+        body: Container(
+          decoration: BoxDecoration(color: Color(0xFFF3FDE8)),
+          padding: EdgeInsets.all(30),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              Expanded(
+                flex: 1,
+                child: photoUrl.isNotEmpty
+                    ? Center(
+                        child: Container(
+                          padding: EdgeInsets.all(15),
+                          decoration: BoxDecoration(
+                            color: Color(0xFFFFF0F5),
+                            borderRadius: BorderRadius.circular(10),
                           ),
-                          actions: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                    emailController.text ='';
-                                  },
-                                  child: Text('Close'),
-                                ),
-                                TextButton(
-                                  onPressed: () async {
-                                    ViewDialogUtil().showLoadingDialog(context);
-                                    await PhotoResultController().sendEmail(
-                                        emailController.text, widget.filename);
-                                    WidgetsBinding.instance
-                                        .addPostFrameCallback((_) {
-                                      Navigator.of(context).pop();
-                                      Navigator.of(context).pop();
-                                      emailController.text ='';
-                                    });
-                                  },
-                                  child: Text('Send'),
-                                ),
-                              ],
-                            ),
-                          ],
+                          child: Image.network(photoUrl),
                         ),
-                      );
-                    },
-                  ),
-                  SizedBox(height: 20),
-                  IconButton(
-                    iconSize: 100,
-                    icon: Icon(Icons.qr_code),
-                    onPressed: () {
-                      _resetIdleTimer();
-                      showDialog(
-                        context: context,
-                        builder: (context) => AlertDialog(
-                          title: Text('QR Code'),
-                          content: Center(
-                            child: SizedBox(
-                              width: 200.0, // Define the desired width
-                              height: 200.0,
-                              child: QrImageView(
-                                data: widget.filename,
-                                version: QrVersions.auto,
-                              ),
-                            ),
-                          ),
-                          actions: [
-                            TextButton(
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                              child: Text('Close'),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
-                ],
+                      )
+                    : Center(
+                        child: CircularProgressIndicator(),
+                      ),
               ),
-            ),
-          ],
+              Expanded(
+                flex: 1,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Row(
+                      children: [
+                        Text(
+                          "Email: ",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 20),
+                        ),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Expanded(
+                          child: TextField(
+                            controller: emailController,
+                            decoration: InputDecoration(
+                              labelText: 'Email',
+                              border: OutlineInputBorder(),
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        ElevatedButton(
+                          onPressed: () async {
+                            ViewDialogUtil().showLoadingDialog(context);
+                            await PhotoResultController().sendEmail(
+                                emailController.text, widget.filename);
+                            WidgetsBinding.instance.addPostFrameCallback((_) {
+                              Navigator.of(context).pop();
+                              Navigator.of(context).pop();
+                              emailController.text = '';
+                            });
+                          },
+                          style: ElevatedButton.styleFrom(
+                              minimumSize: Size(300, 60),
+                              backgroundColor: Color(0xFFFFF0F5),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              )),
+                          child: Text(
+                            'Send',
+                            style: TextStyle(color: Colors.black, fontSize: 20),
+                          ),
+                        )
+                      ],
+                    ),
+                    SizedBox(
+                      height: 30,
+                    ),
+                    QrImageView(
+                      size: MediaQuery.of(context).size.height * 0.4,
+                      data: widget.filename,
+                      version: QrVersions.auto,
+                    ),
+                    Text(
+                      "Save to App?",
+                      style: TextStyle(fontSize: 25),
+                    ),
+                    Text(
+                      "Scan QR using our app!",
+                      style: TextStyle(fontSize: 20),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
