@@ -43,13 +43,18 @@ class PhotoboothFrameSelectionPageState
 
   @override
   Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
     return DefaultTabController(
       length: 2,
       child: Scaffold(
         appBar: AppBar(
-          title: Center(
-              child: Text("Choose A Frame",
-                  style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold))),
+          centerTitle: true,
+          title: Text(
+            "Choose A Frame",
+            style: TextStyle(
+                color: Colors.black, fontSize: 24, fontWeight: FontWeight.bold),
+          ),
+
           backgroundColor: Color(0xFFFFE4E1), // Light green background
           elevation: 0,
           bottom: PreferredSize(
@@ -71,6 +76,7 @@ class PhotoboothFrameSelectionPageState
           ),
         ),
         body: Container(
+          padding: EdgeInsets.symmetric(horizontal: 20),
           color: Color(0xFFEDF9E4), // Light green background for the body
           child: TabBarView(
             children: [
