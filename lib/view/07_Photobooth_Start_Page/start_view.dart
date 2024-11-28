@@ -22,8 +22,7 @@ class PhotoboothStartView extends StatelessWidget {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) =>
-                            PhotoboothFrameSelectionPage()));
+                        builder: (context) => PhotoboothFrameSelectionPage()));
               },
               style: ElevatedButton.styleFrom(
                   backgroundColor: Color(0xFFA8DF8E), // Background color
@@ -43,4 +42,3 @@ class PhotoboothStartView extends StatelessWidget {
     );
   }
 }
-
