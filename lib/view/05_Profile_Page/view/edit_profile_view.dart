@@ -173,84 +173,86 @@ class EditProfilePageState extends State<EditProfilePage> {
         ),
         body: Padding(
           padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              if (isLoadingImage)
-                Center(
-                  // Center the loading indicator
-                  child: SizedBox(
-                    width: 100, // Set width of the circular indicator
-                    height: 100, // Set height of the circular indicator
-                    child: const CircularProgressIndicator(
-                      strokeWidth: 8.0, // Adjust stroke width for visibility
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                if (isLoadingImage)
+                  Center(
+                    // Center the loading indicator
+                    child: SizedBox(
+                      width: 100, // Set width of the circular indicator
+                      height: 100, // Set height of the circular indicator
+                      child: const CircularProgressIndicator(
+                        strokeWidth: 8.0, // Adjust stroke width for visibility
+                      ),
                     ),
                   ),
-                ),
-              if (!isLoadingImage) ...[
-                GestureDetector(
-                  onTap: () async {
-                    await _controller.pickImage();
-                    setState(() {}); // To show the selected image
-                  },
-                  child: CircleAvatar(
-                    radius: 50,
-                    backgroundImage: _controller.profileImage != null
-                        ? FileImage(_controller.profileImage!)
-                        : const AssetImage('assets/default-user.png')
-                            as ImageProvider,
-                    child: const Icon(
-                      Icons.camera_alt,
-                      size: 30,
-                      color: Colors.white,
+                if (!isLoadingImage) ...[
+                  GestureDetector(
+                    onTap: () async {
+                      await _controller.pickImage();
+                      setState(() {}); // To show the selected image
+                    },
+                    child: CircleAvatar(
+                      radius: 50,
+                      backgroundImage: _controller.profileImage != null
+                          ? FileImage(_controller.profileImage!)
+                          : const AssetImage('assets/default-user.png')
+                              as ImageProvider,
+                      child: const Icon(
+                        Icons.camera_alt,
+                        size: 30,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
-                ),
-                const SizedBox(height: 10),
-                TextButton(
-                  onPressed: isSaving ? null : _removeProfile,
-                  child: Text(
-                    'Remove photo',
-                    style: TextStyle(
-                        color: _controller.profileImage != null
-                            ? Colors.red
-                            : Colors.grey),
+                  const SizedBox(height: 10),
+                  TextButton(
+                    onPressed: isSaving ? null : _removeProfile,
+                    child: Text(
+                      'Remove photo',
+                      style: TextStyle(
+                          color: _controller.profileImage != null
+                              ? Colors.red
+                              : Colors.grey),
+                    ),
                   ),
-                ),
-                const SizedBox(height: 20),
-                TextFormField(
-                  controller: _firstNameController,
-                  minLines: 1,
-                  decoration: const InputDecoration(
-                    labelText: 'First Name',
-                    border: OutlineInputBorder(),
-                    hintText: 'Enter your first name',
+                  const SizedBox(height: 20),
+                  TextFormField(
+                    controller: _firstNameController,
+                    minLines: 1,
+                    decoration: const InputDecoration(
+                      labelText: 'First Name',
+                      border: OutlineInputBorder(),
+                      hintText: 'Enter your first name',
+                    ),
                   ),
-                ),
-                const SizedBox(height: 20),
-                TextFormField(
-                  controller: _lastNameController,
-                  minLines: 1,
-                  decoration: const InputDecoration(
-                    labelText: 'Last Name',
-                    border: OutlineInputBorder(),
-                    hintText: 'Enter your last name',
+                  const SizedBox(height: 20),
+                  TextFormField(
+                    controller: _lastNameController,
+                    minLines: 1,
+                    decoration: const InputDecoration(
+                      labelText: 'Last Name',
+                      border: OutlineInputBorder(),
+                      hintText: 'Enter your last name',
+                    ),
                   ),
-                ),
-                const SizedBox(height: 20),
-                TextFormField(
-                  controller: _bioController,
-                  maxLines: 3,
-                  decoration: const InputDecoration(
-                    labelText: 'Bio',
-                    border: OutlineInputBorder(),
-                    hintText: 'Enter your bio',
+                  const SizedBox(height: 20),
+                  TextFormField(
+                    controller: _bioController,
+                    maxLines: 3,
+                    decoration: const InputDecoration(
+                      labelText: 'Bio',
+                      border: OutlineInputBorder(),
+                      hintText: 'Enter your bio',
+                    ),
                   ),
-                ),
-                const SizedBox(height: 20),
-                if (isSaving)
-                  const CircularProgressIndicator(), // Show loading indicator while saving
+                  const SizedBox(height: 20),
+                  if (isSaving)
+                    const CircularProgressIndicator(), // Show loading indicator while saving
+                ],
               ],
-            ],
+            ),
           ),
         ),
       ),
