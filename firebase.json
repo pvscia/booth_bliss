@@ -1,1 +1,36 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"booth-bliss","appId":"1:855889447188:android:f49ea4c22a81c0f561da01","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"booth-bliss","configurations":{"android":"1:855889447188:android:f49ea4c22a81c0f561da01","ios":"1:855889447188:ios:4ee58a45deee0eaf61da01","macos":"1:855889447188:ios:4ee58a45deee0eaf61da01","web":"1:855889447188:web:d0207034eaea4a7361da01","windows":"1:855889447188:web:f5f7cb19c463ee6161da01"}}}}}}
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "booth-bliss",
+          "appId": "1:855889447188:android:f49ea4c22a81c0f561da01",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "booth-bliss",
+          "configurations": {
+            "android": "1:855889447188:android:f49ea4c22a81c0f561da01",
+            "ios": "1:855889447188:ios:4ee58a45deee0eaf61da01",
+            "macos": "1:855889447188:ios:4ee58a45deee0eaf61da01",
+            "web": "1:855889447188:web:d0207034eaea4a7361da01",
+            "windows": "1:855889447188:web:f5f7cb19c463ee6161da01"
+          }
+        }
+      }
+    }
+  },
+  "hosting": {
+    "source": ".",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "frameworksBackend": {
+      "region": "us-central1"
+    }
+  }
+}
