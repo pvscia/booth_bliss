@@ -334,9 +334,18 @@ class HomeViewState extends State<HomeView> {
                                               DetailPage(imageData: image),
                                         ),
                                       );
-                                      setState(() {
-                                        data[index] = result;
-                                      });
+                                      if(result=="delete"){
+                                        setState(() {
+                                          filteredImages.remove(data[index]);
+                                          images.remove(data[index]);
+                                          data.removeAt(index);
+                                        });
+                                      }else{
+                                        setState(() {
+                                          data[index] = result;
+                                        });
+
+                                      }
                                     }
                                   },
                                   child: ClipRRect(

@@ -103,7 +103,7 @@ class DetailPageState extends State<DetailPage> {
   @override
   void initState() {
     super.initState();
-    email = FirebaseAuth.instance.currentUser ?.email ?? '';
+    email = FirebaseAuth.instance.currentUser?.email ?? '';
     if (widget.imageData is ImageModel) {
       _isHeartPressed = widget.imageData.likedBy.where((test) {
         return test == email;
@@ -155,7 +155,8 @@ class DetailPageState extends State<DetailPage> {
                 backgroundColor: Color(0xffffe5e5),
                 body: SingleChildScrollView(
                   child: Column(
-                    mainAxisSize: MainAxisSize.min, // Ensure Column takes only needed space
+                    mainAxisSize: MainAxisSize.min,
+                    // Ensure Column takes only needed space
                     children: [
                       // Image Section with icons
                       Stack(
@@ -241,8 +242,10 @@ class DetailPageState extends State<DetailPage> {
                                               ),
                                               SizedBox(height: 1),
                                               ExpandableText(
-                                                text: getCategoriesString(widget.imageData.categories),
-                                                maxLines: 1, // Show 1 line initially for categories
+                                                text: getCategoriesString(widget
+                                                    .imageData.categories),
+                                                maxLines:
+                                                    1, // Show 1 line initially for categories
                                               ),
                                             ],
                                           ),
@@ -310,7 +313,8 @@ class DetailPageState extends State<DetailPage> {
                                                 backgroundColor:
                                                     Color(0xffb7ed9e),
                                                 padding: EdgeInsets.symmetric(
-                                                    vertical: screenWidth * 0.03,
+                                                    vertical:
+                                                        screenWidth * 0.03,
                                                     horizontal:
                                                         screenWidth * 0.1),
                                                 // Adjust padding
@@ -327,7 +331,8 @@ class DetailPageState extends State<DetailPage> {
                                                 child: Text(
                                                   'Use Frame',
                                                   style: TextStyle(
-                                                    fontSize: screenWidth * 0.045,
+                                                    fontSize:
+                                                        screenWidth * 0.045,
                                                     fontWeight: FontWeight.bold,
                                                     color: Colors.black,
                                                   ),
@@ -348,68 +353,132 @@ class DetailPageState extends State<DetailPage> {
                                             ),
                                           ),
                                         ),
-                                        // Icon(
-                                        //   FontAwesomeIcons.shareFromSquare,
-                                        //   color: Colors.black,
-                                        //   size: screenWidth *
-                                        //       0.08, // Reduce icon size
-                                        // ),
+                                        if (FirebaseAuth
+                                                .instance.currentUser?.email ==
+                                            widget.imageData.user.email)
+                                          GestureDetector(
+                                            onTap: (){
+                                              ViewDialogUtil().showYesNoActionDialog(
+                                                  'Delete frame?',
+                                                  'Yes',
+                                                  'No',
+                                                  context, () async {
+                                                    ViewDialogUtil().showLoadingDialog(context);
+                                                var temp = await DetailController()
+                                                    .deleteFrame(
+                                                    widget.imageData.docName,widget.imageData.filename);
+                                                    Navigator.of(context).pop();
+
+                                                if(temp){
+                                                  Navigator.of(context).pop("delete");
+                                                }else{
+                                                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                                    content: Text('Failed to delete photo'),
+                                                  ));
+                                                }
+
+                                              }, () {});
+
+                                            },
+                                            child: Icon(
+                                              Icons.delete_outlined,
+                                              color: Colors.black,
+                                              size: screenWidth *
+                                                  0.08, // Reduce icon size
+                                            ),
+                                          ),
                                       ],
                                     ),
                                   ],
                                 )
                               : Center(
                                   child: Column(
-                                    children: [
+                                  children: [
                                     SizedBox(height: screenWidth * 0.15),
-                                    ElevatedButton(
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: Color(0xffb7ed9e),
-                                        padding: EdgeInsets.symmetric(
-                                            vertical: screenWidth * 0.05,
-                                            horizontal: screenWidth * 0.15),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(50),
-                                          side: BorderSide(
-                                            color: Color(0xff50c400),
-                                            width: screenWidth * 0.008,
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                      children: [
+                                        ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: Color(0xffb7ed9e),
+                                            padding: EdgeInsets.symmetric(
+                                                vertical: screenWidth * 0.05,
+                                                horizontal: screenWidth * 0.15),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(50),
+                                              side: BorderSide(
+                                                color: Color(0xff50c400),
+                                                width: screenWidth * 0.008,
+                                              ),
+                                            ),
+                                          ),
+                                          child: Text(
+                                            'Save to Library',
+                                            style: TextStyle(
+                                              fontSize: screenWidth * 0.045,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black,
+                                            ),
+                                          ),
+                                          onPressed: () async {
+                                            ViewDialogUtil()
+                                                .showLoadingDialog(context);
+                                            await DetailController()
+                                                .downloadAndSaveImage(
+                                                    widget.imageData.imageUrl,
+                                                    widget.imageData.filename);
+                                            WidgetsBinding.instance
+                                                .addPostFrameCallback((_) {
+                                              Navigator.of(context).pop();
+                                              ViewDialogUtil()
+                                                  .showOneButtonActionDialog(
+                                                      'Photo Saved',
+                                                      'Ok',
+                                                      'success.gif',
+                                                      context,
+                                                      () {});
+                                            });
+                                          },
+                                        ),
+                                        GestureDetector(
+                                          onTap: (){
+                                            ViewDialogUtil().showYesNoActionDialog(
+                                                'Delete photo?',
+                                                'Yes',
+                                                'No',
+                                                context, () async {
+                                              ViewDialogUtil().showLoadingDialog(context);
+                                              var temp = await DetailController()
+                                                  .deletePhotoFromAccount(
+                                                  widget.imageData.filename);
+                                              Navigator.of(context).pop();
+
+                                              if(temp){
+                                                Navigator.of(context).pop("delete");
+                                              }else{
+                                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                                  content: Text('Failed to delete photo'),
+                                                ));
+                                              }
+
+                                            }, () {});
+
+                                          },
+                                          child: Icon(
+                                            Icons.delete_outlined,
+                                            color: Colors.black,
+                                            size: screenWidth *
+                                                0.08, // Reduce icon size
                                           ),
                                         ),
-                                      ),
-                                      child: Text(
-                                        'Save to Library',
-                                        style: TextStyle(
-                                          fontSize: screenWidth * 0.045,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.black,
-                                        ),
-                                      ),
-                                      onPressed: () async {
-                                        ViewDialogUtil()
-                                            .showLoadingDialog(context);
-                                        await DetailController()
-                                            .downloadAndSaveImage(
-                                                widget.imageData.imageUrl,
-                                                widget.imageData.filename);
-                                        WidgetsBinding.instance
-                                            .addPostFrameCallback((_) {
-                                          Navigator.of(context).pop();
-                                          ViewDialogUtil()
-                                              .showOneButtonActionDialog(
-                                                  'Photo Saved',
-                                                  'Ok',
-                                                  'success.gif',
-                                                  context,
-                                                  () {});
-                                        });
-                                      },
+                                      ],
                                     ),
                                   ],
-                                  )
-                                ),
+                                )),
                         ),
                       ),
-                  ],
+                    ],
                   ),
                 ),
               )

@@ -200,7 +200,7 @@ class ProfileViewState extends State<ProfileView> {
   }
 
   void _loadMoreData() {
-    if(_data.length < filteredImages.length) {
+    if (_data.length < filteredImages.length) {
       if (_scrollController.position.pixels ==
           _scrollController.position.maxScrollExtent) {
         setState(() {
@@ -243,39 +243,41 @@ class ProfileViewState extends State<ProfileView> {
         backgroundColor: Color(0xFFF3FDE8),
         elevation: 0,
         actions: [
-          isViewOnly?
-          IconButton(
-            onPressed: () async {
-              Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(
-                  builder: (context) => BottomNavBarMain(
-                      idx: 0), // The page you want to navigate to
+          isViewOnly
+              ? IconButton(
+                  onPressed: () async {
+                    Navigator.of(context).pushAndRemoveUntil(
+                      MaterialPageRoute(
+                        builder: (context) => BottomNavBarMain(
+                            idx: 0), // The page you want to navigate to
+                      ),
+                      (Route<dynamic> route) =>
+                          false, // This removes all the previous routes
+                    );
+                  },
+                  icon: const Icon(
+                    Icons.home,
+                    color: Colors.black,
+                  ),
+                )
+              : IconButton(
+                  onPressed: () async {
+                    ViewDialogUtil().showYesNoActionDialog(
+                        'Are you sure you want to log out?',
+                        'Yes',
+                        'No',
+                        context, () async {
+                      await ProfileController().logout();
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        Navigator.pushReplacementNamed(context, '/front_page');
+                      });
+                    }, () {});
+                  },
+                  icon: const Icon(
+                    Icons.logout,
+                    color: Colors.black,
+                  ),
                 ),
-                    (Route<dynamic> route) =>
-                false, // This removes all the previous routes
-              );
-            },
-            icon: const Icon(
-              Icons.home,
-              color: Colors.black,
-            ),
-          ):
-            IconButton(
-              onPressed: () async {
-                ViewDialogUtil().showYesNoActionDialog(
-                    'Are you sure you want to log out?', 'Yes', 'No', context,
-                    () async {
-                  await ProfileController().logout();
-                  WidgetsBinding.instance.addPostFrameCallback((_) {
-                    Navigator.pushReplacementNamed(context, '/front_page');
-                  });
-                }, () {});
-              },
-              icon: const Icon(
-                Icons.logout,
-                color: Colors.black,
-              ),
-            ),
         ],
       ),
       body: RefreshIndicator(
@@ -391,70 +393,74 @@ class ProfileViewState extends State<ProfileView> {
                       ],
                     ),
                     SizedBox(height: 10),
-                    if(selectedIndex!=0)Container(
-                      height: 50,
-                      decoration: BoxDecoration(
-                        color: Color(0xffffe5e5),
-                        border: Border.all(
-                            color: Color(0xffffe5e5), width: 2), // Box border
-                        borderRadius:
-                            BorderRadius.circular(50), // Rounded corners
-                      ),
-                      padding: EdgeInsets.symmetric(
-                          horizontal: 16), // Adds padding inside the container
-                      child: Row(
-                        children: [
-                          Icon(
-                            Icons.search,
-                            color: Colors.black,
-                            size: 20, // Search Icon
-                          ),
-                          SizedBox(
-                            width: screenWidth *
-                                0.02, // Space between icon and text field
-                          ),
-                          Expanded(
-                            child: TextField(
-                              onChanged: updateSearchQuery,
-                              controller: etSearch,
-                              style: TextStyle(
-                                fontSize: screenHeight * 0.02,
-                                fontWeight: FontWeight.bold,
-                              ),
-                              textAlign: TextAlign.start,
-                              decoration: InputDecoration(
-                                contentPadding:
-                                    EdgeInsets.only(top: 10, bottom: 3),
-                                hintText: 'Search frame', // Placeholder text
-                                border: InputBorder.none, // No internal border
-                                isDense:
-                                    true, // Reduces the padding inside the TextField
+                    if (selectedIndex != 0)
+                      Container(
+                        height: 50,
+                        decoration: BoxDecoration(
+                          color: Color(0xffffe5e5),
+                          border: Border.all(
+                              color: Color(0xffffe5e5), width: 2), // Box border
+                          borderRadius:
+                              BorderRadius.circular(50), // Rounded corners
+                        ),
+                        padding: EdgeInsets.symmetric(
+                            horizontal:
+                                16), // Adds padding inside the container
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.search,
+                              color: Colors.black,
+                              size: 20, // Search Icon
+                            ),
+                            SizedBox(
+                              width: screenWidth *
+                                  0.02, // Space between icon and text field
+                            ),
+                            Expanded(
+                              child: TextField(
+                                onChanged: updateSearchQuery,
+                                controller: etSearch,
+                                style: TextStyle(
+                                  fontSize: screenHeight * 0.02,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                textAlign: TextAlign.start,
+                                decoration: InputDecoration(
+                                  contentPadding:
+                                      EdgeInsets.only(top: 10, bottom: 3),
+                                  hintText: 'Search frame', // Placeholder text
+                                  border:
+                                      InputBorder.none, // No internal border
+                                  isDense:
+                                      true, // Reduces the padding inside the TextField
+                                ),
                               ),
                             ),
-                          ),
-                          PopupMenuButton(
-                            icon: Icon(Icons.tune, size: screenHeight * 0.03),
-                            itemBuilder: (context) => [
-                              PopupMenuItem(
-                                child: Text('Newest to Oldest'),
-                                onTap: () {
-                                  _toggleSortingOrder('Newest to Oldest');
-                                },
-                              ),
-                              PopupMenuItem(
-                                child: Text('Oldest to Newest'),
-                                onTap: () {
-                                  _toggleSortingOrder('Oldest to Newest');
-                                },
-                              ),
-                            ],
-                          ),
-                        ],
+                            PopupMenuButton(
+                              icon: Icon(Icons.tune, size: screenHeight * 0.03),
+                              itemBuilder: (context) => [
+                                PopupMenuItem(
+                                  child: Text('Newest to Oldest'),
+                                  onTap: () {
+                                    _toggleSortingOrder('Newest to Oldest');
+                                  },
+                                ),
+                                PopupMenuItem(
+                                  child: Text('Oldest to Newest'),
+                                  onTap: () {
+                                    _toggleSortingOrder('Oldest to Newest');
+                                  },
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                    if(selectedIndex!=0) SizedBox(
-                      height: 20,
-                    ),
+                    if (selectedIndex != 0)
+                      SizedBox(
+                        height: 20,
+                      ),
                     !isLoading
                         ? GridView.builder(
                             shrinkWrap: true,
@@ -475,10 +481,17 @@ class ProfileViewState extends State<ProfileView> {
                                       MaterialPageRoute(
                                           builder: (context) => DetailPage(
                                               imageData: _data[index])));
-                                  if(result!=null){
-                                    setState(() {
-                                      _data[index]=result;
-                                    });
+                                  if (result != null) {
+                                    if (result == "delete") {
+                                      setState(() {
+                                        images.remove(_data[index]);
+                                        _data.removeAt(index);
+                                      });
+                                    } else {
+                                      setState(() {
+                                        _data[index] = result;
+                                      });
+                                    }
                                   }
                                 },
                                 child: ClipRRect(
@@ -486,9 +499,10 @@ class ProfileViewState extends State<ProfileView> {
                                   child: CachedNetworkImage(
                                     imageUrl: _data[index].imageUrl,
                                     fit: BoxFit.fitHeight,
-                                    placeholder: (context, url) =>
-                                        Center(child: CircularProgressIndicator()),
-                                    errorWidget: (context, url, error) => Icon(Icons.error),
+                                    placeholder: (context, url) => Center(
+                                        child: CircularProgressIndicator()),
+                                    errorWidget: (context, url, error) =>
+                                        Icon(Icons.error),
                                   ),
                                 ),
                               );
@@ -498,10 +512,11 @@ class ProfileViewState extends State<ProfileView> {
                   ],
                 ),
               ),
-              if(isLoadingMore) Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: CircularProgressIndicator(),
-              ),
+              if (isLoadingMore)
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: CircularProgressIndicator(),
+                ),
             ],
           ),
         ),

@@ -28,6 +28,7 @@ class QRController {
         print('User email updated successfully for filename: $filename');
       } else {
         print('No documents found for filename: $filename');
+        return false;
       }
       return true;
 
