@@ -62,7 +62,7 @@ class CameraWithTimerState extends State<CameraWithTimer> {
       final cameras = await availableCameras();
       if (cameras.isNotEmpty) {
         _cameraController =
-            CameraController(cameras.first, ResolutionPreset.max);
+            CameraController(cameras.first, ResolutionPreset.max,enableAudio: false);
         await _cameraController.initialize(); // Ensure initialization completes
 
         setState(() {

@@ -1,6 +1,7 @@
 import 'package:booth_bliss/model/user_model.dart';
 import 'package:booth_bliss/view/bottom_nav_bar_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
 import '02_Home_Page/view/home_view.dart';
 import '03_Custom_Page/view/custom_view.dart';
 import '04_QR_Page/view/qr_view.dart';
@@ -23,6 +24,9 @@ class BottomNavBarMainState extends State<BottomNavBarMain> {
     setState(() {
       _selectedIndex = index;
     });
+    if(_selectedIndex==2){
+      _checkAndRequestCameraPermission();
+    }
   }
 
   @override
@@ -30,6 +34,48 @@ class BottomNavBarMainState extends State<BottomNavBarMain> {
     super.initState();
     _selectedIndex = widget.idx;
     getUser();
+  }
+
+  Future<void> _checkAndRequestCameraPermission() async {
+    PermissionStatus status = await Permission.camera.status;
+
+    if (status.isGranted) {
+      // Permission already granted
+      print("Camera permission granted.");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Camera permission already granted!")),
+      );
+    } else if (status.isDenied) {
+      // Request permission
+      status = await Permission.camera.request();
+      if (status.isGranted) {
+        print("Camera permission granted after request.");
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Camera permission granted.")),
+        );
+      } else {
+        print("Camera permission denied.");
+        _showSnackBarToAllow();
+      }
+    } else if (status.isPermanentlyDenied) {
+      // Open app settings to enable permissions
+      _showSnackBarToAllow();
+      // openAppSettings();
+    }
+  }
+
+  void _showSnackBarToAllow() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text("Camera permission is required to proceed. Please enable it in settings. Then restart the app"),
+        action: SnackBarAction(
+          label: "Open Settings",
+          onPressed: () {
+            openAppSettings();
+          },
+        ),
+      ),
+    );
   }
 
   Future<void> getUser() async {
