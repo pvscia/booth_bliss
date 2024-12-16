@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:booth_bliss/view/09_Photobooth_Frame_Result_Page/view/photo_filter_view.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class CameraWithTimer extends StatefulWidget {
   final int currIndex;
@@ -29,16 +30,24 @@ class CameraWithTimerState extends State<CameraWithTimer> {
   Uint8List lastImagePath = Uint8List(0); // Empty Uint8List
   List<Uint8List> imagePaths = [];
   int maxTake = 1;
+  bool isCameraAllowed = false;
 
   @override
   void initState() {
     super.initState();
-    if (widget.currIndex == 1 || widget.currIndex == 2) {
-      maxTake = 4;
-    } else if (widget.currIndex == 3 || widget.currIndex == 5) {
-      maxTake = 6;
+    _checkCameraPermission();
+  }
+
+  // Check camera permission
+  Future<void> _checkCameraPermission() async {
+    PermissionStatus status = await Permission.camera.request();
+    if (status.isGranted) {
+      _initializeCamera();
+    } else {
+      setState(() {
+        isCameraAllowed = false; // Camera permission denied
+      });
     }
-    _initializeCamera();
   }
 
   Future<void> _initializeCamera() async {
@@ -61,8 +70,9 @@ class CameraWithTimerState extends State<CameraWithTimer> {
     try {
       final cameras = await availableCameras();
       if (cameras.isNotEmpty) {
-        _cameraController =
-            CameraController(cameras.first, ResolutionPreset.max,enableAudio: false);
+        _cameraController = CameraController(
+            cameras.first, ResolutionPreset.max,
+            enableAudio: false);
         await _cameraController.initialize(); // Ensure initialization completes
 
         setState(() {
@@ -158,59 +168,68 @@ class CameraWithTimerState extends State<CameraWithTimer> {
     return MaterialApp(
       home: Scaffold(
         body: Center(
-          child: isCameraInitialized
-              ? Stack(
-            alignment: Alignment.center,
-            children: [
-              AspectRatio(
-                aspectRatio: 16 / 9,
-                child: CameraPreview(_cameraController),
-              ),
-              if (widget.currIndex != 3)
-                AspectRatio(
-                  aspectRatio: 16 / 9,
-                  child: ClipPath(
-                    clipper: HoleClipper(),
-                    child: Container(
-                      color: Colors.black.withOpacity(0.7),
-                    ),
-                  ),
-                ),
-              if (isPreviewVisible && lastImagePath.isNotEmpty)
-                Stack(children: [
-                  Positioned.fill(
-                    child: Image.memory(
-                      lastImagePath,
-                      fit: BoxFit.fitHeight,
-                    ),
-                  ),
-                  Positioned(
-                    left: 30,
-                    top: 30,
-                    child: IconButton(
-                      onPressed: () {
-                        imagePaths.removeLast();
-                        cancelPreview();
-                      },
-                      icon: Icon(
-                        Icons.close,
-                        color: Colors.red,
-                      ),
-                    ),
-                  ),
-                ]),
-              if (!isPreviewVisible)
-                Text(
-                  myDuration.inSeconds.toString(),
-                  style: const TextStyle(
-                    color: Colors.white,
+          child: isCameraAllowed
+              ? isCameraInitialized
+                  ? Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        AspectRatio(
+                          aspectRatio: 16 / 9,
+                          child: CameraPreview(_cameraController),
+                        ),
+                        if (widget.currIndex != 3)
+                          AspectRatio(
+                            aspectRatio: 16 / 9,
+                            child: ClipPath(
+                              clipper: HoleClipper(),
+                              child: Container(
+                                color: Colors.black.withOpacity(0.7),
+                              ),
+                            ),
+                          ),
+                        if (isPreviewVisible && lastImagePath.isNotEmpty)
+                          Stack(children: [
+                            Positioned.fill(
+                              child: Image.memory(
+                                lastImagePath,
+                                fit: BoxFit.fitHeight,
+                              ),
+                            ),
+                            Positioned(
+                              left: 30,
+                              top: 30,
+                              child: IconButton(
+                                onPressed: () {
+                                  imagePaths.removeLast();
+                                  cancelPreview();
+                                },
+                                icon: Icon(
+                                  Icons.close,
+                                  color: Colors.red,
+                                ),
+                              ),
+                            ),
+                          ]),
+                        if (!isPreviewVisible)
+                          Text(
+                            myDuration.inSeconds.toString(),
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 150,
+                            ),
+                          ),
+                      ],
+                    )
+                  : const CircularProgressIndicator()
+              : const Text(
+                  "Camera access is required.\nPlease allow access and refresh the page.",
+                  style: TextStyle(
+                    color: Colors.red,
+                    fontSize: 50,
                     fontWeight: FontWeight.bold,
-                    fontSize: 150,
                   ),
                 ),
-            ],
-          )
-              : const CircularProgressIndicator(),
         ),
       ),
     );
