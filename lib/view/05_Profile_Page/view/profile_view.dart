@@ -484,13 +484,41 @@ class ProfileViewState extends State<ProfileView> {
                                   if (result != null) {
                                     if (result == "delete") {
                                       setState(() {
-                                        images.remove(_data[index]);
-                                        _data.removeAt(index);
+                                        for (var image in images) {
+                                          if (image.filename ==
+                                              _data[index].filename) {
+                                            images.remove(image);
+                                            filteredImages.remove(image);
+                                            _data.removeAt(index);
+                                            break;
+                                          }
+                                        }
                                       });
                                     } else {
-                                      setState(() {
-                                        _data[index] = result;
-                                      });
+                                      if (selectedIndex == 2) {
+                                        if (!result.likedBy
+                                            .contains(updatedUser.email)) {
+                                          for (var image in images) {
+                                            if (image.filename ==
+                                                _data[index].filename) {
+                                              setState(() {
+                                                images.remove(image);
+                                                filteredImages.remove(image);
+                                                _data.removeAt(index);
+                                              });
+                                              break;
+                                            }
+                                          }
+                                        } else {
+                                          setState(() {
+                                            _data[index] = result;
+                                          });
+                                        }
+                                      } else {
+                                        setState(() {
+                                          _data[index] = result;
+                                        });
+                                      }
                                     }
                                   }
                                 },
