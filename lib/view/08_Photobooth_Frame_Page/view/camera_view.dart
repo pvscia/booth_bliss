@@ -35,6 +35,11 @@ class CameraWithTimerState extends State<CameraWithTimer> {
   @override
   void initState() {
     super.initState();
+    if (widget.currIndex == 1 || widget.currIndex == 2) {
+      maxTake = 4;
+    } else if (widget.currIndex == 3 || widget.currIndex == 5) {
+      maxTake = 6;
+    }
     _checkCameraPermission();
   }
 
@@ -42,6 +47,7 @@ class CameraWithTimerState extends State<CameraWithTimer> {
   Future<void> _checkCameraPermission() async {
     PermissionStatus status = await Permission.camera.request();
     if (status.isGranted) {
+      isCameraAllowed = true;
       _initializeCamera();
     } else {
       setState(() {

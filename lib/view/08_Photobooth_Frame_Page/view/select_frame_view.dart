@@ -17,7 +17,6 @@ class PhotoboothFrameSelectionPageState
     extends State<PhotoboothFrameSelectionPage> {
   List<FrameModel> images = [];
   String currImage = '';
-  int currIdx = 0;
   int indexCustom = 0;
 
   @override
@@ -105,7 +104,7 @@ class PhotoboothFrameSelectionPageState
                                   onTap: () {
                                     setState(() {
                                       currImage = images[index].frameUrl;
-                                      currIdx = index;
+                                      indexCustom = images[index].idx;
                                     });
                                   },
                                   child: Image.network(
@@ -148,7 +147,7 @@ class PhotoboothFrameSelectionPageState
                                                 builder: (context) =>
                                                     CameraWithTimer(
                                                   currIndex:
-                                                      images[currIdx].idx,
+                                                      indexCustom,
                                                   frameUrl: currImage,
                                                 ), // The page you want to navigate to
                                               ),
@@ -259,7 +258,7 @@ class PhotoboothFrameSelectionPageState
                                       Navigator.of(context).pushReplacement(
                                         MaterialPageRoute(
                                           builder: (context) => CameraWithTimer(
-                                            currIndex: images[currIdx].idx,
+                                            currIndex: indexCustom,
                                             frameUrl: currImage,
                                           ), // The page you want to navigate to
                                         ),
