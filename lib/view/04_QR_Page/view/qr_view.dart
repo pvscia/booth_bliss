@@ -70,6 +70,11 @@ class _ScanQRState extends State<ScanQR> {
                           // if (!isScanCompleted) {
                           print(barcode.rawValue);
                           String code = barcode.rawValue ?? '---';
+                          bool? isConnect = await ViewDialogUtil.checkConnection();
+                          if(!isConnect){
+                            ViewDialogUtil().showNoConnectionDialog(context, (){});
+                            return;
+                          }
                           ViewDialogUtil().showLoadingDialog(context);
                           bool isSuccess =
                               await QRController().addPhotoToAccount(code);

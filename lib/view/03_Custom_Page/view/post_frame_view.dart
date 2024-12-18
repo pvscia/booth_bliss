@@ -71,6 +71,11 @@ class PostFrameViewState extends State<PostFrameView> {
                     ));
                     return;
                   }
+                  bool? isConnect = await ViewDialogUtil.checkConnection();
+                  if(!isConnect){
+                    ViewDialogUtil().showNoConnectionDialog(context, (){});
+                    return;
+                  }
                   ViewDialogUtil().showLoadingDialog(context);
                   await PostFrameController().postFrame(
                       widget.framePng,

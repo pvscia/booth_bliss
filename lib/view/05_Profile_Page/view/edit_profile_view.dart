@@ -83,6 +83,11 @@ class EditProfilePageState extends State<EditProfilePage> {
   Future<void> _handleSave() async {
     ViewDialogUtil()
         .showYesNoActionDialog('Save Profile?', 'Yes', 'No', context, () async {
+      bool? isConnect = await ViewDialogUtil.checkConnection();
+      if(!isConnect){
+        ViewDialogUtil().showNoConnectionDialog(context, (){});
+        return;
+      }
       ViewDialogUtil().showLoadingDialog(context);
       try {
         var updatedProfile = await _controller.saveProfile(

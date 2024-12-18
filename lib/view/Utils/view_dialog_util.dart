@@ -1,4 +1,6 @@
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 class ViewDialogUtil{
@@ -150,6 +152,63 @@ class ViewDialogUtil{
         });
   }
 
+  void showNoConnectionDialog(
+      BuildContext context, VoidCallback onPressedCallback) {
+    String btnTitle ="back";
+    String pictureParam ="warning.gif";
+    String content ="No internet connection";
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return Dialog(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15.0)),
+            backgroundColor: Colors.white,
+            child: SizedBox(
+              width: MediaQuery.of(context).size.width * 0.9,
+              height: 280,
+              child: Padding(
+                padding: const EdgeInsets.all(15.0),
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Padding(padding: EdgeInsets.only(top: 20.0)),
+                      Align(
+                        alignment: Alignment.center,
+                        child: Column(
+                          children: [
+                            Image.asset('assets/$pictureParam', width: 220, height: 100),
+                            const SizedBox(height: 25),
+                            Text(
+                              content,
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(fontSize: 15.0, color: Colors.black),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const Padding(padding: EdgeInsets.only(top: 30.0)),
+                      Align(
+                        alignment: Alignment.bottomRight,
+                        child: TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                            onPressedCallback();
+                          },
+                          child: Text(btnTitle),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          );
+        });
+  }
+
   void showLoadingDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -166,5 +225,17 @@ class ViewDialogUtil{
         );
       },
     );
+  }
+
+  static Future<bool> checkConnection() async {
+    try {
+      final result = await InternetAddress.lookup('google.co.id');
+      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        return true;
+      }
+    } on SocketException catch (_) {
+      return false;
+    }
+    return false;
   }
 }

@@ -44,6 +44,11 @@ class ProfileViewState extends State<ProfileView> {
   }
 
   Future<void> _fetchUserPhoto() async {
+    bool? isConnect = await ViewDialogUtil.checkConnection();
+    if (!isConnect) {
+      ViewDialogUtil().showNoConnectionDialog(context, () {});
+      return;
+    }
     setState(() {
       isLoading = true;
     });
@@ -64,6 +69,11 @@ class ProfileViewState extends State<ProfileView> {
   }
 
   Future<void> _fetchUserResult() async {
+    bool? isConnect = await ViewDialogUtil.checkConnection();
+    if (!isConnect) {
+      ViewDialogUtil().showNoConnectionDialog(context, () {});
+      return;
+    }
     setState(() {
       isLoading = true;
     });
@@ -88,6 +98,11 @@ class ProfileViewState extends State<ProfileView> {
   }
 
   Future<void> _fetchUserLiked() async {
+    bool? isConnect = await ViewDialogUtil.checkConnection();
+    if (!isConnect) {
+      ViewDialogUtil().showNoConnectionDialog(context, () {});
+      return;
+    }
     setState(() {
       isLoading = true;
       etSearch.text = '';
@@ -180,6 +195,11 @@ class ProfileViewState extends State<ProfileView> {
   }
 
   Future<void> refreshPage() async {
+    bool? isConnect = await ViewDialogUtil.checkConnection();
+    if (!isConnect) {
+      ViewDialogUtil().showNoConnectionDialog(context, () {});
+      return;
+    }
     await Future.delayed(const Duration(seconds: 2), () async {
       UserModel? temp = await ProfileController().getUser();
       if (temp != null) {
@@ -267,10 +287,16 @@ class ProfileViewState extends State<ProfileView> {
                         'Yes',
                         'No',
                         context, () async {
-                      await ProfileController().logout();
-                      WidgetsBinding.instance.addPostFrameCallback((_) {
-                        Navigator.pushReplacementNamed(context, '/front_page');
-                      });
+                      bool? isConnect = await ViewDialogUtil.checkConnection();
+                      if (!isConnect) {
+                        ViewDialogUtil().showNoConnectionDialog(context, () {});
+                      } else {
+                        await ProfileController().logout();
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          Navigator.pushReplacementNamed(
+                              context, '/front_page');
+                        });
+                      }
                     }, () {});
                   },
                   icon: const Icon(
