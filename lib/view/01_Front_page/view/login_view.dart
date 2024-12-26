@@ -3,6 +3,7 @@ import 'package:booth_bliss/view/01_Front_page/controller/login_controller.dart'
 import 'package:booth_bliss/view/01_Front_page/view/forgot_password.dart';
 import 'package:flutter/material.dart';
 
+import '../../Utils/view_dialog_util.dart';
 import '../../bottom_nav_bar_view.dart';
 
 class LoginPage extends StatefulWidget {
@@ -94,7 +95,7 @@ class LoginPageState extends State<LoginPage> {
         Navigator.pop(context);
       },
       child: Scaffold(
-        resizeToAvoidBottomInset : false,
+        resizeToAvoidBottomInset: false,
         backgroundColor: Color(0xFFF3FDE8),
         appBar: AppBar(
           centerTitle: true,
@@ -123,8 +124,8 @@ class LoginPageState extends State<LoginPage> {
                       borderRadius:
                           BorderRadius.circular(10), // Rounded corners
                       borderSide: BorderSide(
-                        color: Color(
-                            0xFF55CF00), // Outline color when not focused
+                        color:
+                            Color(0xFF55CF00), // Outline color when not focused
                         width: 2, // Outline thickness
                       ),
                     ),
@@ -132,8 +133,7 @@ class LoginPageState extends State<LoginPage> {
                       borderRadius:
                           BorderRadius.circular(10), // Rounded corners
                       borderSide: BorderSide(
-                        color:
-                            Color(0xFF55CF00), // Outline color when focused
+                        color: Color(0xFF55CF00), // Outline color when focused
                         width: 2, // Outline thickness
                       ),
                     )),
@@ -145,8 +145,7 @@ class LoginPageState extends State<LoginPage> {
                 decoration: InputDecoration(
                   labelText: 'Password',
                   enabledBorder: OutlineInputBorder(
-                    borderRadius:
-                        BorderRadius.circular(10), // Rounded corners
+                    borderRadius: BorderRadius.circular(10), // Rounded corners
                     borderSide: BorderSide(
                       color:
                           Color(0xFF55CF00), // Outline color when not focused
@@ -154,8 +153,7 @@ class LoginPageState extends State<LoginPage> {
                     ),
                   ),
                   focusedBorder: OutlineInputBorder(
-                    borderRadius:
-                        BorderRadius.circular(10), // Rounded corners
+                    borderRadius: BorderRadius.circular(10), // Rounded corners
                     borderSide: BorderSide(
                       color: Color(0xFF55CF00), // Outline color when focused
                       width: 2, // Outline thickness
@@ -194,9 +192,16 @@ class LoginPageState extends State<LoginPage> {
               !isLoading
                   ? ElevatedButton(
                       onPressed: _isFormFilled
-                          ? () {
+                          ? () async {
+                              bool? isConnect =
+                                  await ViewDialogUtil.checkConnection();
+                              if (!isConnect) {
+                                ViewDialogUtil()
+                                    .showNoConnectionDialog(context, () {});
+                                return;
+                              }
                               FocusManager.instance.primaryFocus?.unfocus();
-                                _login();
+                              _login();
                             }
                           : null,
                       style: ElevatedButton.styleFrom(

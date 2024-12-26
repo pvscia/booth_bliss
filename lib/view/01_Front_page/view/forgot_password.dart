@@ -1,6 +1,8 @@
 import 'package:booth_bliss/view/01_Front_page/controller/forgot_pass_controller.dart';
 import 'package:flutter/material.dart';
 
+import '../../Utils/view_dialog_util.dart';
+
 class ForgetPasswordPage extends StatefulWidget {
   @override
   ForgetPasswordPageState createState() => ForgetPasswordPageState();
@@ -18,6 +20,11 @@ class ForgetPasswordPageState extends State<ForgetPasswordPage> {
   }
 
   void _handlePasswordReset() async {
+    bool? isConnect = await ViewDialogUtil.checkConnection();
+    if (!isConnect) {
+      ViewDialogUtil().showNoConnectionDialog(context, () {});
+      return;
+    }
     setState(() {
       isLoading = true;
       statusMessage = ''; // Clear previous status messages
@@ -47,7 +54,7 @@ class ForgetPasswordPageState extends State<ForgetPasswordPage> {
         Navigator.pop(context);
       },
       child: Scaffold(
-        resizeToAvoidBottomInset : false,
+        resizeToAvoidBottomInset: false,
         backgroundColor: Color(0xFFF3FDE8),
         appBar: AppBar(
           centerTitle: true,

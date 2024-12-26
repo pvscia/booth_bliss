@@ -203,6 +203,11 @@ class SignUpPageState extends State<SignUpPage> {
                     ? ElevatedButton(
                         onPressed: _controller.isFormFilled
                             ? () async {
+                          bool? isConnect = await ViewDialogUtil.checkConnection();
+                          if(!isConnect){
+                            ViewDialogUtil().showNoConnectionDialog(context, (){});
+                            return;
+                          }
                                 FocusManager.instance.primaryFocus?.unfocus();
                                 if (_formKey.currentState!.validate()) {
                                   setState(() {
