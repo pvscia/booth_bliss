@@ -66,7 +66,7 @@ class FrameEditorPageState extends State<FrameEditorView> {
         appBar: AppBar(
           backgroundColor: Colors.pink[50],
           elevation: 0,
-          title: Text('Make Frame', style: TextStyle(color: Colors.black)),
+          title: Text('Design Frame', style: TextStyle(color: Colors.black)),
           centerTitle: true,
           leading: IconButton(
             icon: Icon(Icons.arrow_back, color: Colors.black),

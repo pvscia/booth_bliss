@@ -98,7 +98,7 @@ class LoginPageState extends State<LoginPage> {
         backgroundColor: Color(0xFFF3FDE8),
         appBar: AppBar(
           centerTitle: true,
-          title: Text('I have an account'),
+          title: Text('Log in'),
           backgroundColor: Color(0xFFF3FDE8),
           elevation: 0,
         ),
