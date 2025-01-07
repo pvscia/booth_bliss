@@ -45,6 +45,7 @@ class PostFrameViewState extends State<PostFrameView> {
       },
       child: Scaffold(
         appBar: AppBar(
+          backgroundColor: Color(0xffffe5e5),
           title: Text('Save Frame', style: TextStyle(color: Colors.black)),
           centerTitle: true,
           leading: IconButton(
@@ -72,8 +73,8 @@ class PostFrameViewState extends State<PostFrameView> {
                     return;
                   }
                   bool? isConnect = await ViewDialogUtil.checkConnection();
-                  if(!isConnect){
-                    ViewDialogUtil().showNoConnectionDialog(context, (){});
+                  if (!isConnect) {
+                    ViewDialogUtil().showNoConnectionDialog(context, () {});
                     return;
                   }
                   ViewDialogUtil().showLoadingDialog(context);
@@ -103,78 +104,82 @@ class PostFrameViewState extends State<PostFrameView> {
             ),
           ],
         ),
-        body: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                GestureDetector(
-                  onTap: null, //_pickImage,
-                  child: Image.file(widget.framePng),
-                ),
-                SizedBox(height: 16),
-                TextField(
-                  controller: _descriptionController,
-                  decoration: InputDecoration(
-                    hintText: 'Write a caption...',
-                    border: OutlineInputBorder(),
+        body: Container(
+          decoration: BoxDecoration(color: Color(0xffffe5e5)),
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  GestureDetector(
+                    onTap: null, //_pickImage,
+                    child: Image.file(widget.framePng),
                   ),
-                  maxLines: 2,
-                ),
-                SizedBox(height: 16),
-                Text('Add Category:', style: TextStyle(fontSize: 16)),
-                GridView.builder(
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  // Prevents grid from scrolling
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 3,
-                    // 3 items per row
-                    crossAxisSpacing: 8,
-                    // Adjust spacing between boxes horizontally
-                    mainAxisSpacing: 8,
-                    // Adjust spacing between boxes vertically
-                    childAspectRatio:
-                        3, // Adjusts height to width ratio for smaller boxes
+                  SizedBox(height: 16),
+                  TextField(
+                    controller: _descriptionController,
+                    decoration: InputDecoration(
+                      hintText: 'Write a caption...',
+                      border: OutlineInputBorder(),
+                    ),
+                    maxLines: 2,
                   ),
-                  itemCount: ConstantVar().categories.length,
-                  itemBuilder: (context, index) {
-                    String category = ConstantVar().categories[index];
-                    bool isSelected = selectedCategories.contains(category);
-                    return GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          if (isSelected) {
-                            selectedCategories.remove(category);
-                          } else {
-                            selectedCategories.add(category);
-                          }
-                        });
-                      },
-                      child: Container(
-                        padding: EdgeInsets.symmetric(
-                            vertical: 8, horizontal: 4), // Smaller padding
-                        decoration: BoxDecoration(
-                          color: isSelected ? Colors.green : Colors.grey[200],
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Center(
-                          child: Text(
-                            category,
-                            textAlign: TextAlign.center, // Center-align text
-                            softWrap: true, // Allow text to wrap
-                            maxLines: 2, // Max 2 lines of text
-                            style: TextStyle(
-                              color: isSelected ? Colors.white : Colors.black,
-                              fontSize: 12, // Smaller font size for wrapping
+                  SizedBox(height: 16),
+                  Text('Add Category:', style: TextStyle(fontSize: 16)),
+                  GridView.builder(
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    // Prevents grid from scrolling
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 3,
+                      // 3 items per row
+                      crossAxisSpacing: 8,
+                      // Adjust spacing between boxes horizontally
+                      mainAxisSpacing: 8,
+                      // Adjust spacing between boxes vertically
+                      childAspectRatio:
+                          3, // Adjusts height to width ratio for smaller boxes
+                    ),
+                    itemCount: ConstantVar().categories.length,
+                    itemBuilder: (context, index) {
+                      String category = ConstantVar().categories[index];
+                      bool isSelected = selectedCategories.contains(category);
+                      return GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            if (isSelected) {
+                              selectedCategories.remove(category);
+                            } else {
+                              selectedCategories.add(category);
+                            }
+                          });
+                        },
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                              vertical: 8, horizontal: 4), // Smaller padding
+                          decoration: BoxDecoration(
+                            color: isSelected ? Colors.green : Colors.transparent,
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(color: Colors.black12)
+                          ),
+                          child: Center(
+                            child: Text(
+                              category,
+                              textAlign: TextAlign.center, // Center-align text
+                              softWrap: true, // Allow text to wrap
+                              maxLines: 2, // Max 2 lines of text
+                              style: TextStyle(
+                                color: isSelected ? Colors.white : Colors.black,
+                                fontSize: 12, // Smaller font size for wrapping
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    );
-                  },
-                ),
-              ],
+                      );
+                    },
+                  ),
+                ],
+              ),
             ),
           ),
         ),

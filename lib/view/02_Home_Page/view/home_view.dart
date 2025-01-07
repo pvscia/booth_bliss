@@ -172,6 +172,7 @@ class HomeViewState extends State<HomeView> {
     final screenHeight = MediaQuery.of(context).size.height;
     return SafeArea(
       child: Scaffold(
+        backgroundColor: Color(0xFFF3FDE8),
         body: RefreshIndicator(
           onRefresh: refreshPage,
           child: Column(
@@ -323,10 +324,10 @@ class HomeViewState extends State<HomeView> {
                               physics: NeverScrollableScrollPhysics(),
                               gridDelegate:
                                   SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 2,
-                                childAspectRatio: 0.56,
-                                crossAxisSpacing: 10,
-                                mainAxisSpacing: 15,
+                                    crossAxisCount: 2,
+                                    crossAxisSpacing: 5,
+                                    mainAxisSpacing: 5,
+                                    childAspectRatio: 1/1.5,
                               ),
                               itemCount: data.length,
                               itemBuilder: (BuildContext context, int index) {
@@ -355,22 +356,13 @@ class HomeViewState extends State<HomeView> {
                                       }
                                     }
                                   },
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(16),
-                                    child: SizedBox(
-                                      width:
-                                          170, // Set a fixed width for the image
-                                      height:
-                                          300, // Set a fixed height for the image
-                                      child: CachedNetworkImage(
-                                        imageUrl: data[index].imageUrl,
-                                        fit: BoxFit.cover,
-                                        placeholder: (context, url) => Center(
-                                            child: CircularProgressIndicator()),
-                                        errorWidget: (context, url, error) =>
-                                            Icon(Icons.error),
-                                      ),
-                                    ),
+                                  child: CachedNetworkImage(
+                                    imageUrl: data[index].imageUrl,
+                                    fit: BoxFit.contain,
+                                    placeholder: (context, url) => Center(
+                                        child: CircularProgressIndicator()),
+                                    errorWidget: (context, url, error) =>
+                                        Icon(Icons.error),
                                   ),
                                 );
                               },

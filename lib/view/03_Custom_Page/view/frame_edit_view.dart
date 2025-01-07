@@ -64,7 +64,7 @@ class FrameEditorPageState extends State<FrameEditorView> {
       },
       child: Scaffold(
         appBar: AppBar(
-          backgroundColor: Colors.pink[50],
+          backgroundColor: Color(0xffffe5e5),
           elevation: 0,
           title: Text('Design Frame', style: TextStyle(color: Colors.black)),
           centerTitle: true,
@@ -121,7 +121,7 @@ class FrameEditorPageState extends State<FrameEditorView> {
           children: [
             Expanded(
               child: Container(
-                color: Colors.pink[50],
+                color: Color(0xffffe5e5),
                 child: Center(
                   child: RepaintBoundary(
                     key: _globalKey,
@@ -170,7 +170,7 @@ class FrameEditorPageState extends State<FrameEditorView> {
 
             // Bottom Toolbar
             Container(
-              color: Colors.pink[50],
+              color: Color(0xffffe5e5),
               padding: const EdgeInsets.symmetric(vertical: 10),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -312,12 +312,12 @@ class FrameEditorPageState extends State<FrameEditorView> {
             child: GridView.count(
               crossAxisCount: 2, // 2 columns
               children: [
-                _buildGridImage('assets/layout_1.jpg', 0),
-                _buildGridImage('assets/layout_2.jpg', 1),
-                _buildGridImage('assets/layout_3.jpg', 2),
-                _buildGridImage('assets/layout_4.jpg', 3),
-                _buildGridImage('assets/layout_5.jpg', 4),
-                _buildGridImage('assets/layout_6.jpg', 5),
+                _buildGridImage('assets/layout_1.png', 0),
+                _buildGridImage('assets/layout_2.png', 1),
+                _buildGridImage('assets/layout_3.png', 2),
+                _buildGridImage('assets/layout_4.png', 3),
+                _buildGridImage('assets/layout_5.png', 4),
+                _buildGridImage('assets/layout_6.png', 5),
               ],
             ),
           ),

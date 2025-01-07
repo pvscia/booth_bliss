@@ -30,7 +30,7 @@ class UseFrameView extends StatelessWidget {
         ),
       ),
       body: Container(
-        color: Colors.white,
+        color: Color(0xffffe5e5),
         child: Column(
           children: [
             Expanded(

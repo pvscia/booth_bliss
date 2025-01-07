@@ -82,7 +82,7 @@ class ProfileViewState extends State<ProfileView> {
       setState(() {
         images = temp;
         filteredImages = List.from(images);
-        _data = filteredImages.take(9).toList();
+        _data = filteredImages.take(8).toList();
         _toggleSortingOrder('Newest to Oldest');
         isLoading = false;
       });
@@ -112,7 +112,7 @@ class ProfileViewState extends State<ProfileView> {
       setState(() {
         images = temp;
         filteredImages = List.from(images);
-        _data = filteredImages.take(9).toList();
+        _data = filteredImages.take(8).toList();
         isLoading = false;
         isLoading = false;
       });
@@ -138,7 +138,7 @@ class ProfileViewState extends State<ProfileView> {
       setState(() {
         images = temp;
         filteredImages = List.from(images);
-        _data = filteredImages.take(9).toList();
+        _data = filteredImages.take(8).toList();
         isLoading = false;
       });
     } catch (e) {
@@ -157,7 +157,7 @@ class ProfileViewState extends State<ProfileView> {
     }
     setState(() {
       filteredImages = List.from(images);
-      _data = filteredImages.take(9).toList();
+      _data = filteredImages.take(8).toList();
     });
   }
 
@@ -190,7 +190,7 @@ class ProfileViewState extends State<ProfileView> {
         }
         return false;
       }).toList();
-      _data = filteredImages.take(9).toList();
+      _data = filteredImages.take(8).toList();
     });
   }
 
@@ -228,7 +228,7 @@ class ProfileViewState extends State<ProfileView> {
         });
         Future.delayed(Duration(seconds: 3), () {
           int counter = _data.length;
-          final remainingItems = filteredImages.skip(counter).take(9).toList();
+          final remainingItems = filteredImages.skip(counter).take(8).toList();
           setState(() {
             _data.addAll(remainingItems);
             isLoadingMore = false;
@@ -492,11 +492,11 @@ class ProfileViewState extends State<ProfileView> {
                             shrinkWrap: true,
                             physics: NeverScrollableScrollPhysics(),
                             gridDelegate:
-                                SliverGridDelegateWithMaxCrossAxisExtent(
-                              maxCrossAxisExtent: 150,
-                              crossAxisSpacing: 5,
+                            SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              crossAxisSpacing: 6,
                               mainAxisSpacing: 5,
-                              childAspectRatio: 3 / 5,
+                              childAspectRatio: 1/1.5,
                             ),
                             itemCount: _data.length,
                             itemBuilder: (BuildContext context, int index) {
@@ -548,16 +548,13 @@ class ProfileViewState extends State<ProfileView> {
                                     }
                                   }
                                 },
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(10),
-                                  child: CachedNetworkImage(
-                                    imageUrl: _data[index].imageUrl,
-                                    fit: BoxFit.fitHeight,
-                                    placeholder: (context, url) => Center(
-                                        child: CircularProgressIndicator()),
-                                    errorWidget: (context, url, error) =>
-                                        Icon(Icons.error),
-                                  ),
+                                child: CachedNetworkImage(
+                                  imageUrl: _data[index].imageUrl,
+                                  fit: BoxFit.contain,
+                                  placeholder: (context, url) => Center(
+                                      child: CircularProgressIndicator()),
+                                  errorWidget: (context, url, error) =>
+                                      Icon(Icons.error),
                                 ),
                               );
                             },
