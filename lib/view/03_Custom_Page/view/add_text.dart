@@ -195,6 +195,12 @@ class ResizableTextState extends State<ResizableText> {
     );
   }
   final ValueNotifier<Matrix4> notifier = ValueNotifier(Matrix4.identity());
+
+  @override
+  void dispose(){
+    super.dispose();
+  }
+
   @override
   void initState() {
     super.initState();

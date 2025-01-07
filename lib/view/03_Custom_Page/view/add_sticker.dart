@@ -21,9 +21,13 @@ class ResizableImage extends StatefulWidget {
 
 class ResizableImageState extends State<ResizableImage> {
   final ValueNotifier<Matrix4> notifier = ValueNotifier(Matrix4.identity());
-  final ValueNotifier<Matrix4> notifier2 = ValueNotifier(Matrix4.identity());
   int shapeIndex = 0;
   late Offset offset;
+
+  @override
+  void dispose(){
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {

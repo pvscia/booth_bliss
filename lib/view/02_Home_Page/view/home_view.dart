@@ -27,6 +27,12 @@ class HomeViewState extends State<HomeView> {
   List<ImageModel> data = [];
   TextEditingController etSearch = TextEditingController();
 
+  @override
+  void dispose(){
+    super.dispose();
+    etSearch.dispose();
+    scrollController.dispose();
+  }
   void onSelectionChanged(String category, bool isSelected) {
     setState(() {
       if (isSelected) {

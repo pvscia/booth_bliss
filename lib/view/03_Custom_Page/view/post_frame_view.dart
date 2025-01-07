@@ -28,6 +28,12 @@ class PostFrameViewState extends State<PostFrameView> {
   bool isLoading = false;
 
   @override
+  void dispose(){
+    super.dispose();
+    _descriptionController.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return PopScope(
       canPop: false,

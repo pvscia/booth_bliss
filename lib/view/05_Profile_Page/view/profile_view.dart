@@ -241,6 +241,7 @@ class ProfileViewState extends State<ProfileView> {
   @override
   void dispose() {
     _scrollController.dispose();
+    etSearch.dispose();
     super.dispose();
   }
 

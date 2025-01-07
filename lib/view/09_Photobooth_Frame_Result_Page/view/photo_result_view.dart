@@ -27,6 +27,13 @@ class PhotoResultState extends State<PhotoResult> {
     _resetIdleTimer();
   }
 
+  @override
+  void dispose(){
+    super.dispose();
+    emailController.dispose();
+    _idleTimer?.cancel();
+  }
+
   Future<void> initPhoto() async {
     var temp = await PhotoResultController().fetchPhotoURl(widget.filename);
     setState(() {
@@ -54,11 +61,6 @@ class PhotoResultState extends State<PhotoResult> {
     );
   }
 
-  @override
-  void dispose() {
-    _idleTimer?.cancel(); // Cancel the timer when the page is disposed
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {

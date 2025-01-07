@@ -41,6 +41,11 @@ class FrameEditorPageState extends State<FrameEditorView> {
   ];
 
   @override
+  void dispose(){
+    super.dispose();
+  }
+
+  @override
   void initState() {
     super.initState();
     idxClipPath = widget.idx;
@@ -261,10 +266,7 @@ class FrameEditorPageState extends State<FrameEditorView> {
 
                                 if (offset.dy >
                                         (MediaQuery.of(context).size.height -
-                                            100) &&
-                                    offset.dx >
-                                        (MediaQuery.of(context).size.width -
-                                            100)) {
+                                            200)) {
                                   widgets.removeWhere(
                                       (widget) => widget.key == key);
                                 }
@@ -422,30 +424,28 @@ class PhotoGrid2x3Clipper extends CustomClipper<Path> {
     double height = size.height / 4;
     double gapX = (size.width - (width * 2)) / 3;
     double gapY = ((size.height * 7 / 8) - (height * 3)) / 3;
-    
+
     print('2x3 Square');
     print('width : $width, height: $height');
     print('Top left x: $gapX y:$gapY');
     print('Top right x: ${size.width - width - gapX} y:$gapY');
     print('Middle left x: $gapX y:${height + gapY * 2}');
-    print('Middle right x: ${size.width - width - gapX} y:${height + gapY * 2}');
+    print(
+        'Middle right x: ${size.width - width - gapX} y:${height + gapY * 2}');
     print('Bottom left x: $gapX y:${height * 2 + gapY * 3}');
-    print('Bottom right x: ${size.width - width - gapX} y:${height * 2 + gapY * 3}');
-
+    print(
+        'Bottom right x: ${size.width - width - gapX} y:${height * 2 + gapY * 3}');
 
     // Draw the outer rectangle
     path.addRect(Rect.fromLTWH(0, 0, size.width, size.height));
     path.addRect(Rect.fromLTWH(gapX, gapY, width, height));
+    path.addRect(Rect.fromLTWH(size.width - width - gapX, gapY, width, height));
+    path.addRect(Rect.fromLTWH(gapX, height + gapY * 2, width, height));
     path.addRect(Rect.fromLTWH(
-        size.width - width - gapX, gapY, width, height));
-    path.addRect(
-        Rect.fromLTWH(gapX, height + gapY * 2, width, height));
-    path.addRect(Rect.fromLTWH(size.width - width - gapX, height + gapY * 2,
-        width, height));
-    path.addRect(
-        Rect.fromLTWH(gapX, height * 2 + gapY * 3, width, height));
-    path.addRect(Rect.fromLTWH(size.width - width - gapX, height * 2 + gapY * 3,
-        width, height));
+        size.width - width - gapX, height + gapY * 2, width, height));
+    path.addRect(Rect.fromLTWH(gapX, height * 2 + gapY * 3, width, height));
+    path.addRect(Rect.fromLTWH(
+        size.width - width - gapX, height * 2 + gapY * 3, width, height));
 
     // Set fill type to evenOdd for transparency
     path.fillType = PathFillType.evenOdd;
@@ -471,18 +471,16 @@ class PhotoGrid2x2Clipper extends CustomClipper<Path> {
     print('Top left x: $gapX y:$gapY');
     print('Top right x: ${size.width - width - gapX} y:$gapY');
     print('Bottom left x: $gapX y:${height + gapY * 2}');
-    print('Bottom right x: ${size.width - width - gapX} y:${height + gapY * 2}');
-
+    print(
+        'Bottom right x: ${size.width - width - gapX} y:${height + gapY * 2}');
 
     // Draw the outer rectangle
     path.addRect(Rect.fromLTWH(0, 0, size.width, size.height));
     path.addRect(Rect.fromLTWH(gapX, gapY, width, height));
+    path.addRect(Rect.fromLTWH(size.width - width - gapX, gapY, width, height));
+    path.addRect(Rect.fromLTWH(gapX, height + gapY * 2, width, height));
     path.addRect(Rect.fromLTWH(
-        size.width - width - gapX, gapY, width, height));
-    path.addRect(
-        Rect.fromLTWH(gapX, height + gapY * 2, width, height));
-    path.addRect(Rect.fromLTWH(size.width - width - gapX, height + gapY * 2,
-        width, height));
+        size.width - width - gapX, height + gapY * 2, width, height));
 
     // Set fill type to evenOdd for transparency
     path.fillType = PathFillType.evenOdd;
@@ -508,17 +506,15 @@ class PhotoGrid2x2StairClipper extends CustomClipper<Path> {
     print('Top left x: $gapX y:$gapY');
     print('Top right x: ${size.width - width - gapX} y:${size.height * 1 / 8}');
     print('Bottom left x: $gapX y:${height + gapY * 2}');
-    print('Bottom right x: ${size.width - width - gapX} y:${height + gapY + size.height * 1 / 8}');
-
-
+    print(
+        'Bottom right x: ${size.width - width - gapX} y:${height + gapY + size.height * 1 / 8}');
 
     // Draw the outer rectangle
     path.addRect(Rect.fromLTWH(0, 0, size.width, size.height));
     path.addRect(Rect.fromLTWH(gapX, gapY, width, height));
-    path.addRect(Rect.fromLTWH(size.width - width - gapX, size.height * 1 / 8,
-        width, height));
-    path.addRect(
-        Rect.fromLTWH(gapX, height + gapY * 2, width, height));
+    path.addRect(Rect.fromLTWH(
+        size.width - width - gapX, size.height * 1 / 8, width, height));
+    path.addRect(Rect.fromLTWH(gapX, height + gapY * 2, width, height));
     path.addRect(Rect.fromLTWH(size.width - width - gapX,
         height + gapY + size.height * 1 / 8, width, height));
 
@@ -574,8 +570,7 @@ class PhotoGrid1CircleClipper extends CustomClipper<Path> {
     // Draw the outer rectangle
     path.addRect(Rect.fromLTWH(0, 0, size.width, size.height));
     path.addOval(Rect.fromCircle(
-        center: Offset(width / 2 + gapX, width / 2 + gapY),
-        radius: width / 2));
+        center: Offset(width / 2 + gapX, width / 2 + gapY), radius: width / 2));
     // Set fill type to evenOdd for transparency
     path.fillType = PathFillType.evenOdd;
 
@@ -607,8 +602,7 @@ class PhotoGrid2x3CircleClipper extends CustomClipper<Path> {
     // Draw the outer rectangle
     path.addRect(Rect.fromLTWH(0, 0, size.width, size.height));
     path.addOval(Rect.fromCircle(
-        center: Offset(width / 2 + gapX, width / 2 + gapY),
-        radius: width / 2));
+        center: Offset(width / 2 + gapX, width / 2 + gapY), radius: width / 2));
     path.addOval(Rect.fromCircle(
         center: Offset(width / 2 + gapX * 2 + width, width / 2 + gapY),
         radius: width / 2));
