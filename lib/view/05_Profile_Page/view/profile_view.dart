@@ -550,7 +550,7 @@ class ProfileViewState extends State<ProfileView> {
                                   }
                                 },
                                 child: CachedNetworkImage(
-                                  memCacheWidth: 200,
+                                  memCacheWidth: 250,
                                   imageUrl: _data[index].imageUrl,
                                   fit: BoxFit.contain,
                                   placeholder: (context, url) => Center(

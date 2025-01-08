@@ -363,7 +363,7 @@ class HomeViewState extends State<HomeView> {
                                     }
                                   },
                                   child: CachedNetworkImage(
-                                    memCacheWidth: 200,
+                                    memCacheWidth: 250,
                                     imageUrl: data[index].imageUrl,
                                     fit: BoxFit.contain,
                                     placeholder: (context, url) => Center(
