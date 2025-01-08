@@ -106,65 +106,49 @@ class BottomNavBarMainState extends State<BottomNavBarMain> {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
-
-    return Scaffold(
-      body: _pages == null
-          ? Center(child: CircularProgressIndicator())
-          : IndexedStack(
-        index: _selectedIndex,
-        children: _pages!,
-      ),
-      bottomNavigationBar: SizedBox(
-        height: screenHeight * 0.08,
-        child: BottomNavigationBar(
-          type: BottomNavigationBarType.fixed,
-          backgroundColor: const Color(0xffffe5e5),
-          showSelectedLabels: true,
-          showUnselectedLabels: true,
-          selectedLabelStyle: TextStyle(fontSize: screenWidth * 0.02),
-          unselectedLabelStyle: TextStyle(fontSize: screenWidth * 0.02),
-          items: [
-            BottomNavigationBarItem(
-              icon: SizedBox(
-                width: screenWidth * 0.08,
-                height: screenWidth * 0.08,
-                child: Icon(Icons.home, size: screenWidth * 0.08),
-              ),
-              label: 'Home',
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return SafeArea(
+          child: Scaffold(
+            body: _pages == null
+                ? Center(child: CircularProgressIndicator())
+                : IndexedStack(
+              index: _selectedIndex,
+              children: _pages!,
             ),
-            BottomNavigationBarItem(
-              icon: SizedBox(
-                width: screenWidth * 0.08,
-                height: screenWidth * 0.08,
-                child: Icon(Icons.add_box, size: screenWidth * 0.08),
-              ),
-              label: 'Custom',
+            bottomNavigationBar: BottomNavigationBar(
+              type: BottomNavigationBarType.fixed,
+              backgroundColor: const Color(0xffffe5e5),
+              showSelectedLabels: true,
+              showUnselectedLabels: true,
+              selectedLabelStyle: TextStyle(fontSize: constraints.maxWidth * 0.02),
+              unselectedLabelStyle: TextStyle(fontSize: constraints.maxWidth * 0.02),
+              items: [
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.home, size: constraints.maxWidth * 0.08),
+                  label: 'Home',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.add_box, size: constraints.maxWidth * 0.08),
+                  label: 'Custom',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.qr_code, size: constraints.maxWidth * 0.08),
+                  label: 'Scan',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.person, size: constraints.maxWidth * 0.08),
+                  label: 'Profile',
+                ),
+              ],
+              currentIndex: _selectedIndex,
+              selectedItemColor: Colors.black,
+              unselectedItemColor: const Color(0xff808080),
+              onTap: _onItemTapped,
             ),
-            BottomNavigationBarItem(
-              icon: SizedBox(
-                width: screenWidth * 0.08,
-                height: screenWidth * 0.08,
-                child: Icon(Icons.qr_code, size: screenWidth * 0.08),
-              ),
-              label: 'Scan',
-            ),
-            BottomNavigationBarItem(
-              icon: SizedBox(
-                width: screenWidth * 0.08,
-                height: screenWidth * 0.08,
-                child: Icon(Icons.person, size: screenWidth * 0.08),
-              ),
-              label: 'Profile',
-            ),
-          ],
-          currentIndex: _selectedIndex,
-          selectedItemColor: Colors.black,
-          unselectedItemColor: const Color(0xff808080),
-          onTap: _onItemTapped,
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 }
